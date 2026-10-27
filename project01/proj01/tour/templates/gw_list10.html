@@ -1,0 +1,1101 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TravelMate - 강원특별자치도 인기 관광지 & 세대별 분석</title>
+    
+    <!-- Google Fonts & Font Awesome Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Pretendard:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- D3.js (버블 그래프용) -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+
+    <!-- 🔑 카카오맵 API 스크립트 (YOUR_KAKAO_APP_KEY 부분을 발급받으신 자바스크립트 키로 교체하세요) -->
+    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=f3cc7839c4d204e880d6b7273a6f9eb0"></script>
+
+    <style>
+        :root {
+            --bg-cream: #f7f3e8;
+            --cream-dark: #eee9d8;
+            --palette-deep: #1f06ac;
+            --palette-mid: #0f42c0;
+            --palette-light: #5882e8;
+            --palette-yellow: #e3ef4f;
+            --dark-text: #121629;
+            
+            --subtle-border: rgba(31, 6, 172, 0.15);
+            --card-bg: #ffffff;
+            --border-radius-lg: 32px;
+            --border-radius-md: 20px;
+            --transition: all 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html, body {
+            height: 100%;
+        }
+
+        body {
+            font-family: 'Pretendard', sans-serif;
+            background-color: var(--bg-cream);
+            color: var(--dark-text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        /* Header Navigation */
+        header {
+            padding: 1.2rem 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: var(--bg-cream);
+            border-bottom: 1px solid var(--subtle-border);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.7rem;
+            background-color: var(--palette-deep);
+            color: #fff;
+            padding: 0.7rem 1.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.95rem;
+            transition: var(--transition);
+        }
+
+        .back-btn:hover {
+            background-color: var(--palette-mid);
+            color: #fff;
+            transform: translateX(-4px);
+        }
+
+        .brand-logo {
+            font-family: 'Fredoka', cursive;
+            font-size: 2.1rem;
+            font-weight: 700;
+            color: var(--palette-deep);
+            text-decoration: none;
+        }
+
+        .header-tag {
+            background-color: var(--palette-yellow);
+            color: var(--palette-deep);
+            padding: 0.5rem 1.2rem;
+            border-radius: 50px;
+            font-weight: 800;
+            font-size: 0.9rem;
+            border: 1px solid var(--subtle-border);
+        }
+
+        /* Layout Structure */
+        .layout-wrapper {
+            max-width: 1440px;
+            margin: 2rem auto 4rem auto;
+            width: 100%;
+            padding: 0 1.5rem;
+            display: flex;
+            gap: 1.8rem;
+            align-items: flex-start;
+            flex: 1;
+        }
+
+        /* 1. Left Region Sidebar */
+        .region-sidebar {
+            width: 200px;
+            background-color: #ffffff;
+            border: 1px solid var(--subtle-border);
+            border-radius: var(--border-radius-md);
+            padding: 1rem 0.8rem;
+            box-shadow: 0 8px 20px rgba(31, 6, 172, 0.05);
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+            position: sticky;
+            top: 90px;
+            flex-shrink: 0;
+        }
+
+        .region-nav-btn {
+            display: block;
+            width: 100%;
+            padding: 0.65rem 1rem;
+            border-radius: 12px;
+            border: none;
+            background-color: transparent;
+            color: var(--dark-text);
+            font-size: 0.9rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: left;
+        }
+
+        .region-nav-btn:hover {
+            background-color: var(--cream-dark);
+            color: var(--palette-deep);
+        }
+
+        .region-nav-btn.active {
+            background-color: var(--palette-deep);
+            color: var(--palette-yellow);
+            box-shadow: 0 4px 12px rgba(31, 6, 172, 0.2);
+            font-weight: 800;
+        }
+
+        /* Right Content Area */
+        .content-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+
+        /* SECTION: Split Box */
+        .split-box {
+            display: flex;
+            gap: 1.8rem;
+            align-items: stretch;
+        }
+
+        /* 2. Center Map Section */
+        .map-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .map-wrapper {
+            width: 100%;
+            height: 100%;
+            min-height: 680px;
+            border-radius: var(--border-radius-lg);
+            overflow: hidden;
+            border: 1px solid var(--subtle-border);
+            box-shadow: 0 12px 32px rgba(31, 6, 172, 0.08);
+            position: relative;
+        }
+
+        #map {
+            width: 100%;
+            height: 100%;
+            background-color: #e5e3df;
+        }
+
+        .map-overlay-info {
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            right: 16px;
+            z-index: 10;
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(8px);
+            padding: 1rem 1.3rem;
+            border-radius: 18px;
+            border: 1px solid var(--subtle-border);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+        }
+
+        .map-overlay-info h2 {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--palette-deep);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .map-overlay-info p {
+            font-size: 0.85rem;
+            color: #555;
+            margin-top: 2px;
+        }
+
+        /* 3. Right List Section */
+        .list-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+            min-width: 0;
+        }
+
+        .list-header {
+            background-color: var(--palette-yellow);
+            color: var(--palette-deep);
+            padding: 1.2rem 1.6rem;
+            border-radius: var(--border-radius-md);
+            border: 1px solid var(--subtle-border);
+            box-shadow: 0 6px 18px rgba(31, 6, 172, 0.06);
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .list-header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+        }
+
+        .list-header h1 {
+            font-size: 1.45rem;
+            font-weight: 800;
+        }
+
+        .list-header p {
+            font-size: 0.88rem;
+            color: var(--palette-deep);
+            font-weight: 700;
+            opacity: 0.85;
+        }
+
+        .header-age-filter {
+            display: flex;
+            gap: 0.4rem;
+            background-color: rgba(255, 255, 255, 0.65);
+            padding: 0.3rem;
+            border-radius: 14px;
+            border: 1px solid var(--subtle-border);
+            overflow-x: auto;
+        }
+
+        .age-filter-btn {
+            flex: 1;
+            padding: 0.45rem 0.6rem;
+            border-radius: 10px;
+            border: none;
+            background: transparent;
+            color: var(--palette-deep);
+            font-size: 0.82rem;
+            font-weight: 800;
+            cursor: pointer;
+            transition: var(--transition);
+            white-space: nowrap;
+            text-align: center;
+        }
+
+        .age-filter-btn:hover {
+            background-color: rgba(31, 6, 172, 0.1);
+        }
+
+        .age-filter-btn.active {
+            background-color: var(--palette-deep);
+            color: var(--palette-yellow);
+            box-shadow: 0 2px 8px rgba(31, 6, 172, 0.2);
+        }
+
+        /* 2열 카드 그리드 */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.1rem;
+        }
+
+        .place-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--subtle-border);
+            border-radius: var(--border-radius-md);
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 4px 12px rgba(31, 6, 172, 0.04);
+            text-decoration: none;
+            color: inherit;
+            position: relative;
+            height: 110px;
+            min-width: 0;
+        }
+
+        .place-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(31, 6, 172, 0.12);
+            border-color: var(--palette-light);
+            background-color: #ffffff;
+        }
+
+        .card-img-box {
+            position: relative;
+            width: 95px;
+            height: 90px;
+            border-radius: 14px;
+            overflow: hidden;
+            border: 1px solid var(--subtle-border);
+            flex-shrink: 0;
+        }
+
+        .card-img-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.4s ease;
+        }
+
+        .place-card:hover .card-img-box img {
+            transform: scale(1.1);
+        }
+
+        .rank-badge {
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            width: 25px;
+            height: 25px;
+            border-radius: 6px;
+            background-color: var(--palette-deep);
+            color: #fff;
+            font-family: 'Fredoka', cursive;
+            font-weight: 700;
+            font-size: 0.88rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .rank-1 .rank-badge { background-color: var(--palette-deep); color: var(--palette-yellow); }
+        .rank-2 .rank-badge { background-color: var(--palette-mid); color: #ffffff; }
+        .rank-3 .rank-badge { background-color: var(--palette-light); color: #ffffff; }
+
+        .card-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 90px;
+            padding: 0.1rem 0;
+            min-width: 0;
+            overflow: hidden;
+        }
+
+        .info-top h3 {
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: var(--palette-deep);
+            margin-bottom: 0.2rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: block;
+        }
+
+        .category-tag {
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 0.15rem 0.45rem;
+            border-radius: 6px;
+            background-color: var(--cream-dark);
+            color: var(--palette-deep);
+            border: 1px solid rgba(31, 6, 172, 0.1);
+            display: inline-block;
+            margin-bottom: 0.2rem;
+            width: fit-content;
+        }
+
+        .place-location {
+            font-size: 0.8rem;
+            color: #666;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .info-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .search-count {
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: var(--palette-deep);
+            white-space: nowrap;
+        }
+
+        /* MODAL STYLING & 팝업창 130% 확대, 이미지 20% 확대 */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(18, 22, 41, 0.65);
+            backdrop-filter: blur(6px);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            padding: 1.5rem;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-card {
+            background-color: var(--bg-cream);
+            border: 1px solid var(--subtle-border);
+            border-radius: var(--border-radius-lg);
+            box-shadow: 0 20px 48px rgba(0, 0, 0, 0.25);
+            width: 100%;
+            max-width: 884px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            transform: translateY(15px) scale(0.97);
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            display: flex;
+            flex-direction: column;
+            scroll-behavior: smooth;
+        }
+
+        .modal-card::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .modal-card::-webkit-scrollbar-track {
+            background: var(--bg-cream);
+            border-radius: 0 32px 32px 0;
+        }
+
+        .modal-card::-webkit-scrollbar-thumb {
+            background-color: var(--palette-light);
+            border-radius: 10px;
+            border: 2px solid var(--bg-cream);
+        }
+
+        .modal-card::-webkit-scrollbar-thumb:hover {
+            background-color: var(--palette-deep);
+        }
+
+        .modal-overlay.active .modal-card {
+            transform: translateY(0) scale(1);
+        }
+
+        .modal-close-btn {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background-color: var(--palette-deep);
+            color: var(--palette-yellow);
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            cursor: pointer;
+            z-index: 10;
+            transition: var(--transition);
+        }
+
+        .modal-close-btn:hover {
+            background-color: var(--palette-mid);
+            color: #ffffff;
+            transform: rotate(90deg);
+        }
+
+        .modal-hero-img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            border-bottom: 1px solid var(--subtle-border);
+        }
+
+        .modal-body {
+            padding: 1.8rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.4rem;
+        }
+
+        .modal-title-box {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+        }
+
+        .modal-title {
+            font-size: 1.65rem;
+            font-weight: 800;
+            color: var(--palette-deep);
+        }
+
+        .modal-rank-tag {
+            background-color: var(--palette-yellow);
+            color: var(--palette-deep);
+            font-family: 'Fredoka', cursive;
+            font-weight: 700;
+            padding: 0.35rem 0.95rem;
+            border-radius: 50px;
+            font-size: 0.88rem;
+            border: 1px solid var(--subtle-border);
+        }
+
+        .modal-location {
+            font-size: 0.9rem;
+            color: #666;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            margin-top: 0.2rem;
+        }
+
+        .modal-description {
+            background-color: #ffffff;
+            border: 1px solid var(--subtle-border);
+            border-radius: var(--border-radius-md);
+            padding: 1.2rem 1.4rem;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: #333;
+            box-shadow: 0 4px 12px rgba(31, 6, 172, 0.03);
+        }
+
+        .modal-map-links {
+            display: flex;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+
+        .map-link-btn {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.85rem 1.2rem;
+            border-radius: 14px;
+            border: 1px solid var(--subtle-border);
+            font-weight: 800;
+            font-size: 0.92rem;
+            text-decoration: none;
+            transition: var(--transition);
+            box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+        }
+
+        .map-link-btn.kakao { background-color: #fee500; color: #191919; }
+        .map-link-btn.naver { background-color: #03c75a; color: #ffffff; }
+
+        .map-link-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 14px rgba(0,0,0,0.1);
+        }
+
+        /* 버블 차트 디자인 */
+        .bubble-chart-section {
+            background-color: #ffffff;
+            border: 1px solid var(--subtle-border);
+            border-radius: var(--border-radius-md);
+            padding: 1.4rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            box-shadow: 0 4px 14px rgba(31, 6, 172, 0.04);
+        }
+
+        .bubble-chart-title {
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: var(--palette-deep);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .bubble-container {
+            width: 100%;
+            height: 260px;
+            position: relative;
+            background-color: var(--bg-cream);
+            border-radius: 16px;
+            border: 1px solid var(--subtle-border);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .bubble-node {
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .bubble-node:hover {
+            filter: brightness(1.08);
+            transform: scale(1.05);
+        }
+
+        .bubble-node circle {
+            stroke: var(--palette-deep);
+            stroke-width: 1.5px;
+        }
+
+        .bubble-node text {
+            font-family: 'Pretendard', sans-serif;
+            font-weight: 800;
+            text-anchor: middle;
+            dominant-baseline: central;
+            pointer-events: none;
+        }
+
+        /* 카카오맵 오버레이 오버라이드 스타일 */
+        .kakao-info-window {
+            padding: 8px 12px;
+            font-size: 13px;
+            font-weight: bold;
+            color: var(--palette-deep);
+            background: #ffffff;
+            border-radius: 8px;
+            border: 1px solid var(--palette-mid);
+        }
+
+        .modal-video-section {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .modal-video-title {
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: var(--palette-deep);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .video-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%;
+            border-radius: var(--border-radius-md);
+            overflow: hidden;
+            border: 1px solid var(--subtle-border);
+            background-color: #000;
+        }
+
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+
+        /* 푸터 하단 고정 */
+        footer {
+            text-align: center;
+            padding: 2.2rem;
+            background-color: var(--palette-deep);
+            color: #ffffff;
+            font-size: 0.88rem;
+            margin-top: auto;
+        }
+
+        @media (max-width: 1024px) {
+            .layout-wrapper { flex-direction: column; }
+            .region-sidebar { width: 100%; flex-direction: row; overflow-x: auto; position: static; }
+            .split-box { flex-direction: column; }
+            .map-section { width: 100%; height: 420px; }
+            .cards-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Navigation -->
+    <header>
+        <a href="/" class="back-btn"><i class="fa-solid fa-arrow-left"></i> HOME으로 돌아가기</a>
+        <a href="#" class="brand-logo">TravelMate</a>
+        <span class="header-tag"><i class="fa-solid fa-calendar-days"></i> 2025년 10월 전국 연령별 데이터 기준</span>
+    </header>
+
+    <!-- Main Layout Wrapper -->
+    <div class="layout-wrapper">
+        
+        <!-- 1. Left 15%: Region Sidebar -->
+        <aside class="region-sidebar">
+            <button class="region-nav-btn" onclick="switchRegion('서울특별시')">서울특별시</button>
+            <button class="region-nav-btn" onclick="switchRegion('부산광역시')">부산광역시</button>
+            <button class="region-nav-btn" onclick="switchRegion('대구광역시')">대구광역시</button>
+            <button class="region-nav-btn active" onclick="switchRegion('강원특별자치도')">강원특별자치도</button>
+            <button class="region-nav-btn" onclick="switchRegion('인천광역시')">인천광역시</button>
+            <button class="region-nav-btn" onclick="switchRegion('광주광역시')">광주광역시</button>
+            <button class="region-nav-btn" onclick="switchRegion('대전광역시')">대전광역시</button>
+            <button class="region-nav-btn" onclick="switchRegion('울산광역시')">울산광역시</button>
+            <button class="region-nav-btn" onclick="switchRegion('세종특별자치시')">세종특별자치시</button>
+            <button class="region-nav-btn" onclick="switchRegion('경기도')">경기도</button>
+            <button class="region-nav-btn" onclick="switchRegion('충청북도')">충청북도</button>
+            <button class="region-nav-btn" onclick="switchRegion('충청남도')">충청남도</button>
+            <button class="region-nav-btn" onclick="switchRegion('전라북도')">전북특별자치도</button>
+            <button class="region-nav-btn" onclick="switchRegion('전라남도')">전라남도</button>
+            <button class="region-nav-btn" onclick="switchRegion('경상북도')">경상북도</button>
+            <button class="region-nav-btn" onclick="switchRegion('경상남도')">경상남도</button>
+            <button class="region-nav-btn" onclick="switchRegion('제주특별자치도')">제주특별자치도</button>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="content-container">
+
+            <!-- SECTION: Map & Top 10 Cards Split Box -->
+            <div class="split-box">
+
+                <!-- 2. Center 50%: Map (카카오맵) -->
+                <section class="map-section">
+                    <div class="map-wrapper">
+                        <div class="map-overlay-info">
+                            <h2><i class="fa-solid fa-map-pin"></i> 강원특별자치도 인기 명소</h2>
+                            <p>우측 카드를 클릭하면 상세 팝업 및 지도 위치로 연결됩니다.</p>
+                        </div>
+                        <div id="map"></div>
+                    </div>
+                </section>
+
+                <!-- 3. Right 50%: Top 10 Cards Grid -->
+                <section class="list-section">
+                    
+                    <div class="list-header">
+                        <div class="list-header-top">
+                            <h1 id="headerTitleText">강원도 인기 관광지 TOP 10</h1>
+                            <p>카드를 클릭하면 상세 팝업창이 열립니다</p>
+                        </div>
+
+                        <!-- 20~60대 연령대 버튼 (한 줄) -->
+                        <div class="header-age-filter">
+                            <button class="age-filter-btn active" onclick="filterByAge('all', this)">전체</button>
+                            <button class="age-filter-btn" onclick="filterByAge('20s', this)">20대</button>
+                            <button class="age-filter-btn" onclick="filterByAge('30s', this)">30대</button>
+                            <button class="age-filter-btn" onclick="filterByAge('40s', this)">40대</button>
+                            <button class="age-filter-btn" onclick="filterByAge('50s', this)">50대</button>
+                            <button class="age-filter-btn" onclick="filterByAge('60s', this)">60대+</button>
+                        </div>
+                    </div>
+
+                    <div id="cardsGridContainer" class="cards-grid">
+                        <!-- Dynamic Rendering -->
+                    </div>
+                </section>
+
+            </div>
+
+        </main>
+
+    </div>
+
+    <!-- DYNAMIC MODAL DIALOG -->
+    <div class="modal-overlay" id="placeModal" onclick="closeModalOnOverlay(event)">
+        <div class="modal-card">
+            <button class="modal-close-btn" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></button>
+            
+            <img id="modalImg" class="modal-hero-img" src="" alt="관광지 이미지" onerror="this.src='https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80'">
+            
+            <div class="modal-body">
+                <div class="modal-title-box">
+                    <div>
+                        <div id="modalTitle" class="modal-title">관광지명</div>
+                        <div id="modalLocation" class="modal-location"><i class="fa-solid fa-location-dot"></i> 강원특별자치도</div>
+                    </div>
+                    <span id="modalRank" class="modal-rank-tag">검색 순위 1위</span>
+                </div>
+
+                <div id="modalDesc" class="modal-description">
+                    장소 설명 텍스트
+                </div>
+
+                <!-- 길찾기 버튼 -->
+                <div class="modal-map-links">
+                    <a id="kakaoLink" href="#" target="_blank" class="map-link-btn kakao">
+                        <i class="fa-solid fa-comment"></i> 카카오맵 길안내
+                    </a>
+                    <a id="naverLink" href="#" target="_blank" class="map-link-btn naver">
+                        <i class="fa-solid fa-location-arrow"></i> 네이버 지도 길안내
+                    </a>
+                </div>
+
+                <!-- 연관어 버블 그래프 섹션 -->
+                <div class="bubble-chart-section">
+                    <div class="bubble-chart-title">
+                        <i class="fa-solid fa-chart-bubble" style="color: var(--palette-deep);"></i> 빅데이터 연관어 분석 버블 그래프
+                    </div>
+                    
+                    <div id="modalBubbleChart" class="bubble-container">
+                        <!-- Dynamic D3 Bubble Chart -->
+                    </div>
+
+                    <div id="modalSnsTip" class="tip-card-box">
+                        <strong>💡 주요 연관 키워드 분석 팁</strong>
+                        <span id="modalTipContent">버블을 클릭하시면 세부 연관어 정보를 확인하실 수 있습니다.</span>
+                    </div>
+                </div>
+
+                <!-- 동영상 섹션 -->
+                <div class="modal-video-section">
+                    <div class="modal-video-title">
+                        <i class="fa-solid fa-circle-play" style="color: var(--palette-deep);"></i> 홍보 및 소개 동영상
+                    </div>
+                    <div class="video-container">
+                        <iframe id="modalIframe" src="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2026 TravelMate. All rights reserved.</p>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        // Django 백엔드 데이터 파싱
+        const placeData = JSON.parse('{{ place_data_json|escapejs|default:"{}" }}');
+        const ageFilterDataSets = JSON.parse('{{ age_datasets_json|escapejs|default:"{}" }}');
+
+        // 1. 카카오맵 객체 생성 및 초기화 (강원도 중심으로 세팅)
+        const mapContainer = document.getElementById('map');
+        const mapOptions = {
+            center: new kakao.maps.LatLng(37.8000, 128.2000), // 강원도 중심 좌표
+            level: 10 // 확대 레벨
+        };
+
+        const map = new kakao.maps.Map(mapContainer, mapOptions);
+        
+        // 지도 컨트롤러 (확대/축소) 추가
+        const zoomControl = new kakao.maps.ZoomControl();
+        map.addControl(zoomControl, kakao.maps.ControlPosition.BOTTOMLEFT);
+
+        const markers = {};
+        const infoWindows = {};
+
+        // 카카오맵 마커 동적 생성
+        Object.keys(placeData).forEach(key => {
+            const item = placeData[key];
+            if (item.lat && item.lng) {
+                const markerPosition = new kakao.maps.LatLng(item.lat, item.lng);
+                
+                const marker = new kakao.maps.Marker({
+                    position: markerPosition,
+                    title: item.name
+                });
+                
+                marker.setMap(map);
+                markers[key] = marker;
+
+                // 인포윈도우 생성
+                const infowindow = new kakao.maps.InfoWindow({
+                    content: `<div class="kakao-info-window">${item.name}</div>`
+                });
+                infoWindows[key] = infowindow;
+
+                // 마커 클릭 시 모달 열기
+                kakao.maps.event.addListener(marker, 'click', function() {
+                    openModal(key);
+                });
+            }
+        });
+
+        // 2. 연령대 필터링 함수
+        function filterByAge(ageKey, btnElem) {
+            document.querySelectorAll('.age-filter-btn').forEach(b => b.classList.remove('active'));
+            if (btnElem) btnElem.classList.add('active');
+
+            const titleMap = {
+                all: "강원도 10월 인기 관광지 TOP 10",
+                '20s': "강원도 20대 인기 관광지 TOP 10",
+                '30s': "강원도 30대 인기 관광지 TOP 10",
+                '40s': "강원도 40대 인기 관광지 TOP 10",
+                '50s': "강원도 50대 인기 관광지 TOP 10",
+                '60s': "강원도 60대+ 인기 관광지 TOP 10"
+            };
+
+            document.getElementById('headerTitleText').innerText = titleMap[ageKey];
+
+            const listData = ageFilterDataSets[ageKey] || ageFilterDataSets.all || [];
+            const container = document.getElementById('cardsGridContainer');
+            container.innerHTML = '';
+
+            listData.forEach(item => {
+                const detail = placeData[item.id] || {};
+                const rankClass = item.rank <= 3 ? `rank-${item.rank}` : '';
+                const imgUrl = detail.img || "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80";
+
+                const cardHtml = `
+                    <div class="place-card ${rankClass}" onclick="openModal('${item.id}')">
+                        <div class="card-img-box">
+                            <img src="${imgUrl}" alt="${item.name}" onerror="this.src='https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80'">
+                            <div class="rank-badge">${item.rank}</div>
+                        </div>
+                        <div class="card-info">
+                            <div class="info-top">
+                                <h3 title="${item.name}">${item.name}</h3>
+                                <span class="category-tag">${item.category}</span>
+                                <div class="place-location"><i class="fa-solid fa-location-dot"></i> ${item.location}</div>
+                            </div>
+                            <div class="info-bottom">
+                                <div class="search-count">${item.count}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += cardHtml;
+            });
+
+            // 카카오맵 크기 재조정
+            setTimeout(() => {
+                map.relayout();
+            }, 100);
+        }
+
+        // D3 연관어 버블 그래프 생성
+        function renderBubbleChart(tags, placeName) {
+            const container = d3.select("#modalBubbleChart");
+            container.html("");
+
+            const width = container.node().getBoundingClientRect().width || 750;
+            const height = 260;
+
+            const bubbleData = (tags && tags.length > 0) ? tags.map((tag, idx) => ({
+                name: tag.replace('#', ''),
+                value: 80 - (idx * 12) + Math.floor(Math.random() * 15)
+            })) : [
+                { name: placeName, value: 80 },
+                { name: "강원도여행", value: 65 },
+                { name: "인생샷", value: 50 },
+                { name: "가볼만한곳", value: 45 },
+                { name: "맛집투어", value: 35 }
+            ];
+
+            const colorScale = d3.scaleOrdinal()
+                .range(["#1f06ac", "#0f42c0", "#5882e8", "#8faeff", "#e3ef4f"]);
+
+            const pack = d3.pack()
+                .size([width, height])
+                .padding(8);
+
+            const root = d3.hierarchy({ children: bubbleData })
+                .sum(d => d.value);
+
+            const nodes = pack(root).leaves();
+
+            const svg = container.append("svg")
+                .attr("width", width)
+                .attr("height", height)
+                .append("g");
+
+            const nodeGroup = svg.selectAll(".bubble-node")
+                .data(nodes)
+                .enter()
+                .append("g")
+                .attr("class", "bubble-node")
+                .attr("transform", d => `translate(${d.x},${d.y})`)
+                .on("click", (event, d) => {
+                    document.getElementById('modalTipContent').innerText = `'${d.data.name}' 키워드는 검색자들이 가장 높은 관심을 보인 주요 명소 요소입니다!`;
+                });
+
+            nodeGroup.append("circle")
+                .attr("r", d => d.r)
+                .attr("fill", (d, i) => colorScale(i))
+                .attr("opacity", 0.9);
+
+            nodeGroup.append("text")
+                .attr("fontSize", d => Math.min(d.r / 2.2, 16) + "px")
+                .attr("fill", d => d.data.value > 65 ? "#e3ef4f" : "#ffffff")
+                .text(d => d.data.name);
+        }
+
+        // 초기 필터 적용
+        filterByAge('all', document.querySelector('.age-filter-btn.active'));
+
+        function switchRegion(regionName) {
+            if (regionName === "강원특별자치도") {
+                return;
+            }
+            alert(`[TravelMate] ${regionName} 페이지 데이터 연동 준비 중입니다.\n현재는 강원특별자치도 상세 데이터가 수록되어 있습니다.`);
+        }
+
+        function openModal(placeId) {
+            const data = placeData[placeId];
+            if (!data) return;
+
+            document.getElementById('modalImg').src = data.img;
+            document.getElementById('modalTitle').innerText = data.name;
+            document.getElementById('modalLocation').innerHTML = `<i class="fa-solid fa-location-dot"></i> ${data.location}`;
+            document.getElementById('modalRank').innerText = `검색 순위 ${data.rank || ''}`;
+            document.getElementById('modalDesc').innerText = data.desc;
+            document.getElementById('kakaoLink').href = data.kmap;
+            document.getElementById('naverLink').href = data.nmap;
+            document.getElementById('modalIframe').src = data.yt;
+
+            // 버블 차트 생성
+            renderBubbleChart(data.tags, data.name);
+            document.getElementById('modalTipContent').innerText = data.tip || "버블을 클릭하시면 세부 연관어 정보를 확인하실 수 있습니다.";
+
+            document.getElementById('placeModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+
+            // 카카오맵 위치 이동 및 인포윈도우 표시
+            if (data.lat && data.lng) {
+                const moveLatLon = new kakao.maps.LatLng(data.lat, data.lng);
+                map.panTo(moveLatLon);
+                
+                // 기존 오픈된 인포윈도우 닫기 후 현재 마커만 열기
+                Object.values(infoWindows).forEach(iw => iw.close());
+                if (infoWindows[placeId] && markers[placeId]) {
+                    infoWindows[placeId].open(map, markers[placeId]);
+                }
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('placeModal').classList.remove('active');
+            document.getElementById('modalIframe').src = '';
+            document.body.style.overflow = 'auto';
+        }
+
+        function closeModalOnOverlay(e) {
+            if (e.target.id === 'placeModal') {
+                closeModal();
+            }
+        }
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeModal();
+        });
+    </script>
+</body>
+</html>
