@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>서울 주요 명소 연관어 라이트 글래스 대시보드</title>
+    <!-- D3.js CDN -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+            background: linear-gradient(135deg, #e0f2fe 0%, #f0f9ff 50%, #e0e7ff 100%);
+            min-height: 100vh;
+            color: #1e293b;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 30px 20px;
+            overflow-x: hidden;
+        }
+
+        .glass-container {
+            width: 100%;
+            max-width: 980px;
+            background: rgba(255, 255, 255, 0.55);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            border-radius: 24px;
+            padding: 35px;
+            box-shadow: 0 15px 35px rgba(148, 163, 184, 0.15);
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 26px;
+            font-weight: 700;
+            margin-bottom: 25px;
+            color: #0f172a;
+            letter-spacing: -0.5px;
+        }
+
+        .control-panel {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+            background: rgba(255, 255, 255, 0.6);
+            padding: 14px 25px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.9);
+        }
+
+        label {
+            font-weight: 600;
+            font-size: 16px;
+            color: #334155;
+        }
+
+        select {
+            padding: 10px 22px;
+            font-size: 16px;
+            border-radius: 12px;
+            border: 1px solid rgba(203, 213, 225, 0.8);
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            color: #0f172a;
+            outline: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        select option {
+            background: #ffffff;
+            color: #0f172a;
+        }
+
+        select:hover {
+            background: rgba(255, 255, 255, 0.95);
+            border-color: #3b82f6;
+        }
+
+        .info-card {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 25px;
+            padding: 14px 20px;
+            background: rgba(224, 242, 254, 0.6);
+            border-radius: 14px;
+            font-size: 16px;
+            color: #0369a1;
+            border: 1px solid rgba(186, 230, 253, 0.8);
+        }
+
+        .chart-box {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 600px;
+            background: rgba(255, 255, 255, 0.35);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.7);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tooltip {
+            position: absolute;
+            padding: 10px 15px;
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(203, 213, 225, 0.8);
+            color: #0f172a;
+            border-radius: 10px;
+            font-size: 14px;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s ease, transform 0.1s ease;
+            box-shadow: 0 8px 20px rgba(148, 163, 184, 0.25);
+            z-index: 10;
+        }
+    </style>
+</head>
+<body>
+
+<div class="glass-container">
+    <h1>✨ 서울 주요 명소 연관어 라이트 글래스 대시보드 (2025년 10월)</h1>
+
+    <div class="control-panel">
+        <label for="placeSelect">🔍 분석 장소 선택:</label>
+        <select id="placeSelect" onchange="updateChart()">
+        </select>
+    </div>
+
+    <div class="info-card">
+        <div><strong>자치구:</strong> <span id="districtInfo">-</span></div>
+        <div><strong>구분:</strong> <span id="categoryInfo">-</span></div>
+    </div>
+
+    <div class="chart-box" id="bubbleChart">
+        <div class="tooltip" id="tooltip"></div>
+    </div>
+</div>
+
+<script>
+const placeData = {"봉은사": {"district": "강남구", "category": "종교", "keywords": [{"name": "시간", "value": 581.61}, {"name": "강남", "value": 100.0}, {"name": "봉은사", "value": 58.33}, {"name": "서울특별시", "value": 33.61}, {"name": "성종", "value": 23.68}, {"name": "감사", "value": 22.11}, {"name": "강남구", "value": 20.76}, {"name": "선릉", "value": 20.04}, {"name": "봉은사역", "value": 17.88}, {"name": "역사", "value": 15.1}, {"name": "사찰", "value": 14.81}, {"name": "관세음보살", "value": 14.32}, {"name": "삼성동", "value": 12.86}, {"name": "유산", "value": 12.8}, {"name": "문화", "value": 12.52}, {"name": "문화유산", "value": 9.53}, {"name": "국가유산포털", "value": 8.73}, {"name": "국가", "value": 8.71}, {"name": "지자체", "value": 7.8}, {"name": "정보", "value": 7.26}]}, "코엑스": {"district": "강남구", "category": "문화생활시설", "keywords": [{"name": "메가박스", "value": 1222.19}, {"name": "대구", "value": 126.1}, {"name": "공연", "value": 100.0}, {"name": "전시회", "value": 84.61}, {"name": "한국", "value": 78.48}, {"name": "박람회", "value": 76.18}, {"name": "전시", "value": 36.54}, {"name": "행사", "value": 28.55}, {"name": "로봇", "value": 25.77}, {"name": "강남구", "value": 16.16}, {"name": "코엑스몰", "value": 15.86}, {"name": "파일", "value": 14.09}, {"name": "일정", "value": 12.71}, {"name": "인사", "value": 12.37}, {"name": "인수", "value": 11.85}, {"name": "프랜차이즈", "value": 10.56}, {"name": "삼성동", "value": 10.02}, {"name": "문화", "value": 9.75}, {"name": "글로벌", "value": 7.64}, {"name": "회의", "value": 7.38}]}, "서울식물원": {"district": "강서구", "category": "관광명소", "keywords": [{"name": "축제", "value": 711.14}, {"name": "시간", "value": 588.13}, {"name": "한강", "value": 106.6}, {"name": "가을", "value": 100.0}, {"name": "공원", "value": 79.67}, {"name": "서울시", "value": 73.36}, {"name": "전시", "value": 47.45}, {"name": "허경영", "value": 43.98}, {"name": "하늘", "value": 38.03}, {"name": "행사", "value": 37.08}, {"name": "강서구", "value": 31.0}, {"name": "식물", "value": 26.29}, {"name": "정원", "value": 25.08}, {"name": "식물원", "value": 19.79}, {"name": "파일", "value": 18.29}, {"name": "자연", "value": 16.96}, {"name": "환경", "value": 14.75}, {"name": "문화", "value": 12.66}, {"name": "도시", "value": 10.34}, {"name": "주제", "value": 9.75}]}, "뚝섬한강공원": {"district": "광진구", "category": "관광명소", "keywords": [{"name": "축제", "value": 711.14}, {"name": "시간", "value": 588.13}, {"name": "공연", "value": 129.85}, {"name": "이용", "value": 124.16}, {"name": "한강", "value": 106.6}, {"name": "가을", "value": 100.0}, {"name": "공원", "value": 79.67}, {"name": "수영장", "value": 76.44}, {"name": "드론", "value": 55.98}, {"name": "한강공원", "value": 47.93}, {"name": "여의도", "value": 44.62}, {"name": "행사", "value": 37.08}, {"name": "유니콘", "value": 33.38}, {"name": "양천구", "value": 24.06}, {"name": "뚝섬", "value": 23.94}, {"name": "충북", "value": 18.02}, {"name": "일정", "value": 16.5}, {"name": "경기", "value": 15.58}, {"name": "라이트", "value": 14.15}, {"name": "신월동", "value": 10.73}]}, "어린이대공원": {"district": "광진구", "category": "레저/스포츠", "keywords": [{"name": "추석", "value": 6913.0}, {"name": "축제", "value": 892.64}, {"name": "시간", "value": 738.23}, {"name": "부산", "value": 248.51}, {"name": "이용", "value": 155.85}, {"name": "연휴", "value": 111.56}, {"name": "공원", "value": 100.0}, {"name": "동물원", "value": 87.53}, {"name": "어린이집", "value": 55.78}, {"name": "행사", "value": 46.54}, {"name": "광진구", "value": 41.18}, {"name": "운동", "value": 36.63}, {"name": "가족", "value": 32.15}, {"name": "정원", "value": 31.48}, {"name": "나라", "value": 24.67}, {"name": "일정", "value": 20.72}, {"name": "어린이", "value": 17.04}, {"name": "공간", "value": 15.8}, {"name": "조깅", "value": 14.89}, {"name": "운영", "value": 10.26}]}, "망원한강공원": {"district": "마포구", "category": "관광명소", "keywords": [{"name": "축제", "value": 892.63}, {"name": "시간", "value": 738.23}, {"name": "버스", "value": 225.1}, {"name": "이용", "value": 155.85}, {"name": "한강", "value": 133.8}, {"name": "공원", "value": 100.0}, {"name": "주차장", "value": 96.52}, {"name": "시장", "value": 62.92}, {"name": "한강공원", "value": 60.16}, {"name": "유니콘", "value": 41.9}, {"name": "운동", "value": 36.63}, {"name": "망원동", "value": 31.99}, {"name": "양천구", "value": 30.2}, {"name": "마포구", "value": 25.14}, {"name": "충북", "value": 22.62}, {"name": "경기", "value": 19.56}, {"name": "신월동", "value": 13.47}, {"name": "망원", "value": 11.14}, {"name": "운영", "value": 10.26}, {"name": "장소", "value": 9.61}]}, "서울월드컵경기장": {"district": "마포구", "category": "레저/스포츠", "keywords": [{"name": "축구", "value": 1121.28}, {"name": "시간", "value": 442.56}, {"name": "대한민국", "value": 258.51}, {"name": "브라질", "value": 156.84}, {"name": "월드컵", "value": 141.61}, {"name": "fc서울", "value": 100.0}, {"name": "이용", "value": 93.43}, {"name": "한국", "value": 76.68}, {"name": "수원", "value": 67.22}, {"name": "공원", "value": 59.95}, {"name": "주차장", "value": 57.86}, {"name": "시장", "value": 37.72}, {"name": "행사", "value": 27.9}, {"name": "마포구", "value": 15.07}, {"name": "일정", "value": 12.42}, {"name": "경기", "value": 11.72}, {"name": "상암", "value": 9.3}, {"name": "풋살장", "value": 8.02}, {"name": "국가", "value": 6.63}, {"name": "지역", "value": 6.5}]}, "하늘공원": {"district": "마포구", "category": "관광명소", "keywords": [{"name": "시간", "value": 588.13}, {"name": "월드컵", "value": 188.19}, {"name": "가을", "value": 100.0}, {"name": "공원", "value": 79.67}, {"name": "하늘", "value": 38.03}, {"name": "억새", "value": 25.53}, {"name": "나라", "value": 19.65}, {"name": "쓰레기", "value": 17.7}, {"name": "자연", "value": 16.96}, {"name": "난지도", "value": 10.97}, {"name": "시작", "value": 10.8}, {"name": "월드컵공원", "value": 10.7}, {"name": "대원", "value": 8.63}, {"name": "공사", "value": 7.93}, {"name": "이야기", "value": 4.57}, {"name": "경축", "value": 4.36}, {"name": "부대", "value": 3.69}, {"name": "고목", "value": 3.53}, {"name": "작업", "value": 3.37}, {"name": "국군", "value": 2.91}]}, "반포한강공원": {"district": "서초구", "category": "관광명소", "keywords": [{"name": "축제", "value": 892.63}, {"name": "시간", "value": 738.23}, {"name": "자전거", "value": 224.67}, {"name": "이용", "value": 155.85}, {"name": "한강", "value": 133.8}, {"name": "공원", "value": 100.0}, {"name": "아파트", "value": 94.09}, {"name": "러닝", "value": 76.97}, {"name": "한강공원", "value": 60.16}, {"name": "여의도", "value": 56.01}, {"name": "유니콘", "value": 41.9}, {"name": "양천구", "value": 30.2}, {"name": "잠수교", "value": 26.74}, {"name": "충북", "value": 22.62}, {"name": "서초구", "value": 21.9}, {"name": "경기", "value": 19.56}, {"name": "반포", "value": 17.97}, {"name": "대교", "value": 14.41}, {"name": "관광", "value": 14.12}, {"name": "세빛섬", "value": 14.04}]}, "예술의전당": {"district": "서초구", "category": "문화생활시설", "keywords": [{"name": "축제", "value": 227.06}, {"name": "시간", "value": 187.78}, {"name": "콘서트", "value": 102.42}, {"name": "경주", "value": 100.0}, {"name": "의정부", "value": 48.48}, {"name": "공연", "value": 41.46}, {"name": "이용", "value": 39.64}, {"name": "전시", "value": 15.15}, {"name": "이상", "value": 10.77}, {"name": "음악", "value": 9.92}, {"name": "티켓", "value": 9.39}, {"name": "오페라", "value": 5.38}, {"name": "여부", "value": 5.18}, {"name": "문화", "value": 4.04}, {"name": "예술", "value": 3.24}, {"name": "초등학생", "value": 3.09}, {"name": "프로그램", "value": 2.67}, {"name": "운영", "value": 2.61}, {"name": "장소", "value": 2.44}, {"name": "오후", "value": 2.34}]}, "헌릉과인릉": {"district": "서초구", "category": "관광명소", "keywords": [{"name": "시간", "value": 3545.29}, {"name": "호텔", "value": 771.8}, {"name": "원경", "value": 253.89}, {"name": "조선", "value": 213.7}, {"name": "서울특별시", "value": 204.89}, {"name": "순조", "value": 144.27}, {"name": "서초구", "value": 105.18}, {"name": "궁능유적본부", "value": 100.0}, {"name": "태종", "value": 87.07}, {"name": "원경왕후", "value": 84.8}, {"name": "유산", "value": 78.01}, {"name": "유네스코", "value": 71.34}, {"name": "국가", "value": 53.11}, {"name": "무덤", "value": 46.27}, {"name": "세계", "value": 44.35}, {"name": "정비", "value": 32.05}, {"name": "탐방", "value": 31.4}, {"name": "내곡동", "value": 30.71}, {"name": "도면", "value": 30.23}, {"name": "조선왕릉", "value": 29.24}]}, "서울숲": {"district": "성동구", "category": "관광명소", "keywords": [{"name": "시간", "value": 738.23}, {"name": "한강", "value": 133.8}, {"name": "성수동", "value": 115.4}, {"name": "연휴", "value": 111.56}, {"name": "공원", "value": 100.0}, {"name": "아파트", "value": 94.09}, {"name": "서울시", "value": 92.09}, {"name": "행사", "value": 46.54}, {"name": "성동구", "value": 40.58}, {"name": "정원", "value": 31.48}, {"name": "뚝섬", "value": 30.05}, {"name": "감사", "value": 28.07}, {"name": "자연", "value": 21.28}, {"name": "문화", "value": 15.89}, {"name": "예술", "value": 12.74}, {"name": "편성", "value": 12.61}, {"name": "대비", "value": 11.99}, {"name": "거래", "value": 10.77}, {"name": "장소", "value": 9.61}, {"name": "오후", "value": 9.22}]}, "롯데월드잠실점": {"district": "송파구", "category": "레저/스포츠", "keywords": [{"name": "롯데시네마", "value": 2516.18}, {"name": "맛집", "value": 1393.27}, {"name": "롯데월드", "value": 1125.0}, {"name": "롯데백화점", "value": 705.4}, {"name": "시간", "value": 634.3}, {"name": "쇼핑", "value": 401.65}, {"name": "예약", "value": 145.16}, {"name": "교복", "value": 100.0}, {"name": "롯데", "value": 95.03}, {"name": "리뷰", "value": 87.36}, {"name": "잠실", "value": 75.98}, {"name": "롯데월드타워", "value": 38.26}, {"name": "패션", "value": 23.58}, {"name": "송파구", "value": 23.06}, {"name": "아이", "value": 20.95}, {"name": "브랜드", "value": 20.69}, {"name": "월드", "value": 14.0}, {"name": "오픈", "value": 9.52}, {"name": "단지", "value": 9.12}, {"name": "할인", "value": 8.2}]}, "올림픽공원": {"district": "송파구", "category": "관광명소", "keywords": [{"name": "스포츠", "value": 551.3}, {"name": "코스", "value": 275.94}, {"name": "공연", "value": 100.0}, {"name": "이용", "value": 95.62}, {"name": "가을", "value": 77.01}, {"name": "공원", "value": 61.35}, {"name": "올림픽", "value": 58.57}, {"name": "아파트", "value": 57.73}, {"name": "행사", "value": 28.55}, {"name": "감사", "value": 17.22}, {"name": "송파구", "value": 16.46}, {"name": "나들이", "value": 16.24}, {"name": "일정", "value": 12.71}, {"name": "문화", "value": 9.75}, {"name": "공간", "value": 9.69}, {"name": "홈페이지", "value": 9.47}, {"name": "씨앗", "value": 7.69}, {"name": "가이드", "value": 6.31}, {"name": "업데이트", "value": 6.13}, {"name": "장소", "value": 5.89}]}, "여의도한강공원": {"district": "영등포구", "category": "관광명소", "keywords": [{"name": "축제", "value": 547.67}, {"name": "시간", "value": 452.94}, {"name": "마라톤", "value": 138.97}, {"name": "공연", "value": 100.0}, {"name": "이용", "value": 95.62}, {"name": "한강", "value": 82.09}, {"name": "가을", "value": 77.01}, {"name": "공원", "value": 61.35}, {"name": "주차장", "value": 59.22}, {"name": "수영장", "value": 58.87}, {"name": "광장", "value": 51.22}, {"name": "러닝", "value": 47.23}, {"name": "한강공원", "value": 36.91}, {"name": "여의도", "value": 34.36}, {"name": "행사", "value": 28.55}, {"name": "뚝섬", "value": 18.44}, {"name": "교통", "value": 14.21}, {"name": "일정", "value": 12.71}, {"name": "이름", "value": 11.05}, {"name": "운영", "value": 6.3}]}, "CGV용산아이파크몰": {"district": "용산구", "category": "문화생활시설", "keywords": [{"name": "영화", "value": 3552.02}, {"name": "시간", "value": 458.76}, {"name": "용산아이파크몰", "value": 225.08}, {"name": "공유", "value": 100.0}, {"name": "이용", "value": 96.85}, {"name": "이미지", "value": 82.97}, {"name": "용산", "value": 38.53}, {"name": "아이파크", "value": 21.49}, {"name": "배우", "value": 14.8}, {"name": "일정", "value": 12.87}, {"name": "인사", "value": 12.53}, {"name": "전경", "value": 7.58}, {"name": "이전", "value": 6.32}, {"name": "대화", "value": 6.16}, {"name": "보도", "value": 5.93}, {"name": "다운로드", "value": 5.55}, {"name": "목적", "value": 5.22}, {"name": "감독", "value": 4.73}, {"name": "상업", "value": 3.98}, {"name": "라이브러리", "value": 3.86}]}, "국립중앙박물관": {"district": "용산구", "category": "문화생활시설", "keywords": [{"name": "예약", "value": 1088.62}, {"name": "박물관", "value": 459.83}, {"name": "전시", "value": 383.78}, {"name": "주소", "value": 333.25}, {"name": "행사", "value": 299.87}, {"name": "이벤트", "value": 140.02}, {"name": "일정", "value": 133.48}, {"name": "어린이", "value": 109.81}, {"name": "체험", "value": 105.24}, {"name": "문화", "value": 102.37}, {"name": "교육", "value": 100.0}, {"name": "일시", "value": 71.66}, {"name": "정보", "value": 59.36}, {"name": "관람", "value": 50.52}, {"name": "소식", "value": 48.94}, {"name": "유물", "value": 47.57}, {"name": "클래스", "value": 45.74}, {"name": "참여", "value": 42.81}, {"name": "중앙", "value": 42.53}, {"name": "경품", "value": 38.58}]}, "노들섬": {"district": "용산구", "category": "관광명소", "keywords": [{"name": "축제", "value": 547.67}, {"name": "시간", "value": 452.94}, {"name": "공연", "value": 100.0}, {"name": "한강", "value": 82.09}, {"name": "모델", "value": 15.85}, {"name": "이름", "value": 11.05}, {"name": "라이트", "value": 10.9}, {"name": "문화", "value": 9.75}, {"name": "공간", "value": 9.69}, {"name": "한강대교", "value": 9.16}, {"name": "용산구", "value": 8.74}, {"name": "예술", "value": 7.81}, {"name": "글로벌", "value": 7.64}, {"name": "프로그램", "value": 6.44}, {"name": "사업", "value": 6.35}, {"name": "운영", "value": 6.3}, {"name": "장소", "value": 5.89}, {"name": "오후", "value": 5.66}, {"name": "공존", "value": 4.74}, {"name": "조성", "value": 4.63}]}, "경복궁": {"district": "종로구", "category": "관광명소", "keywords": [{"name": "시간", "value": 575.81}, {"name": "광화문", "value": 100.0}, {"name": "행사", "value": 36.3}, {"name": "조선", "value": 34.71}, {"name": "치매", "value": 24.09}, {"name": "건강", "value": 17.61}, {"name": "궁능유적본부", "value": 16.24}, {"name": "근정전", "value": 14.26}, {"name": "인지", "value": 11.83}, {"name": "일시", "value": 8.67}, {"name": "프로그램", "value": 8.19}, {"name": "게스트", "value": 8.05}, {"name": "정보", "value": 7.19}, {"name": "관람", "value": 6.12}, {"name": "기능", "value": 4.95}, {"name": "이야기", "value": 4.47}, {"name": "어르신", "value": 4.25}, {"name": "야간", "value": 4.24}, {"name": "체조", "value": 4.21}, {"name": "궁궐", "value": 4.18}]}, "팔각정북악스카이": {"district": "종로구", "category": "관광명소", "keywords": [{"name": "맛집", "value": 1326.78}, {"name": "코스", "value": 367.98}, {"name": "한국", "value": 104.65}, {"name": "드라이브", "value": 100.0}, {"name": "라면", "value": 73.23}, {"name": "청와대", "value": 67.76}, {"name": "북악스카이웨이", "value": 39.75}, {"name": "하늘", "value": 39.06}, {"name": "성북구", "value": 27.21}, {"name": "평창동", "value": 25.43}, {"name": "스카이", "value": 23.06}, {"name": "데이트", "value": 19.57}, {"name": "북악산", "value": 13.52}, {"name": "종로구", "value": 11.45}, {"name": "팔각정", "value": 11.26}, {"name": "미래", "value": 11.21}, {"name": "야경", "value": 8.96}, {"name": "추천", "value": 8.79}, {"name": "장소", "value": 7.86}, {"name": "웨이", "value": 7.41}]}};
+
+let simulation = null;
+
+function init() {
+    const select = document.getElementById('placeSelect');
+    Object.keys(placeData).forEach(place => {
+        const option = document.createElement('option');
+        option.value = place;
+        option.textContent = place;
+        select.appendChild(option);
+    });
+    updateChart();
+}
+
+function updateChart() {
+    const selectedPlace = document.getElementById('placeSelect').value;
+    const data = placeData[selectedPlace];
+
+    document.getElementById('districtInfo').textContent = data.district;
+    document.getElementById('categoryInfo').textContent = data.category;
+
+    if (simulation) simulation.stop();
+    d3.select("#bubbleChart svg").remove();
+
+    const width = 880;
+    const height = 580;
+
+    const svg = d3.select("#bubbleChart")
+        .append("svg")
+        .attr("width", width)
+        .attr("height", height);
+
+    const tooltip = d3.select("#tooltip");
+
+    // 필터 정의 (밝은 은은한 포커스 그림자)
+    const defs = svg.append("defs");
+    const filter = defs.append("filter")
+        .attr("id", "soft-shadow")
+        .attr("x", "-20%")
+        .attr("y", "-20%")
+        .attr("width", "140%")
+        .attr("height", "140%");
+
+    filter.append("feGaussianBlur")
+        .attr("stdDeviation", "4")
+        .attr("result", "blur");
+
+    filter.append("feComposite")
+        .attr("in", "SourceGraphic")
+        .attr("in2", "blur")
+        .attr("operator", "over");
+
+    const maxVal = d3.max(data.keywords, k => k.value);
+    const minVal = d3.min(data.keywords, k => k.value);
+
+    // 가중치에 따른 반지름 계산
+    const radiusScale = d3.scaleSqrt()
+        .domain([minVal, maxVal])
+        .range([28, 78]);
+
+    // 초기 위치를 패킹 레이아웃으로 계산하여 별도의 폭발/등장 모션 없이 완벽 배치된 상태로 시작
+    const pack = d3.pack()
+        .size([width, height])
+        .padding(4);
+
+    const root = d3.hierarchy({ children: data.keywords })
+        .sum(d => radiusScale(d.value))
+        .sort((a, b) => b.value - a.value);
+
+    const packedNodes = pack(root).leaves();
+
+    const nodes = packedNodes.map(p => ({
+        ...p.data,
+        r: radiusScale(p.data.value),
+        x: p.x,
+        y: p.y
+    }));
+
+    // 무빙을 아주아주 천천히 제어하기 위한 초미세 Force 설정
+    simulation = d3.forceSimulation(nodes)
+        .force("center", d3.forceCenter(width / 2, height / 2).strength(0.005))
+        .force("charge", d3.forceManyBody().strength(0.1))
+        .force("collide", d3.forceCollide().radius(d => d.r + 3).iterations(2))
+        .alphaTarget(0.02)  // 정지하지 않고 지속적으로 유영
+        .alphaDecay(0.001)  // 감소 속도를 극도로 낮춤
+        .velocityDecay(0.92); // 속도를 크게 낮춰 부드럽고 천천히 이동
+
+    const nodeGroup = svg.selectAll(".node")
+        .data(nodes)
+        .enter()
+        .append("g")
+        .attr("class", "node")
+        .style("cursor", "pointer");
+
+    // 초기 위치 바로 적용 (등장 애니메이션 없음)
+    nodeGroup.attr("transform", d => `translate(${d.x},${d.y})`);
+
+    // 밝은 유리 버블 원 그리기
+    nodeGroup.append("circle")
+        .attr("r", d => d.r)
+        .attr("fill", d => {
+            const opacity = 0.45 + (d.value / maxVal) * 0.35;
+            return `rgba(255, 255, 255, ${opacity})`;
+        })
+        .attr("stroke", d => {
+            const strokeOpacity = 0.5 + (d.value / maxVal) * 0.4;
+            return `rgba(59, 130, 246, ${strokeOpacity})`;
+        })
+        .attr("stroke-width", 1.8)
+        .style("filter", "url(#soft-shadow)")
+        .on("mouseover", function(event, d) {
+            d3.select(this)
+                .transition().duration(200)
+                .attr("fill", "rgba(224, 242, 254, 0.9)")
+                .attr("stroke", "#2563eb")
+                .attr("stroke-width", 2.5);
+
+            tooltip.style("opacity", 1)
+                   .html(`<strong style="color:#0284c7; font-size:15px;">${d.name}</strong><br>검색 가중치: <span style="color:#d97706; font-weight:bold;">${d.value}</span>`);
+        })
+        .on("mousemove", (event) => {
+            const [x, y] = d3.pointer(event, document.getElementById("bubbleChart"));
+            tooltip.style("left", (x + 15) + "px")
+                   .style("top", (y - 10) + "px");
+        })
+        .on("mouseout", function(event, d) {
+            d3.select(this)
+                .transition().duration(300)
+                .attr("fill", `rgba(255, 255, 255, ${0.45 + (d.value / maxVal) * 0.35})`)
+                .attr("stroke", `rgba(59, 130, 246, ${0.5 + (d.value / maxVal) * 0.4})`)
+                .attr("stroke-width", 1.8);
+
+            tooltip.style("opacity", 0);
+        });
+
+    // 텍스트 라벨 (키워드)
+    nodeGroup.append("text")
+        .text(d => d.name)
+        .attr("text-anchor", "middle")
+        .attr("dy", d => d.r > 32 ? "-0.2em" : "0.3em")
+        .style("font-size", d => Math.min(d.r / 2.3, 15) + "px")
+        .style("font-weight", "700")
+        .style("fill", "#0f172a");
+
+    // 가중치 값 라벨
+    nodeGroup.filter(d => d.r > 32)
+        .append("text")
+        .text(d => `(${d.value})`)
+        .attr("text-anchor", "middle")
+        .attr("dy", "1.1em")
+        .style("font-size", d => Math.min(d.r / 3.4, 11) + "px")
+        .style("font-weight", "600")
+        .style("fill", "#0284c7");
+
+    // 아주아주 천천히 둥둥 떠다니는 초미세 시뮬레이션 tick
+    // 무빙을 아주아주 천천히 제어하면서 부드러운 감속 효과 적용
+    simulation = d3.forceSimulation(nodes)
+        .force("center", d3.forceCenter(width / 2, height / 2).strength(0.003)) // 약한 중심 인력
+        .force("charge", d3.forceManyBody().strength(-2)) // 버블 간 미세 밀어내기로 덜컹거림 완화
+        .force("collide", d3.forceCollide().radius(d => d.r + 4).iterations(3)) // 충돌 경계 부드럽게
+        .alphaTarget(0.015)   // 무한 유영 상태 유지
+        .alphaDecay(0.0005)   // 극도로 천천히 에너지 감소
+        .velocityDecay(0.96); // 속도 감쇄력을 높여 부드럽고 매끄러운 오일링 유영 느낌 연출
+
+    // 덜컹거림 없는 부드러운 쿠션 경계 처리
+    simulation.on("tick", () => {
+        const padding = 10; // 벽과의 여유 공간
+        
+        nodes.forEach(d => {
+            // 벽면 경계 접근 시 충격 흡수 (완충 쿠션 보간)
+            if (d.x - d.r < padding) {
+                d.x += (d.r + padding - d.x) * 0.1;
+                d.vx *= 0.5; // 벽에 부딪힐 때 속도를 반으로 줄여 덜컥거림 제거
+            } else if (d.x + d.r > width - padding) {
+                d.x -= (d.x + d.r - (width - padding)) * 0.1;
+                d.vx *= 0.5;
+            }
+
+            if (d.y - d.r < padding) {
+                d.y += (d.r + padding - d.y) * 0.1;
+                d.vy *= 0.5;
+            } else if (d.y + d.r > height - padding) {
+                d.y -= (d.y + d.r - (height - padding)) * 0.1;
+                d.vy *= 0.5;
+            }
+        });
+
+        // 위치 반영
+        nodeGroup.attr("transform", d => `translate(${d.x},${d.y})`);
+    });
+}
+
+window.onload = init;
+</script>
+
+</body>
+</html>
