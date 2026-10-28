@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TravelMate - 전국 광역시도 방문객 변화 추이 분석</title>
+    
+    <!-- Google Fonts & Font Awesome Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Pretendard:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        :root {
+            --bg-bright: #ffffff;
+            --bg-cream-light: #faf3e1;
+            --bg-cream-mid: #f5e7c6;
+            --palette-orange: #FF6D1F;
+            --palette-dark: #222222;
+            --subtle-border: rgba(34, 34, 34, 0.12);
+            --border-radius-lg: 28px;
+            --border-radius-md: 18px;
+            --transition: all 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html, body {
+            height: 100%;
+        }
+
+        body {
+            font-family: 'Pretendard', sans-serif;
+            background-color: var(--bg-bright);
+            color: var(--palette-dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        /* Header Navigation */
+        header {
+            padding: 1.2rem 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: var(--bg-cream-light);
+            border-bottom: 1px solid var(--subtle-border);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.7rem;
+            background-color: var(--palette-dark);
+            color: #ffffff;
+            padding: 0.65rem 1.4rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.92rem;
+            transition: var(--transition);
+        }
+
+        .back-btn:hover {
+            background-color: var(--palette-orange);
+            color: #ffffff;
+            transform: translateX(-4px);
+        }
+
+        .brand-logo {
+            font-family: 'Fredoka', cursive;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--palette-dark);
+            text-decoration: none;
+        }
+
+        .brand-logo span {
+            color: var(--palette-orange);
+        }
+
+        .header-tag {
+            background-color: var(--palette-orange);
+            color: #ffffff;
+            padding: 0.5rem 1.2rem;
+            border-radius: 50px;
+            font-weight: 800;
+            font-size: 0.88rem;
+            box-shadow: 0 4px 12px rgba(255, 109, 31, 0.25);
+        }
+
+        /* Layout Structure - 4 : 6 비율 세팅 */
+        .layout-wrapper {
+            max-width: 1560px;
+            margin: 1.5rem auto 3rem auto;
+            width: 100%;
+            padding: 0 1.5rem;
+            display: flex;
+            gap: 1.8rem;
+            align-items: stretch;
+            flex: 1;
+        }
+
+        /* 💡 Left 40%: Pie Chart Section (원 그래프 축소 방지) */
+        .pie-analysis-section {
+            flex: 0.4;
+            background-color: var(--bg-cream-light);
+            border-radius: var(--border-radius-lg);
+            border: 1px solid var(--subtle-border);
+            box-shadow: 0 10px 28px rgba(0, 0, 0, 0.04);
+            padding: 1.6rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+
+        .section-header h2 {
+            font-size: 1.35rem;
+            font-weight: 800;
+            color: var(--palette-dark);
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .section-header h2 i {
+            color: var(--palette-orange);
+        }
+
+        /* 💡 원 그래프가 큼직하게 유지되도록 min-height 확대 */
+        .pie-chart-container {
+            flex: 1;
+            position: relative;
+            width: 100%;
+            min-height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        /* 슬라이더 박스 */
+        .volume-control-box {
+            background-color: var(--bg-cream-mid);
+            padding: 1.8rem 1.5rem 1.2rem;
+            border-radius: var(--border-radius-md);
+            border: 1px solid var(--subtle-border);
+            position: relative;
+        }
+
+        .slider-wrapper {
+            position: relative;
+            width: 100%;
+        }
+
+        /* 노브 따라다니는 년월 뱃지 */
+        .floating-month-badge {
+            position: absolute;
+            top: -42px;
+            left: 0%;
+            transform: translateX(-50%);
+            background-color: var(--palette-orange);
+            color: #ffffff;
+            font-weight: 800;
+            font-size: 0.82rem;
+            padding: 0.3rem 0.85rem;
+            border-radius: 50px;
+            white-space: nowrap;
+            box-shadow: 0 4px 10px rgba(255, 109, 31, 0.35);
+            pointer-events: none;
+            transition: left 0.05s ease-out;
+        }
+
+        .floating-month-badge::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-top: 5px solid var(--palette-orange);
+        }
+
+        .volume-slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 10px;
+            border-radius: 5px;
+            background: #e2d2b0;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--palette-orange);
+            border: 3px solid #ffffff;
+            cursor: pointer;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+            transition: transform 0.15s;
+        }
+
+        .volume-slider::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+        }
+
+        /* 가장 아래에 위치한 설명 문구 */
+        .pie-footer-desc {
+            font-size: 0.83rem;
+            color: #666;
+            text-align: center;
+            margin-top: 0.2rem;
+            line-height: 1.4;
+        }
+
+        /* 💡 Right 60%: Line Chart Section */
+        .line-analysis-section {
+            flex: 0.6;
+            background-color: #ffffff;
+            border-radius: var(--border-radius-lg);
+            border: 1px solid var(--subtle-border);
+            box-shadow: 0 10px 28px rgba(0, 0, 0, 0.04);
+            padding: 1.6rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+
+        .chart-header-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .chart-header-title h2 {
+            font-size: 1.35rem;
+            font-weight: 800;
+            color: var(--palette-dark);
+        }
+
+        /* 방문객 순 정렬 필터 버튼 바 */
+        .region-filter-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.45rem;
+            background-color: var(--bg-cream-light);
+            padding: 0.8rem;
+            border-radius: var(--border-radius-md);
+            border: 1px solid var(--subtle-border);
+        }
+
+        .filter-btn {
+            padding: 0.4rem 0.85rem;
+            border-radius: 8px;
+            border: 1px solid var(--subtle-border);
+            background-color: #ffffff;
+            color: var(--palette-dark);
+            font-size: 0.82rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .filter-btn:hover {
+            background-color: var(--bg-cream-mid);
+        }
+
+        .filter-btn.active {
+            background-color: var(--palette-orange);
+            color: #ffffff;
+            border-color: var(--palette-orange);
+            box-shadow: 0 4px 10px rgba(255, 109, 31, 0.3);
+            font-weight: 800;
+        }
+
+        .line-chart-container {
+            flex: 1;
+            position: relative;
+            width: 100%;
+            min-height: 440px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            background-color: var(--palette-dark);
+            color: var(--bg-cream-light);
+            font-size: 0.88rem;
+            margin-top: auto;
+        }
+
+        @media (max-width: 1024px) {
+            .layout-wrapper { flex-direction: column; }
+            .pie-analysis-section { width: 100%; }
+            .line-analysis-section { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Navigation -->
+    <header>
+        <a href="/" class="back-btn"><i class="fa-solid fa-arrow-left"></i> 메인으로 돌아가기</a>
+        <a href="#" class="brand-logo">TravelMate <span>Data Hub</span></a>
+        <span class="header-tag"><i class="fa-solid fa-chart-line"></i> 전국 17개 광역시도 추이 분석</span>
+    </header>
+
+    <!-- Main Layout Wrapper (40% : 60%) -->
+    <div class="layout-wrapper">
+        
+        <!-- 1. Left 40%: 파이 그래프 및 컨트롤러 -->
+        <section class="pie-analysis-section">
+            <div class="section-header">
+                <h2><i class="fa-solid fa-chart-pie"></i> 월별 광역시도 점유율</h2>
+            </div>
+
+            <!-- 파이 차트 캔버스 -->
+            <div class="pie-chart-container">
+                <canvas id="pieChart"></canvas>
+            </div>
+
+            <!-- 슬라이더 컨트롤러 -->
+            <div class="volume-control-box">
+                <div class="slider-wrapper">
+                    <span id="floatingBadge" class="floating-month-badge">2025년 8월</span>
+                    <input type="range" id="monthSlider" class="volume-slider" min="0" max="10" value="0" step="1" oninput="onSliderChange(this.value)">
+                </div>
+            </div>
+
+            <!-- 가장 아래에 위치한 설명 문구 -->
+            <p class="pie-footer-desc">
+                <i class="fa-solid fa-circle-info" style="color: var(--palette-orange);"></i> 
+                슬라이드를 좌우로 움직이면 해당 월의 점유율 현황이 연동되며,<br>원 그래프의 파이를 클릭해도 선 그래프가 연동됩니다.
+            </p>
+        </section>
+
+        <!-- 2. Right 60%: 선 그래프 추이 -->
+        <section class="line-analysis-section">
+            <div class="chart-header-title">
+                <h2><i class="fa-solid fa-chart-line" style="color: var(--palette-orange);"></i> 광역시도 방문객 추이</h2>
+            </div>
+
+            <!-- 방문객 수 순 정렬 필터 버튼 -->
+            <div class="region-filter-bar">
+                <button class="filter-btn active" onclick="selectRegion('전체')">전체</button>
+                <button class="filter-btn" onclick="selectRegion('경기도')">경기</button>
+                <button class="filter-btn" onclick="selectRegion('서울특별시')">서울</button>
+                <button class="filter-btn" onclick="selectRegion('인천광역시')">인천</button>
+                <button class="filter-btn" onclick="selectRegion('강원특별자치도')">강원</button>
+                <button class="filter-btn" onclick="selectRegion('부산광역시')">부산</button>
+                <button class="filter-btn" onclick="selectRegion('충청남도')">충남</button>
+                <button class="filter-btn" onclick="selectRegion('경상남도')">경남</button>
+                <button class="filter-btn" onclick="selectRegion('경상북도')">경북</button>
+                <button class="filter-btn" onclick="selectRegion('충청북도')">충북</button>
+                <button class="filter-btn" onclick="selectRegion('전라남도')">전남</button>
+                <button class="filter-btn" onclick="selectRegion('대구광역시')">대구</button>
+                <button class="filter-btn" onclick="selectRegion('전북특별자치도')">전북</button>
+                <button class="filter-btn" onclick="selectRegion('제주특별자치도')">제주</button>
+                <button class="filter-btn" onclick="selectRegion('대전광역시')">대전</button>
+                <button class="filter-btn" onclick="selectRegion('광주광역시')">광주</button>
+                <button class="filter-btn" onclick="selectRegion('울산광역시')">울산</button>
+                <button class="filter-btn" onclick="selectRegion('세종특별자치시')">세종</button>
+            </div>
+
+            <!-- 선 그래프 캔버스 -->
+            <div class="line-chart-container">
+                <canvas id="lineChart"></canvas>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2026 TravelMate Data Hub. All rights reserved.</p>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        const rawTrendData = {
+            "경기도": [12871342, 12871342, 21677353, 14614763, 13083955, 12284980, 12061001, 12767015, 13327685, 15309623, 12781489],
+            "서울특별시": [5607247, 5607247, 8920036, 6182466, 5934920, 5344510, 4971616, 5171628, 5202776, 5785810, 5075248],
+            "인천광역시": [2796581, 2796581, 4878825, 3051073, 2696120, 2592135, 2539945, 2600800, 2696889, 3225131, 2650643],
+            "강원특별자치도": [4686419, 4686419, 7064390, 4478343, 4016147, 4398188, 3991276, 3737562, 3815858, 4831618, 4376352],
+            "부산광역시": [1965779, 1965779, 3532166, 2204501, 2111232, 1997644, 1999655, 1896288, 1932079, 2384182, 1884717],
+            "충청남도": [3086938, 3086938, 5214041, 3508103, 2959639, 2736166, 2715003, 2872659, 3165243, 3816654, 3048924],
+            "경상남도": [3007559, 3007559, 5236761, 3448439, 2980838, 2780650, 2806286, 2894589, 3087642, 3645063, 2928503],
+            "경상북도": [3261763, 3261763, 5601262, 3757132, 3139366, 2862804, 2919245, 3097129, 3336712, 3968840, 3182877],
+            "충청북도": [1887340, 1887340, 3195221, 2187656, 1856114, 1699042, 1675704, 1787834, 1931326, 2276532, 1876121],
+            "전라남도": [2670782, 2670782, 4583196, 3072534, 2577926, 2396495, 2442436, 2552946, 2818956, 3350352, 2721868],
+            "대구광역시": [1115101, 1115101, 1966461, 1315016, 1208099, 1085123, 1052712, 1104308, 1119822, 1293243, 1042735],
+            "전북특별자치도": [1943486, 1943486, 3326164, 2197505, 1858882, 1698246, 1716300, 1836067, 2038936, 2427618, 1957263],
+            "제주특별자치도": [1213600, 1213600, 1761217, 1373977, 1203530, 1162312, 1202029, 1182245, 1269382, 1438914, 1243555],
+            "대전광역시": [864170, 864170, 1499362, 1033525, 936478, 865233, 824104, 863278, 894384, 1030244, 847042],
+            "광주광역시": [593758, 593758, 1006427, 654135, 644466, 555070, 540739, 578634, 599147, 687396, 598184],
+            "울산광역시": [535996, 535996, 969368, 622779, 554608, 511509, 486230, 502206, 537569, 645844, 544685],
+            "세종특별자치시": [243227, 243227, 422561, 272212, 250063, 218335, 211044, 234751, 259186, 293619, 237617]
+        };
+
+        const monthLabels = ['2025년 8월', '2025년 9월', '2025년 10월', '2025년 11월', '2025년 12월', '2026년 1월', '2026년 2월', '2026년 3월', '2026년 4월', '2026년 5월', '2026년 6월'];
+
+        const colorPalette = {
+            "경기도": "#FF6D1F",
+            "서울특별시": "#e63946",
+            "인천광역시": "#023e8a",
+            "강원특별자치도": "#10b981",
+            "부산광역시": "#0077b6",
+            "충청남도": "#4361ee",
+            "경상남도": "#fb8500",
+            "경상북도": "#ffb703",
+            "충청북도": "#3a0ca3",
+            "전라남도": "#00b4d8",
+            "대구광역시": "#d90429",
+            "전북특별자치도": "#8338ec",
+            "제주특별자치도": "#48cae4",
+            "대전광역시": "#2a9d8f",
+            "광주광역시": "#f77f00",
+            "울산광역시": "#70e000",
+            "세종특별자치시": "#9d4edd"
+        };
+
+        let lineChartInstance = null;
+        let pieChartInstance = null;
+        let currentMonthIndex = 0;
+        let selectedRegionName = '전체';
+
+        // 1. 선 그래프 초기화
+        function initLineChart() {
+            const ctx = document.getElementById('lineChart').getContext('2d');
+            
+            const datasets = Object.keys(rawTrendData).map(region => {
+                const color = colorPalette[region];
+                return {
+                    label: region,
+                    data: rawTrendData[region],
+                    borderColor: color,
+                    backgroundColor: color,
+                    borderWidth: 2.5,
+                    pointRadius: 3,
+                    tension: 0.25,
+                    originalColor: color
+                };
+            });
+
+            lineChartInstance = new Chart(ctx, {
+                type: 'line',
+                data: { labels: monthLabels, datasets: datasets },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { mode: 'nearest', intersect: false },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: '#222222',
+                            titleFont: { family: 'Pretendard', size: 13, weight: 'bold' },
+                            bodyFont: { family: 'Pretendard', size: 12 },
+                            padding: 12,
+                            cornerRadius: 10,
+                            callbacks: {
+                                label: (ctx) => `${ctx.dataset.label}: ${ctx.raw.toLocaleString()} 건`
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: { color: 'rgba(34, 34, 34, 0.06)' },
+                            ticks: { font: { family: 'Pretendard', weight: 'bold', size: 11 }, color: '#222' }
+                        },
+                        y: {
+                            min: 0,
+                            grid: { color: 'rgba(34, 34, 34, 0.06)' },
+                            ticks: { 
+                                font: { family: 'Pretendard', size: 11 },
+                                color: '#555',
+                                callback: (val) => (val / 10000).toLocaleString() + '만'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // 2. 파이 차트 초기화 (큼직하게 비율 튜닝)
+        function initPieChart() {
+            const ctx = document.getElementById('pieChart').getContext('2d');
+            const regions = Object.keys(rawTrendData);
+            const colors = regions.map(r => colorPalette[r]);
+            const initialValues = regions.map(r => rawTrendData[r][currentMonthIndex]);
+
+            pieChartInstance = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: regions,
+                    datasets: [{
+                        data: initialValues,
+                        backgroundColor: colors,
+                        borderColor: '#ffffff',
+                        borderWidth: 2,
+                        hoverOffset: 14,
+                        offset: regions.map(() => 0)
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    onClick: (event, elements) => {
+                        if (elements && elements.length > 0) {
+                            const index = elements[0].index;
+                            const clickedRegion = regions[index];
+                            
+                            if (selectedRegionName === clickedRegion) {
+                                selectRegion('전체');
+                            } else {
+                                selectRegion(clickedRegion);
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                font: { family: 'Pretendard', size: 11, weight: 'bold' },
+                                boxWidth: 12,
+                                padding: 8
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: '#222222',
+                            padding: 12,
+                            callbacks: {
+                                label: function(context) {
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const val = context.raw;
+                                    const pct = ((val / total) * 100).toFixed(1);
+                                    return `${context.label}: ${val.toLocaleString()} 건 (${pct}%)`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // 슬라이더 변경 시 뱃지 이동 및 파이 차트 갱신
+        function onSliderChange(val) {
+            currentMonthIndex = parseInt(val);
+            const selectedMonthName = monthLabels[currentMonthIndex];
+            
+            const badge = document.getElementById('floatingBadge');
+            const slider = document.getElementById('monthSlider');
+            
+            badge.innerText = selectedMonthName;
+
+            const pct = (currentMonthIndex / parseInt(slider.max)) * 100;
+            badge.style.left = `${pct}%`;
+
+            const regions = Object.keys(rawTrendData);
+            const newValues = regions.map(r => rawTrendData[r][currentMonthIndex]);
+            pieChartInstance.data.datasets[0].data = newValues;
+            
+            updatePieHighlight(selectedRegionName);
+        }
+
+        // 지자체 선택 함수
+        function selectRegion(regionName) {
+            selectedRegionName = regionName;
+
+            // 버튼 활성화 상태
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                if (btn.innerText === getShortName(regionName) || (regionName === '전체' && btn.innerText === '전체')) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+
+            // 1) 선 그래프 라인 강조
+            lineChartInstance.data.datasets.forEach(dataset => {
+                if (regionName === '전체') {
+                    dataset.borderColor = dataset.originalColor;
+                    dataset.backgroundColor = dataset.originalColor;
+                    dataset.borderWidth = 2.5;
+                    dataset.pointRadius = 3;
+                } else if (dataset.label === regionName) {
+                    dataset.borderColor = dataset.originalColor;
+                    dataset.backgroundColor = dataset.originalColor;
+                    dataset.borderWidth = 4.5;
+                    dataset.pointRadius = 5;
+                } else {
+                    const rgb = hexToRgb(dataset.originalColor);
+                    dataset.borderColor = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.12)`;
+                    dataset.backgroundColor = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.12)`;
+                    dataset.borderWidth = 1.2;
+                    dataset.pointRadius = 0;
+                }
+            });
+            lineChartInstance.update();
+
+            // 2) 파이 차트 조각 강조
+            updatePieHighlight(regionName);
+        }
+
+        // 파이 차트 강조 갱신
+        function updatePieHighlight(regionName) {
+            const regions = Object.keys(rawTrendData);
+            const dataset = pieChartInstance.data.datasets[0];
+
+            if (regionName === '전체') {
+                dataset.backgroundColor = regions.map(r => colorPalette[r]);
+                dataset.offset = regions.map(() => 0);
+            } else {
+                dataset.backgroundColor = regions.map(r => {
+                    if (r === regionName) {
+                        return colorPalette[r];
+                    } else {
+                        const rgb = hexToRgb(colorPalette[r]);
+                        return `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.18)`;
+                    }
+                });
+                dataset.offset = regions.map(r => r === regionName ? 16 : 0);
+            }
+            pieChartInstance.update();
+        }
+
+        function hexToRgb(hex) {
+            let c;
+            if(/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)){
+                c = hex.substring(1).split('');
+                if(c.length == 3){
+                    c = [c[0], c[0], c[1], c[1], c[2], c[2]];
+                }
+                c = '0x' + c.join('');
+                return { r: (c>>16)&255, g: (c>>8)&255, b: c&255 };
+            }
+            return { r: 150, g: 150, b: 150 };
+        }
+
+        function getShortName(fullName) {
+            const map = {
+                "전체": "전체", "경기도": "경기", "서울특별시": "서울", "인천광역시": "인천",
+                "강원특별자치도": "강원", "부산광역시": "부산", "충청남도": "충남", "경상남도": "경남",
+                "경상북도": "경북", "충청북도": "충북", "전라남도": "전남", "대구광역시": "대구",
+                "전북특별자치도": "전북", "제주특별자치도": "제주", "대전광역시": "대전",
+                "광주광역시": "광주", "울산광역시": "울산", "세종특별자치시": "세종"
+            };
+            return map[fullName] || fullName;
+        }
+
+        // 초기화
+        window.addEventListener('DOMContentLoaded', () => {
+            initLineChart();
+            initPieChart();
+            onSliderChange(0);
+        });
+    </script>
+</body>
+</html>
