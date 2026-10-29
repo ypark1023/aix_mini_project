@@ -1,0 +1,1430 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TravelMate - 전국 광역시도 추이 & 서울시 연령별 구성비 분석</title>
+    
+    <!-- Google Fonts & Font Awesome Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Pretendard:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        :root {
+            --bg-bright: #ffffff;
+            --bg-cream-light: #faf3e1;
+            --bg-cream-mid: #f5e7c6;
+            --palette-orange: #FF6D1F;
+            --palette-dark: #222222;
+            --subtle-border: rgba(34, 34, 34, 0.12);
+            --border-radius-lg: 28px;
+            --border-radius-md: 18px;
+            --transition: all 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html, body {
+            height: 100%;
+        }
+
+        body {
+            font-family: 'Pretendard', sans-serif;
+            background-color: var(--bg-bright);
+            color: var(--palette-dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        /* Header Navigation */
+        header {
+            padding: 1.1rem 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: var(--bg-cream-light);
+            border-bottom: 1px solid var(--subtle-border);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            background-color: var(--palette-dark);
+            color: #ffffff;
+            padding: 0.6rem 1.3rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+
+        .back-btn:hover {
+            background-color: var(--palette-orange);
+            transform: translateX(-4px);
+        }
+
+        .brand-logo {
+            font-family: 'Fredoka', cursive;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--palette-dark);
+            text-decoration: none;
+        }
+
+        .brand-logo span {
+            color: var(--palette-orange);
+        }
+
+        /* 💡 상단 페이지 전환 탭 버튼 */
+        .view-switch-nav {
+            display: flex;
+            background-color: var(--bg-cream-mid);
+            padding: 0.3rem;
+            border-radius: 50px;
+            border: 1px solid var(--subtle-border);
+            gap: 0.35rem;
+        }
+
+        .view-switch-btn {
+            padding: 0.55rem 1.3rem;
+            border-radius: 50px;
+            border: none;
+            background: transparent;
+            color: var(--palette-dark);
+            font-weight: 800;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .view-switch-btn:hover {
+            color: var(--palette-orange);
+        }
+
+        .view-switch-btn.active {
+            background-color: var(--palette-orange);
+            color: #ffffff;
+            box-shadow: 0 3px 10px rgba(255, 109, 31, 0.35);
+        }
+
+        .header-tag {
+            background-color: var(--palette-dark);
+            color: var(--bg-cream-light);
+            padding: 0.45rem 1.15rem;
+            border-radius: 50px;
+            font-weight: 800;
+            font-size: 0.85rem;
+        }
+
+        /* 공통 메인 컨테이너 */
+        .main-container {
+            max-width: 1540px;
+            margin: 1.5rem auto 2.5rem auto;
+            width: 100%;
+            padding: 0 1.5rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* =========================================================
+           VIEW 1: 전국 광역시도 추이 분석 (원 그래프 4 : 선 그래프 6)
+           ========================================================= */
+        #nationalTrendView {
+            display: flex;
+            gap: 1.8rem;
+            align-items: stretch;
+            flex: 1;
+            width: 100%;
+        }
+
+        /* Left 40%: 원 그래프 (Pie Chart) 섹션 */
+        .pie-analysis-section {
+            flex: 0.4;
+            background-color: var(--bg-cream-light);
+            border-radius: var(--border-radius-lg);
+            border: 1px solid var(--subtle-border);
+            box-shadow: 0 10px 28px rgba(0, 0, 0, 0.04);
+            padding: 1.6rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+
+        .section-header h2 {
+            font-size: 1.35rem;
+            font-weight: 800;
+            color: var(--palette-dark);
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .section-header h2 i {
+            color: var(--palette-orange);
+        }
+
+        .pie-chart-container {
+            flex: 1;
+            position: relative;
+            width: 100%;
+            min-height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        /* 따라다니는 년/월 뱃지 슬라이더 컨트롤러 */
+        .volume-control-box {
+            background-color: var(--bg-cream-mid);
+            padding: 1.8rem 1.5rem 1.2rem;
+            border-radius: var(--border-radius-md);
+            border: 1px solid var(--subtle-border);
+            position: relative;
+        }
+
+        .slider-wrapper {
+            position: relative;
+            width: 100%;
+        }
+
+        .floating-month-badge {
+            position: absolute;
+            top: -42px;
+            left: 0%;
+            transform: translateX(-50%);
+            background-color: var(--palette-orange);
+            color: #ffffff;
+            font-weight: 800;
+            font-size: 0.82rem;
+            padding: 0.3rem 0.85rem;
+            border-radius: 50px;
+            white-space: nowrap;
+            box-shadow: 0 4px 10px rgba(255, 109, 31, 0.35);
+            pointer-events: none;
+            transition: left 0.05s ease-out;
+        }
+
+        .floating-month-badge::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-top: 5px solid var(--palette-orange);
+        }
+
+        .volume-slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 10px;
+            border-radius: 5px;
+            background: #e2d2b0;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--palette-orange);
+            border: 3px solid #ffffff;
+            cursor: pointer;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+            transition: transform 0.15s;
+        }
+
+        .volume-slider::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+        }
+
+        .pie-footer-desc {
+            font-size: 0.83rem;
+            color: #666;
+            text-align: center;
+            margin-top: 0.2rem;
+            line-height: 1.4;
+        }
+
+        /* Right 60%: 선 그래프 (Line Chart) 섹션 */
+        .line-analysis-section {
+            flex: 0.6;
+            background-color: #ffffff;
+            border-radius: var(--border-radius-lg);
+            border: 1px solid var(--subtle-border);
+            box-shadow: 0 10px 28px rgba(0, 0, 0, 0.04);
+            padding: 1.6rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+
+        .chart-header-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .chart-header-title h2 {
+            font-size: 1.35rem;
+            font-weight: 800;
+            color: var(--palette-dark);
+        }
+
+        .region-filter-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.45rem;
+            background-color: var(--bg-cream-light);
+            padding: 0.8rem;
+            border-radius: var(--border-radius-md);
+            border: 1px solid var(--subtle-border);
+        }
+
+        .filter-btn {
+            padding: 0.4rem 0.85rem;
+            border-radius: 8px;
+            border: 1px solid var(--subtle-border);
+            background-color: #ffffff;
+            color: var(--palette-dark);
+            font-size: 0.82rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .filter-btn:hover {
+            background-color: var(--bg-cream-mid);
+        }
+
+        .filter-btn.active {
+            background-color: var(--palette-orange);
+            color: #ffffff;
+            border-color: var(--palette-orange);
+            box-shadow: 0 4px 10px rgba(255, 109, 31, 0.3);
+            font-weight: 800;
+        }
+
+        .line-chart-container {
+            flex: 1;
+            position: relative;
+            width: 100%;
+            min-height: 440px;
+        }
+
+        /* =========================================================
+           VIEW 2: 서울시 자치구별 연령대 구성비 히트맵 & TOP 5 막대그래프
+           ========================================================= */
+        #seoulAgeView {
+            display: none; /* 상단 탭 클릭 시 flex로 전환 */
+            flex-direction: column;
+            gap: 1.4rem;
+            flex: 1;
+            width: 100%;
+        }
+
+        .age-filter-bar {
+            background-color: var(--bg-cream-light);
+            border: 1px solid var(--subtle-border);
+            border-radius: var(--border-radius-md);
+            padding: 0.9rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.03);
+        }
+
+        .filter-label {
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: var(--palette-dark);
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .age-buttons {
+            display: flex;
+            gap: 0.55rem;
+            flex-wrap: wrap;
+        }
+
+        .age-btn {
+            padding: 0.5rem 1.35rem;
+            border-radius: 50px;
+            border: 1px solid var(--subtle-border);
+            background-color: #ffffff;
+            color: var(--palette-dark);
+            font-size: 0.9rem;
+            font-weight: 800;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .age-btn:hover {
+            background-color: var(--bg-cream-mid);
+            transform: translateY(-2px);
+        }
+
+        .age-btn.active {
+            background-color: var(--palette-orange);
+            color: #ffffff;
+            border-color: var(--palette-orange);
+            box-shadow: 0 4px 12px rgba(255, 109, 31, 0.35);
+        }
+
+        .seoul-dashboard-row {
+            display: flex;
+            gap: 1.8rem;
+            align-items: stretch;
+            flex: 1;
+        }
+
+        /* 좌측: 서울시 25개 자치구 히트맵 */
+        .map-section {
+            flex: 0.46;
+            background-color: var(--bg-cream-light);
+            border: 1px solid var(--subtle-border);
+            border-radius: var(--border-radius-lg);
+            padding: 1.6rem;
+            box-shadow: 0 10px 28px rgba(0, 0, 0, 0.04);
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .seoul-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .seoul-header-row p {
+            font-size: 0.84rem;
+            color: #666;
+            margin-top: 4px;
+        }
+
+        .avg-badge {
+            background-color: var(--palette-dark);
+            color: var(--bg-cream-light);
+            font-size: 0.82rem;
+            font-weight: 800;
+            padding: 0.35rem 0.9rem;
+            border-radius: 50px;
+            white-space: nowrap;
+        }
+
+        .svg-map-box {
+            flex: 1;
+            background-color: #ffffff;
+            border-radius: 22px;
+            border: 1px solid var(--subtle-border);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            min-height: 420px;
+            overflow: hidden;
+        }
+
+        #seoulSvg {
+            width: 100%;
+            height: 100%;
+            max-height: 440px;
+        }
+
+        .gu-path {
+            stroke: #ffffff;
+            stroke-width: 1.2;
+            cursor: pointer;
+            transition: fill 0.35s ease, stroke 0.2s ease, filter 0.2s ease;
+        }
+
+        .gu-path:hover {
+            stroke: var(--palette-dark);
+            stroke-width: 2.5;
+            filter: brightness(1.05) drop-shadow(0 4px 8px rgba(0,0,0,0.2));
+        }
+
+        .gu-path.top5-border {
+            stroke: #ffffff;
+            stroke-width: 2;
+        }
+
+        .gu-path.selected {
+            stroke: var(--palette-dark);
+            stroke-width: 3.5;
+            filter: drop-shadow(0 0 12px rgba(255, 109, 31, 0.7));
+        }
+
+        .gu-label {
+            font-family: 'Pretendard', sans-serif;
+            font-size: 10.5px;
+            font-weight: 800;
+            text-anchor: middle;
+            dominant-baseline: central;
+            pointer-events: none;
+            user-select: none;
+        }
+
+        .map-tooltip {
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            background: rgba(34, 34, 34, 0.92);
+            color: #ffffff;
+            padding: 0.65rem 1rem;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 20;
+        }
+
+        .legend-bar-box {
+            background-color: var(--bg-cream-mid);
+            padding: 0.75rem 1.2rem;
+            border-radius: 14px;
+            border: 1px solid var(--subtle-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.82rem;
+            font-weight: 800;
+        }
+
+        .gradient-bar {
+            flex: 1;
+            margin: 0 1rem;
+            height: 12px;
+            border-radius: 6px;
+            background: linear-gradient(90deg, #ffe8d6 0%, #ff9e66 50%, #FF6D1F 80%, #b83700 100%);
+            border: 1px solid rgba(0,0,0,0.1);
+        }
+
+        /* 우측: 선호 자치구 TOP 5 가로 막대그래프 */
+        .seoul-chart-section {
+            flex: 0.54;
+            background-color: #ffffff;
+            border: 1px solid var(--subtle-border);
+            border-radius: var(--border-radius-lg);
+            padding: 1.6rem;
+            box-shadow: 0 10px 28px rgba(0, 0, 0, 0.04);
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+
+        .bar-chart-box {
+            position: relative;
+            width: 100%;
+            height: 260px;
+            background-color: #ffffff;
+            padding: 0.5rem;
+        }
+
+        .top5-cards-container {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 0.65rem;
+        }
+
+        .top5-mini-card {
+            background-color: var(--bg-cream-light);
+            border: 1px solid var(--subtle-border);
+            border-radius: 16px;
+            padding: 0.85rem 0.6rem;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .top5-mini-card:hover, .top5-mini-card.active {
+            border-color: var(--palette-orange);
+            background-color: #ffffff;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(255, 109, 31, 0.15);
+        }
+
+        .mini-rank {
+            background-color: var(--palette-dark);
+            color: #ffffff;
+            font-size: 0.72rem;
+            font-weight: 800;
+            padding: 0.15rem 0.55rem;
+            border-radius: 20px;
+        }
+
+        .top5-mini-card:nth-child(1) .mini-rank {
+            background-color: var(--palette-orange);
+        }
+
+        .mini-gu {
+            font-size: 0.95rem;
+            font-weight: 800;
+            color: var(--palette-dark);
+            margin-top: 2px;
+        }
+
+        .mini-val {
+            font-size: 1rem;
+            font-weight: 800;
+            color: var(--palette-orange);
+        }
+
+        .gu-detail-box {
+            margin-top: auto;
+            background-color: var(--bg-cream-mid);
+            border: 1px solid var(--subtle-border);
+            border-radius: 18px;
+            padding: 1rem 1.3rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+        }
+
+        .gu-detail-title {
+            font-size: 0.92rem;
+            font-weight: 800;
+            color: var(--palette-dark);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .age-breakdown-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 0.5rem;
+        }
+
+        .breakdown-pill {
+            background-color: #ffffff;
+            border-radius: 10px;
+            padding: 0.45rem 0.3rem;
+            text-align: center;
+            border: 1px solid var(--subtle-border);
+        }
+
+        .breakdown-pill.current-age {
+            border-color: var(--palette-orange);
+            background-color: #fff4ed;
+        }
+
+        .breakdown-pill span {
+            display: block;
+            font-size: 0.72rem;
+            color: #666;
+            font-weight: 700;
+        }
+
+        .breakdown-pill strong {
+            font-size: 0.88rem;
+            color: var(--palette-dark);
+            font-weight: 800;
+        }
+
+        footer {
+            text-align: center;
+            padding: 1.8rem;
+            background-color: var(--palette-dark);
+            color: var(--bg-cream-light);
+            font-size: 0.86rem;
+            margin-top: auto;
+        }
+
+        @media (max-width: 1024px) {
+            #nationalTrendView, .seoul-dashboard-row { flex-direction: column; }
+            .top5-cards-container { grid-template-columns: repeat(3, 1fr); }
+            .age-breakdown-grid { grid-template-columns: repeat(3, 1fr); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Navigation & View Switcher -->
+    <header>
+        <div class="header-left">
+            <a href="/" class="back-btn"><i class="fa-solid fa-arrow-left"></i> 메인으로</a>
+            <a href="#" class="brand-logo">TravelMate <span>Data Hub</span></a>
+
+            <!-- 💡 2개 페이지 전환 탭 -->
+            <nav class="view-switch-nav">
+                <button class="view-switch-btn active" onclick="switchMainTab('national', this)">
+                    <i class="fa-solid fa-chart-pie"></i> 전국 광역시도 추이 (원·선 그래프)
+                </button>
+                <button class="view-switch-btn" onclick="switchMainTab('seoul', this)">
+                    <i class="fa-solid fa-map-location-dot"></i> 서울시 연령별 선호 자치구 (히트맵·TOP 5)
+                </button>
+            </nav>
+        </div>
+        <span class="header-tag" id="headerPeriodTag"><i class="fa-solid fa-chart-line"></i> 전국 17개 광역시도 추이 분석</span>
+    </header>
+
+    <!-- Main Container -->
+    <main class="main-container">
+
+        <!-- =========================================================================
+             [페이지 1] 어제 만든 전국 17개 광역시도 원 그래프 & 선 그래프 (4:6 비율)
+             ========================================================================= -->
+        <div id="nationalTrendView">
+            <!-- 1. Left 40%: 파이 그래프 및 따라다니는 슬라이더 -->
+            <section class="pie-analysis-section">
+                <div class="section-header">
+                    <h2><i class="fa-solid fa-chart-pie"></i> 월별 광역시도 점유율 (파이 차트)</h2>
+                </div>
+
+                <div class="pie-chart-container">
+                    <canvas id="pieChart"></canvas>
+                </div>
+
+                <div class="volume-control-box">
+                    <div class="slider-wrapper">
+                        <span id="floatingBadge" class="floating-month-badge">2025년 8월</span>
+                        <input type="range" id="monthSlider" class="volume-slider" min="0" max="10" value="0" step="1" oninput="onSliderChange(this.value)">
+                    </div>
+                </div>
+
+                <p class="pie-footer-desc">
+                    <i class="fa-solid fa-circle-info" style="color: var(--palette-orange);"></i> 
+                    슬라이드를 좌우로 움직이면 해당 월의 점유율 현황이 연동되며,<br>원 그래프의 파이를 클릭해도 선 그래프가 연동됩니다.
+                </p>
+            </section>
+
+            <!-- 2. Right 60%: 선 그래프 추이 -->
+            <section class="line-analysis-section">
+                <div class="chart-header-title">
+                    <h2><i class="fa-solid fa-chart-line" style="color: var(--palette-orange);"></i> 광역시도 방문객 추이 (선 그래프)</h2>
+                </div>
+
+                <div class="region-filter-bar">
+                    <button class="filter-btn active" onclick="selectRegion('전체')">전체</button>
+                    <button class="filter-btn" onclick="selectRegion('경기도')">경기</button>
+                    <button class="filter-btn" onclick="selectRegion('서울특별시')">서울</button>
+                    <button class="filter-btn" onclick="selectRegion('인천광역시')">인천</button>
+                    <button class="filter-btn" onclick="selectRegion('강원특별자치도')">강원</button>
+                    <button class="filter-btn" onclick="selectRegion('부산광역시')">부산</button>
+                    <button class="filter-btn" onclick="selectRegion('충청남도')">충남</button>
+                    <button class="filter-btn" onclick="selectRegion('경상남도')">경남</button>
+                    <button class="filter-btn" onclick="selectRegion('경상북도')">경북</button>
+                    <button class="filter-btn" onclick="selectRegion('충청북도')">충북</button>
+                    <button class="filter-btn" onclick="selectRegion('전라남도')">전남</button>
+                    <button class="filter-btn" onclick="selectRegion('대구광역시')">대구</button>
+                    <button class="filter-btn" onclick="selectRegion('전북특별자치도')">전북</button>
+                    <button class="filter-btn" onclick="selectRegion('제주특별자치도')">제주</button>
+                    <button class="filter-btn" onclick="selectRegion('대전광역시')">대전</button>
+                    <button class="filter-btn" onclick="selectRegion('광주광역시')">광주</button>
+                    <button class="filter-btn" onclick="selectRegion('울산광역시')">울산</button>
+                    <button class="filter-btn" onclick="selectRegion('세종특별자치시')">세종</button>
+                </div>
+
+                <div class="line-chart-container">
+                    <canvas id="lineChart"></canvas>
+                </div>
+            </section>
+        </div>
+
+        <!-- =========================================================================
+             [페이지 2] 서울시 25개 자치구 연령별 구성비 히트맵 & 선호 TOP 5 가로 막대그래프
+             ========================================================================= -->
+        <div id="seoulAgeView">
+            <!-- 상단 연령 선택 바 (20대 ~ 70대) -->
+            <div class="age-filter-bar">
+                <div class="filter-label">
+                    <i class="fa-solid fa-users-viewfinder" style="color: var(--palette-orange);"></i>
+                    <span>분석할 연령대를 선택하세요</span>
+                </div>
+                <div class="age-buttons">
+                    <button class="age-btn active" onclick="selectAge('20대', this)">20대</button>
+                    <button class="age-btn" onclick="selectAge('30대', this)">30대</button>
+                    <button class="age-btn" onclick="selectAge('40대', this)">40대</button>
+                    <button class="age-btn" onclick="selectAge('50대', this)">50대</button>
+                    <button class="age-btn" onclick="selectAge('60대', this)">60대</button>
+                    <button class="age-btn" onclick="selectAge('70대', this)">70대</button>
+                </div>
+            </div>
+
+            <!-- 좌측 지도 히트맵 + 우측 TOP 5 가로 막대그래프 -->
+            <div class="seoul-dashboard-row">
+                <!-- 1. 좌측: 서울시 25개 구 히트맵 -->
+                <section class="map-section">
+                    <div class="seoul-header-row">
+                        <div class="section-header">
+                            <div>
+                                <h2 id="mapTitle"><i class="fa-solid fa-map-location-dot"></i> 서울시 20대 방문 구성비 히트맵</h2>
+                                <p>색상이 짙을수록 해당 연령대의 방문 구성비(%)가 높은 자치구입니다.</p>
+                            </div>
+                        </div>
+                        <span id="seoulAvgBadge" class="avg-badge">서울 평균 17.90%</span>
+                    </div>
+
+                    <div class="svg-map-box">
+                        <div id="mapTooltip" class="map-tooltip">마포구 : 24.84%</div>
+                        <svg id="seoulSvg" viewBox="0 125 455 352">
+                            <g id="polygonsGroup"></g>
+                            <g id="labelsGroup"></g>
+                        </svg>
+                    </div>
+
+                    <div class="legend-bar-box">
+                        <span id="minLegendText">최저 12.95% (양천구)</span>
+                        <div class="gradient-bar"></div>
+                        <span id="maxLegendText" style="color: var(--palette-orange);">최고 24.84% (마포구)</span>
+                    </div>
+                </section>
+
+                <!-- 2. 우측: 선호 자치구 TOP 5 가로 막대그래프 -->
+                <section class="seoul-chart-section">
+                    <div class="seoul-header-row">
+                        <div class="section-header">
+                            <div>
+                                <h2 id="chartTitle"><i class="fa-solid fa-trophy"></i> 20대 선호 자치구 TOP 5</h2>
+                                <p>선택한 연령대의 방문 구성비(%) 상위 5개 자치구 가로 막대그래프입니다.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bar-chart-box">
+                        <canvas id="top5BarChart"></canvas>
+                    </div>
+
+                    <div class="top5-cards-container" id="top5CardsContainer"></div>
+
+                    <div class="gu-detail-box">
+                        <div class="gu-detail-title">
+                            <span><i class="fa-solid fa-magnifying-glass-chart" style="color: var(--palette-orange);"></i> <strong id="detailGuName">마포구</strong> 연령대별 구성비 상세</span>
+                            <span id="detailGuRankBadge" style="font-size:0.8rem; color:var(--palette-orange);">20대 선호 1위</span>
+                        </div>
+                        <div class="age-breakdown-grid" id="ageBreakdownGrid"></div>
+                    </div>
+                </section>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2026 TravelMate Data Hub. All rights reserved.</p>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        /* =========================================================================
+           탭 전환 함수 (전국 광역시도 추이 뷰 <-> 서울시 연령별 자치구 뷰)
+           ========================================================================= */
+        let isSeoulInitialized = false;
+
+        function switchMainTab(tabName, btnElem) {
+            document.querySelectorAll('.view-switch-btn').forEach(b => b.classList.remove('active'));
+            if (btnElem) btnElem.classList.add('active');
+
+            const nationalView = document.getElementById('nationalTrendView');
+            const seoulView = document.getElementById('seoulAgeView');
+            const headerTag = document.getElementById('headerPeriodTag');
+
+            if (tabName === 'national') {
+                nationalView.style.display = 'flex';
+                seoulView.style.display = 'none';
+                headerTag.innerHTML = `<i class="fa-solid fa-chart-line"></i> 전국 17개 광역시도 추이 분석 (2025.08 ~ 2026.06)`;
+                if (lineChartInstance && pieChartInstance) {
+                    lineChartInstance.resize();
+                    pieChartInstance.resize();
+                }
+            } else {
+                nationalView.style.display = 'none';
+                seoulView.style.display = 'flex';
+                headerTag.innerHTML = `<i class="fa-solid fa-calendar-check"></i> 서울시 25개 자치구 연령별 구성비 (2025.09 ~ 2026.08)`;
+                if (!isSeoulInitialized) {
+                    initSvgMap();
+                    initBarChart();
+                    selectAge('20대', document.querySelector('#seoulAgeView .age-btn.active'));
+                    isSeoulInitialized = true;
+                } else if (barChartInstance) {
+                    barChartInstance.resize();
+                }
+            }
+        }
+
+        /* =========================================================================
+           [페이지 1 스크립트] 전국 17개 광역시도 원 그래프 & 선 그래프
+           ========================================================================= */
+        const rawTrendData = {
+            "경기도": [12871342, 12871342, 21677353, 14614763, 13083955, 12284980, 12061001, 12767015, 13327685, 15309623, 12781489],
+            "서울특별시": [5607247, 5607247, 8920036, 6182466, 5934920, 5344510, 4971616, 5171628, 5202776, 5785810, 5075248],
+            "인천광역시": [2796581, 2796581, 4878825, 3051073, 2696120, 2592135, 2539945, 2600800, 2696889, 3225131, 2650643],
+            "강원특별자치도": [4686419, 4686419, 7064390, 4478343, 4016147, 4398188, 3991276, 3737562, 3815858, 4831618, 4376352],
+            "부산광역시": [1965779, 1965779, 3532166, 2204501, 2111232, 1997644, 1999655, 1896288, 1932079, 2384182, 1884717],
+            "충청남도": [3086938, 3086938, 5214041, 3508103, 2959639, 2736166, 2715003, 2872659, 3165243, 3816654, 3048924],
+            "경상남도": [3007559, 3007559, 5236761, 3448439, 2980838, 2780650, 2806286, 2894589, 3087642, 3645063, 2928503],
+            "경상북도": [3261763, 3261763, 5601262, 3757132, 3139366, 2862804, 2919245, 3097129, 3336712, 3968840, 3182877],
+            "충청북도": [1887340, 1887340, 3195221, 2187656, 1856114, 1699042, 1675704, 1787834, 1931326, 2276532, 1876121],
+            "전라남도": [2670782, 2670782, 4583196, 3072534, 2577926, 2396495, 2442436, 2552946, 2818956, 3350352, 2721868],
+            "대구광역시": [1115101, 1115101, 1966461, 1315016, 1208099, 1085123, 1052712, 1104308, 1119822, 1293243, 1042735],
+            "전북특별자치도": [1943486, 1943486, 3326164, 2197505, 1858882, 1698246, 1716300, 1836067, 2038936, 2427618, 1957263],
+            "제주특별자치도": [1213600, 1213600, 1761217, 1373977, 1203530, 1162312, 1202029, 1182245, 1269382, 1438914, 1243555],
+            "대전광역시": [864170, 864170, 1499362, 1033525, 936478, 865233, 824104, 863278, 894384, 1030244, 847042],
+            "광주광역시": [593758, 593758, 1006427, 654135, 644466, 555070, 540739, 578634, 599147, 687396, 598184],
+            "울산광역시": [535996, 535996, 969368, 622779, 554608, 511509, 486230, 502206, 537569, 645844, 544685],
+            "세종특별자치시": [243227, 243227, 422561, 272212, 250063, 218335, 211044, 234751, 259186, 293619, 237617]
+        };
+
+        const monthLabels = ['2025년 8월', '2025년 9월', '2025년 10월', '2025년 11월', '2025년 12월', '2026년 1월', '2026년 2월', '2026년 3월', '2026년 4월', '2026년 5월', '2026년 6월'];
+
+        const colorPalette = {
+            "경기도": "#FF6D1F", "서울특별시": "#e63946", "인천광역시": "#023e8a", "강원특별자치도": "#10b981",
+            "부산광역시": "#0077b6", "충청남도": "#4361ee", "경상남도": "#fb8500", "경상북도": "#ffb703",
+            "충청북도": "#3a0ca3", "전라남도": "#00b4d8", "대구광역시": "#d90429", "전북특별자치도": "#8338ec",
+            "제주특별자치도": "#48cae4", "대전광역시": "#2a9d8f", "광주광역시": "#f77f00", "울산광역시": "#70e000",
+            "세종특별자치시": "#9d4edd"
+        };
+
+        let lineChartInstance = null;
+        let pieChartInstance = null;
+        let currentMonthIndex = 0;
+        let selectedRegionName = '전체';
+
+        function initLineChart() {
+            const ctx = document.getElementById('lineChart').getContext('2d');
+            const datasets = Object.keys(rawTrendData).map(region => {
+                const color = colorPalette[region];
+                return {
+                    label: region,
+                    data: rawTrendData[region],
+                    borderColor: color,
+                    backgroundColor: color,
+                    borderWidth: 2.5,
+                    pointRadius: 3,
+                    tension: 0.25,
+                    originalColor: color
+                };
+            });
+
+            lineChartInstance = new Chart(ctx, {
+                type: 'line',
+                data: { labels: monthLabels, datasets: datasets },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { mode: 'nearest', intersect: false },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: '#222222',
+                            titleFont: { family: 'Pretendard', size: 13, weight: 'bold' },
+                            bodyFont: { family: 'Pretendard', size: 12 },
+                            padding: 12,
+                            cornerRadius: 10,
+                            callbacks: {
+                                label: (ctx) => `${ctx.dataset.label}: ${ctx.raw.toLocaleString()} 건`
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: { color: 'rgba(34, 34, 34, 0.06)' },
+                            ticks: { font: { family: 'Pretendard', weight: 'bold', size: 11 }, color: '#222' }
+                        },
+                        y: {
+                            min: 0,
+                            grid: { color: 'rgba(34, 34, 34, 0.06)' },
+                            ticks: { 
+                                font: { family: 'Pretendard', size: 11 },
+                                color: '#555',
+                                callback: (val) => (val / 10000).toLocaleString() + '만'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function initPieChart() {
+            const ctx = document.getElementById('pieChart').getContext('2d');
+            const regions = Object.keys(rawTrendData);
+            const colors = regions.map(r => colorPalette[r]);
+            const initialValues = regions.map(r => rawTrendData[r][currentMonthIndex]);
+
+            pieChartInstance = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: regions,
+                    datasets: [{
+                        data: initialValues,
+                        backgroundColor: colors,
+                        borderColor: '#ffffff',
+                        borderWidth: 2,
+                        hoverOffset: 14,
+                        offset: regions.map(() => 0)
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    onClick: (event, elements) => {
+                        if (elements && elements.length > 0) {
+                            const index = elements[0].index;
+                            const clickedRegion = regions[index];
+                            selectRegion(selectedRegionName === clickedRegion ? '전체' : clickedRegion);
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                font: { family: 'Pretendard', size: 11, weight: 'bold' },
+                                boxWidth: 12,
+                                padding: 8
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: '#222222',
+                            padding: 12,
+                            callbacks: {
+                                label: function(context) {
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const val = context.raw;
+                                    const pct = ((val / total) * 100).toFixed(1);
+                                    return `${context.label}: ${val.toLocaleString()} 건 (${pct}%)`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function onSliderChange(val) {
+            currentMonthIndex = parseInt(val);
+            const selectedMonthName = monthLabels[currentMonthIndex];
+            const badge = document.getElementById('floatingBadge');
+            const slider = document.getElementById('monthSlider');
+            
+            badge.innerText = selectedMonthName;
+            const pct = (currentMonthIndex / parseInt(slider.max)) * 100;
+            badge.style.left = `${pct}%`;
+
+            const regions = Object.keys(rawTrendData);
+            pieChartInstance.data.datasets[0].data = regions.map(r => rawTrendData[r][currentMonthIndex]);
+            updatePieHighlight(selectedRegionName);
+        }
+
+        function selectRegion(regionName) {
+            selectedRegionName = regionName;
+
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                if (btn.innerText === getShortName(regionName) || (regionName === '전체' && btn.innerText === '전체')) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+
+            lineChartInstance.data.datasets.forEach(dataset => {
+                if (regionName === '전체') {
+                    dataset.borderColor = dataset.originalColor;
+                    dataset.backgroundColor = dataset.originalColor;
+                    dataset.borderWidth = 2.5;
+                    dataset.pointRadius = 3;
+                } else if (dataset.label === regionName) {
+                    dataset.borderColor = dataset.originalColor;
+                    dataset.backgroundColor = dataset.originalColor;
+                    dataset.borderWidth = 4.5;
+                    dataset.pointRadius = 5;
+                } else {
+                    const rgb = hexToRgb(dataset.originalColor);
+                    dataset.borderColor = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.12)`;
+                    dataset.backgroundColor = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.12)`;
+                    dataset.borderWidth = 1.2;
+                    dataset.pointRadius = 0;
+                }
+            });
+            lineChartInstance.update();
+            updatePieHighlight(regionName);
+        }
+
+        function updatePieHighlight(regionName) {
+            const regions = Object.keys(rawTrendData);
+            const dataset = pieChartInstance.data.datasets[0];
+
+            if (regionName === '전체') {
+                dataset.backgroundColor = regions.map(r => colorPalette[r]);
+                dataset.offset = regions.map(() => 0);
+            } else {
+                dataset.backgroundColor = regions.map(r => {
+                    if (r === regionName) return colorPalette[r];
+                    const rgb = hexToRgb(colorPalette[r]);
+                    return `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.18)`;
+                });
+                dataset.offset = regions.map(r => r === regionName ? 16 : 0);
+            }
+            pieChartInstance.update();
+        }
+
+        function hexToRgb(hex) {
+            let c;
+            if(/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)){
+                c = hex.substring(1).split('');
+                if(c.length == 3){ c = [c[0], c[0], c[1], c[1], c[2], c[2]]; }
+                c = '0x' + c.join('');
+                return { r: (c>>16)&255, g: (c>>8)&255, b: c&255 };
+            }
+            return { r: 150, g: 150, b: 150 };
+        }
+
+        function getShortName(fullName) {
+            const map = {
+                "전체": "전체", "경기도": "경기", "서울특별시": "서울", "인천광역시": "인천",
+                "강원특별자치도": "강원", "부산광역시": "부산", "충청남도": "충남", "경상남도": "경남",
+                "경상북도": "경북", "충청북도": "충북", "전라남도": "전남", "대구광역시": "대구",
+                "전북특별자치도": "전북", "제주특별자치도": "제주", "대전광역시": "대전",
+                "광주광역시": "광주", "울산광역시": "울산", "세종특별자치시": "세종"
+            };
+            return map[fullName] || fullName;
+        }
+
+        /* =========================================================================
+           [페이지 2 스크립트] 서울시 25개 자치구 연령별 구성비 히트맵 & TOP 5 막대그래프
+           ========================================================================= */
+        const seoulAgeData = {
+            "강남구": {"20대": 17.62, "30대": 23.31, "40대": 18.15, "50대": 16.64, "60대": 12.93, "70대": 6.52},
+            "강동구": {"20대": 13.19, "30대": 18.75, "40대": 17.53, "50대": 18.93, "60대": 17.34, "70대": 9.27},
+            "강북구": {"20대": 17.07, "30대": 16.70, "40대": 14.66, "50대": 18.42, "60대": 17.31, "70대": 10.38},
+            "강서구": {"20대": 15.02, "30대": 21.80, "40대": 18.04, "50대": 18.44, "60대": 15.34, "70대": 6.92},
+            "관악구": {"20대": 23.37, "30대": 22.56, "40대": 14.26, "50대": 15.64, "60대": 13.35, "70대": 6.72},
+            "광진구": {"20대": 21.69, "30대": 20.48, "40대": 15.45, "50대": 16.51, "60대": 14.06, "70대": 6.65},
+            "구로구": {"20대": 17.15, "30대": 21.75, "40대": 15.63, "50대": 17.33, "60대": 16.20, "70대": 8.14},
+            "금천구": {"20대": 15.88, "30대": 22.06, "40대": 16.95, "50대": 19.22, "60대": 16.07, "70대": 6.82},
+            "노원구": {"20대": 15.73, "30대": 17.03, "40대": 15.72, "50대": 19.34, "60대": 17.26, "70대": 9.01},
+            "도봉구": {"20대": 14.07, "30대": 16.44, "40대": 14.73, "50대": 19.35, "60대": 19.08, "70대": 11.56},
+            "동대문구": {"20대": 20.01, "30대": 17.62, "40대": 14.32, "50대": 17.41, "60대": 16.47, "70대": 9.61},
+            "동작구": {"20대": 20.41, "30대": 21.25, "40대": 15.13, "50대": 16.61, "60대": 14.45, "70대": 8.17},
+            "마포구": {"20대": 24.84, "30대": 22.31, "40대": 15.51, "50대": 15.39, "60대": 11.45, "70대": 4.93},
+            "서대문구": {"20대": 24.10, "30대": 19.93, "40대": 15.13, "50대": 16.09, "60대": 12.90, "70대": 6.53},
+            "서초구": {"20대": 17.66, "30대": 22.15, "40대": 17.63, "50대": 17.72, "60대": 13.79, "70대": 6.90},
+            "성동구": {"20대": 20.70, "30대": 21.90, "40대": 16.08, "50대": 16.49, "60대": 13.62, "70대": 6.69},
+            "성북구": {"20대": 20.54, "30대": 17.15, "40대": 14.85, "50대": 17.93, "60대": 15.18, "70대": 8.07},
+            "송파구": {"20대": 16.89, "30대": 21.36, "40대": 17.35, "50대": 16.73, "60대": 14.61, "70대": 7.17},
+            "양천구": {"20대": 12.95, "30대": 19.81, "40대": 17.92, "50대": 18.87, "60대": 16.51, "70대": 8.00},
+            "영등포구": {"20대": 17.86, "30대": 23.05, "40대": 16.81, "50대": 17.40, "60대": 14.51, "70대": 6.92},
+            "용산구": {"20대": 20.89, "30대": 23.23, "40대": 16.63, "50대": 16.57, "60대": 12.66, "70대": 6.13},
+            "은평구": {"20대": 15.53, "30대": 19.01, "40대": 15.78, "50대": 17.97, "60대": 16.68, "70대": 9.85},
+            "종로구": {"20대": 19.81, "30대": 20.72, "40대": 16.18, "50대": 17.05, "60대": 14.07, "70대": 7.91},
+            "중구": {"20대": 19.11, "30대": 22.82, "40대": 17.69, "50대": 17.01, "60대": 13.00, "70대": 6.75},
+            "중랑구": {"20대": 14.13, "30대": 18.81, "40대": 16.23, "50대": 19.74, "60대": 18.00, "70대": 8.85}
+        };
+
+        const seoulSvgPaths = {
+            "서초구": "M267,352L271,352L272,355L273,359L275,365L279,375L282,383L287,393L289,400L293,399L297,399L299,402L300,406L304,412L307,416L308,420L312,419L316,419L319,419L323,418L326,416L330,416L333,414L336,412L341,411L343,414L346,417L348,420L351,422L352,427L355,429L355,433L353,436L351,439L349,442L348,446L346,449L343,450L341,453L337,453L334,452L330,452L330,456L330,460L329,463L329,467L324,467L321,468L317,468L314,468L310,469L307,467L304,466L302,463L299,460L297,458L293,457L291,454L292,451L294,448L293,444L291,440L292,437L291,433L290,430L290,426L288,423L285,426L283,429L281,432L278,434L275,435L271,435L267,436L264,435L262,432L260,429L258,426L258,422L254,421L250,421L250,425L248,428L244,430L241,432L239,429L240,425L240,422L237,419L235,416L233,412L233,408L233,404L234,401L234,397L234,393L234,389L234,385L236,382L235,379L232,377L232,373L235,372L238,371L240,368L242,365L245,363L248,360L252,358L254,356L257,353L260,351L264,350L267,352Z",
+            "강남구": "M295,336L300,337L303,339L307,341L310,343L313,345L317,347L321,349L325,350L325,354L326,358L326,363L327,366L327,370L328,375L331,378L335,378L339,379L342,380L345,382L349,383L352,384L356,385L359,387L362,389L365,390L368,393L370,396L372,399L373,402L375,405L377,408L379,411L381,414L383,417L385,420L384,424L381,426L378,429L375,431L373,428L369,427L365,427L363,430L360,433L357,435L355,432L354,429L352,426L350,422L347,420L345,416L343,413L338,412L334,413L331,415L328,416L324,418L321,419L317,419L313,420L310,420L307,418L304,412L302,409L300,405L298,401L296,399L292,399L287,393L282,383L279,375L276,367L274,361L273,356L271,352L267,352L264,350L263,347L266,344L269,341L271,338L275,337L278,336L283,336L286,336L290,336L295,336Z",
+            "강서구": "M48,256L51,258L54,261L58,264L60,266L64,269L66,271L70,273L74,275L77,277L80,280L83,282L89,286L93,290L96,292L99,295L102,297L105,299L108,301L111,303L114,305L118,307L122,309L123,315L123,318L122,322L119,322L115,322L112,320L109,318L106,320L105,324L105,328L107,331L106,335L107,340L107,344L102,344L97,345L93,346L88,347L84,347L81,346L78,342L77,338L76,335L74,331L71,329L70,325L70,322L67,324L66,327L63,330L59,330L55,330L51,330L48,328L45,327L40,328L38,330L38,334L34,335L32,332L31,329L28,326L25,324L22,323L18,323L14,323L12,320L8,320L6,318L3,315L1,312L4,310L7,310L9,307L12,304L13,301L11,298L15,297L18,295L19,292L21,289L24,287L27,284L28,281L30,284L31,281L31,277L35,276L36,273L39,271L38,268L37,264L35,261L36,258L38,255L40,252L43,252L47,255L48,256Z",
+            "송파구": "M374,327L377,328L381,330L384,332L384,335L383,339L382,343L381,346L384,348L387,349L391,351L395,353L398,355L401,356L404,358L408,360L404,361L407,364L404,367L403,370L404,373L407,375L410,377L414,375L417,377L421,378L425,379L425,383L424,386L423,390L423,393L420,395L417,397L413,400L411,403L411,406L408,409L407,412L403,413L400,413L396,412L395,416L395,419L392,420L388,419L386,422L384,419L382,416L379,412L377,408L375,405L374,402L372,399L370,396L368,393L365,391L362,389L359,387L356,385L352,384L349,383L346,382L342,381L339,379L335,378L332,378L328,377L327,373L327,369L326,365L326,361L326,357L325,353L328,351L332,352L336,352L339,352L343,350L347,349L350,347L353,344L359,338L362,336L364,333L367,331L370,327L374,327Z",
+            "은평구": "M201,189L205,189L207,192L208,196L209,200L209,204L210,207L212,210L213,215L211,218L208,220L205,222L202,223L199,225L198,229L199,232L199,236L200,239L200,243L196,246L193,249L190,252L189,255L189,258L185,259L182,261L178,263L176,266L175,270L173,273L170,275L167,278L164,277L162,274L159,273L157,276L154,279L152,281L149,284L143,283L135,276L132,274L129,272L127,269L129,266L132,264L130,267L131,270L135,270L139,270L142,271L145,268L145,265L147,262L147,258L145,254L148,251L146,246L146,243L147,239L148,236L150,233L153,229L153,225L155,221L153,217L155,214L157,211L157,207L158,202L156,200L153,198L156,199L159,201L164,200L168,200L171,199L174,197L177,195L181,194L184,193L186,190L188,186L192,185L195,184L198,186L201,189Z",
+            "마포구": "M135,276L142,282L148,286L150,288L154,291L157,293L160,295L164,297L167,298L171,299L176,302L174,305L177,309L180,310L185,312L189,311L195,310L199,310L204,309L208,309L211,308L213,310L212,314L213,317L212,321L210,323L207,326L207,329L204,332L202,335L198,336L195,337L190,336L187,334L183,332L180,330L176,331L173,331L170,329L164,329L159,329L155,329L152,329L148,326L144,321L141,320L137,318L133,316L129,314L126,312L122,309L118,307L114,305L111,303L108,301L105,299L102,297L99,295L96,292L97,289L101,288L105,286L108,285L112,284L117,284L120,283L121,279L121,275L123,273L125,269L128,270L132,274L134,276Z",
+            "노원구": "M371,208L373,211L373,216L371,219L368,222L366,225L364,230L362,232L358,231L355,233L351,233L348,231L344,232L341,233L337,234L334,235L330,236L327,237L323,238L320,239L317,237L314,235L311,232L309,229L306,226L304,223L301,221L297,218L300,215L301,212L303,208L305,205L307,202L310,205L313,201L313,198L311,194L311,191L310,187L309,183L308,180L307,176L305,173L304,169L305,165L306,161L307,158L308,154L308,150L310,147L313,146L317,144L319,142L322,139L326,139L329,140L333,139L337,138L343,140L344,144L348,145L352,145L355,146L356,150L354,153L352,157L353,161L354,165L356,169L355,173L355,177L352,181L351,185L352,189L353,192L352,196L354,200L357,202L362,201L366,200L369,202L372,204L372,208L371,208Z",
+            "성북구": "M264,281L261,279L260,275L258,273L255,270L254,267L251,266L247,267L244,267L240,266L238,264L234,263L231,261L228,258L230,255L234,254L238,252L238,249L238,245L238,241L236,237L235,233L234,229L232,225L231,221L228,220L227,217L230,214L233,213L237,212L240,214L244,216L247,218L249,221L252,224L255,225L258,227L261,229L261,233L264,235L267,237L271,238L274,240L277,242L280,241L284,241L285,245L289,243L291,241L294,239L297,236L300,234L301,231L304,228L308,228L310,231L313,233L316,236L319,238L322,238L326,237L329,239L329,242L329,246L326,248L323,250L319,250L317,253L314,255L311,256L307,256L305,259L302,261L299,261L296,263L295,267L291,269L289,272L287,275L285,278L281,281L278,283L275,283L272,282L269,279L266,279L264,281Z",
+            "강북구": "M289,243L285,245L285,242L282,241L278,242L275,241L272,239L268,238L265,236L262,234L260,231L261,227L258,227L255,225L251,223L249,220L246,218L243,216L239,213L236,212L237,208L236,205L236,200L236,197L234,193L232,190L234,187L238,183L239,180L241,177L244,176L246,172L246,166L245,163L245,159L247,156L250,153L254,152L257,151L261,152L263,155L265,158L267,161L269,164L271,167L273,170L270,173L270,176L270,180L268,183L267,186L267,190L267,193L270,196L273,196L277,197L280,199L283,201L286,203L288,206L290,209L293,211L294,215L296,217L300,220L303,222L306,225L303,228L301,231L299,234L296,237L294,239L291,242L289,243Z",
+            "관악구": "M176,387L179,389L183,389L186,390L190,390L193,389L197,388L200,390L204,392L207,391L210,388L211,392L212,395L212,399L212,403L215,406L218,408L221,410L225,410L230,409L233,411L234,414L236,418L239,420L240,423L240,427L240,431L237,434L233,434L230,435L225,437L222,440L221,443L216,446L215,449L214,453L210,454L207,456L203,456L199,457L196,457L192,458L189,460L186,458L186,454L183,451L180,449L178,446L177,443L174,440L171,438L170,435L166,434L162,433L161,430L160,426L159,422L156,419L155,416L157,413L158,409L155,407L151,405L146,406L146,403L149,400L153,399L156,398L159,396L162,394L166,393L169,393L172,391L174,388L176,387Z",
+            "영등포구": "M124,311L128,313L131,315L135,317L138,319L142,320L146,323L149,327L152,329L156,329L160,329L169,329L172,331L175,332L178,329L182,331L185,333L189,335L192,337L194,340L196,343L198,346L199,349L199,354L199,358L195,359L191,360L187,361L184,361L179,361L175,361L174,365L172,367L171,371L169,375L168,378L167,382L164,384L161,385L158,387L156,390L154,393L151,396L149,399L146,398L143,395L141,392L140,389L139,385L139,382L138,378L138,375L138,371L137,368L133,365L130,364L127,362L123,359L123,355L123,351L125,348L128,346L131,344L134,343L133,340L134,336L132,334L130,330L129,327L127,324L125,321L123,318L122,315L124,312L124,311Z",
+            "종로구": "M262,281L266,279L269,279L272,281L274,283L278,285L278,289L275,292L272,293L269,294L264,294L261,294L257,294L253,295L250,295L246,296L243,296L239,296L235,295L232,295L228,295L225,295L221,296L218,298L215,296L212,293L210,291L208,288L205,286L203,283L207,282L207,278L207,274L207,270L207,267L209,263L208,259L205,257L202,255L203,251L201,248L200,244L200,240L199,236L199,232L198,229L199,225L202,223L205,222L208,220L214,220L217,218L221,218L225,217L226,221L229,220L231,224L233,226L235,230L235,235L237,238L237,242L238,246L238,250L236,253L232,255L229,256L230,260L232,262L236,264L239,266L242,267L246,267L249,266L253,266L255,269L257,272L260,274L260,278L262,281Z",
+            "강동구": "M444,293L445,297L446,300L448,303L448,307L448,311L448,314L449,317L449,321L450,325L446,323L442,324L439,324L435,325L432,326L428,325L426,327L423,330L421,333L419,336L418,339L418,343L416,346L413,349L411,353L409,355L408,359L404,358L401,357L398,355L395,353L392,351L387,349L384,348L381,346L382,343L383,339L384,336L384,332L381,330L378,328L374,327L371,327L372,323L373,318L375,314L376,310L379,307L382,305L385,302L388,300L392,298L395,297L399,296L403,296L409,296L413,296L416,293L421,290L425,287L432,283L436,283L439,282L443,280L442,283L441,287L443,290L444,293Z",
+            "구로구": "M126,360L128,363L132,364L135,366L137,369L138,372L138,376L138,380L139,383L140,386L140,390L141,393L143,397L147,399L147,402L145,405L142,407L138,407L135,406L132,404L129,401L126,399L122,397L119,399L121,395L117,395L118,391L115,393L113,390L112,387L110,390L106,392L103,394L101,397L98,399L96,402L93,403L89,403L87,406L87,410L87,413L83,412L80,411L76,412L74,409L70,409L66,410L63,410L59,410L57,413L54,412L56,408L59,406L59,402L59,398L62,397L63,393L59,392L56,390L53,387L53,383L57,383L59,380L61,377L62,374L64,370L68,370L71,371L72,374L75,376L78,377L81,374L85,373L87,371L91,369L94,368L98,369L101,369L104,372L106,374L110,374L114,373L117,376L118,373L117,369L120,367L120,364L122,361L124,359Z",
+            "서대문구": "M202,253L203,257L206,258L208,261L207,264L207,268L207,272L208,276L208,279L205,282L205,286L208,288L210,291L212,293L215,296L217,299L219,302L217,305L214,307L211,308L206,309L202,310L198,310L191,310L185,312L181,310L177,309L174,307L176,302L173,299L169,298L165,297L162,296L159,294L155,292L152,290L149,287L150,283L153,280L155,277L158,275L161,273L162,276L166,277L169,276L171,273L175,272L175,268L177,265L179,262L183,261L186,259L189,258L189,255L190,251L194,248L197,246L201,247L202,250L202,253Z",
+            "용산구": "M220,313L224,313L228,315L231,314L235,314L238,315L241,317L245,319L247,321L250,320L253,319L257,319L259,321L260,325L263,328L263,331L267,332L270,334L272,338L269,341L266,344L264,346L261,349L259,352L256,355L253,357L250,359L247,361L244,364L241,367L239,370L236,372L232,372L228,372L225,371L222,370L217,368L214,366L211,364L208,362L204,361L200,359L199,356L199,351L199,348L197,345L194,340L195,336L199,336L202,334L205,332L207,329L208,325L210,322L213,320L212,317L216,314L220,312Z",
+            "동작구": "M205,361L209,363L212,364L215,367L218,369L223,370L226,372L230,372L231,376L234,378L237,381L235,383L234,387L234,391L234,394L234,398L233,401L233,406L233,409L228,410L223,411L219,410L217,407L214,404L211,401L212,397L211,394L211,390L208,390L205,391L201,390L198,388L194,389L191,390L187,390L184,390L180,389L177,387L174,389L172,392L168,393L165,393L162,394L159,397L156,398L152,399L152,395L154,392L156,390L158,386L161,385L165,384L167,380L168,377L170,374L171,370L172,367L174,364L177,361L181,361L185,361L189,360L193,360L196,359L200,359L203,360L204,361Z",
+            "도봉구": "M269,195L266,192L267,189L267,185L268,182L271,179L270,176L271,172L273,170L271,166L268,163L266,159L263,158L262,154L262,148L261,144L263,141L263,137L268,134L269,131L274,131L278,132L282,132L285,135L285,139L287,141L291,142L294,140L298,138L300,141L304,141L306,144L306,147L308,150L308,154L307,157L306,161L305,165L304,169L305,173L307,176L308,180L309,183L310,187L311,190L311,194L313,198L313,201L312,205L309,204L305,205L303,207L301,210L300,214L298,217L294,215L293,212L290,210L289,207L286,203L283,201L280,199L277,197L274,196L270,196L269,195Z",
+            "양천구": "M118,322L121,322L125,321L127,324L129,327L130,330L132,334L134,336L133,340L134,343L131,344L128,346L125,348L123,351L123,354L122,358L122,361L120,365L118,367L119,371L118,374L114,373L110,374L107,374L107,371L103,372L101,368L96,368L93,368L89,369L86,371L84,374L80,375L77,377L74,376L71,373L69,370L66,370L64,365L63,360L65,357L66,353L67,349L68,346L65,343L63,340L62,335L61,332L64,329L66,326L67,323L71,324L71,328L74,330L76,334L77,338L78,342L80,345L83,347L87,347L90,346L94,346L101,345L105,344L107,340L106,336L106,332L106,329L105,326L106,322L107,319L110,319L113,321L117,322L118,322Z",
+            "광진구": "M362,291L364,294L363,297L362,301L361,305L363,308L366,311L369,309L372,308L376,310L375,314L373,317L372,321L371,325L369,328L367,331L364,334L361,336L354,343L351,346L347,348L344,350L340,351L337,352L333,352L329,351L325,350L321,349L317,347L314,346L315,341L321,328L325,321L332,307L332,303L334,298L336,292L340,292L345,293L350,294L354,293L357,291L361,289L362,291Z",
+            "금천구": "M118,399L122,398L125,398L128,400L131,403L133,405L137,407L140,407L144,407L149,406L152,405L156,404L157,408L158,412L155,414L156,418L158,421L160,423L160,427L160,431L163,433L167,434L170,436L172,439L175,441L174,445L171,447L169,450L168,453L164,455L161,456L158,458L156,461L153,463L149,462L147,459L145,457L144,453L143,450L140,447L141,444L139,440L136,440L134,437L131,434L130,431L133,429L130,427L127,425L127,421L125,418L123,415L121,412L120,409L118,406L116,402L115,399L118,399Z",
+            "성동구": "M299,291L304,293L307,295L309,298L313,300L316,303L322,304L327,305L332,307L327,318L321,328L318,334L315,341L313,345L310,344L307,341L304,339L300,337L296,336L292,336L288,336L284,336L279,336L275,336L272,338L272,334L268,332L264,332L262,328L262,325L263,321L266,319L268,317L271,314L272,311L275,309L277,307L279,304L282,301L278,300L278,296L278,292L282,293L285,294L289,292L293,291L298,290L299,291Z",
+            "동대문구": "M329,248L330,252L331,256L328,259L327,262L328,266L328,270L330,273L331,276L333,279L335,282L335,287L337,291L335,296L333,300L331,304L328,305L322,304L317,304L313,301L310,298L307,295L304,293L299,291L294,290L291,291L288,293L284,294L280,293L278,290L278,286L279,282L283,280L286,276L288,273L291,270L293,267L296,263L299,261L302,261L305,259L307,256L310,256L314,255L317,253L319,251L323,249L326,248L329,247Z",
+            "중랑구": "M373,231L377,232L379,235L378,239L379,243L379,246L379,250L377,254L375,257L377,261L377,264L374,266L372,270L371,273L370,277L367,279L364,281L362,284L361,288L358,291L355,293L350,294L345,293L342,292L338,292L336,289L335,285L335,282L332,278L330,275L330,272L328,268L327,263L329,258L331,255L330,251L329,247L329,243L330,239L331,236L335,235L338,234L342,232L345,231L349,232L352,234L355,233L359,231L363,232L366,231L370,231L372,231Z",
+            "중구": "M278,291L278,295L278,299L282,300L280,303L278,306L276,309L273,310L271,313L269,316L266,319L263,321L262,325L258,323L258,319L254,319L251,319L248,322L245,320L243,317L239,316L236,315L232,314L229,313L225,314L220,313L216,313L213,316L212,313L213,309L215,306L218,304L218,301L219,297L222,295L225,295L229,295L232,295L236,295L239,296L243,296L247,296L250,295L254,294L258,294L261,294L265,294L269,294L272,293L276,291L278,291Z"
+        };
+
+        const labelCoords = {
+            "서초구": [292, 412], "강남구": [330, 385], "강서구": [62, 299], "송파구": [376, 375], "은평구": [170, 235],
+            "마포구": [155, 303], "노원구": [336, 188], "성북구": [278, 248], "강북구": [269, 198], "관악구": [192, 423],
+            "영등포구": [160, 355], "종로구": [235, 265], "강동구": [410, 320], "구로구": [100, 386], "서대문구": [184, 278],
+            "용산구": [232, 342], "동작구": [193, 385], "도봉구": [287, 175], "양천구": [98, 347], "광진구": [345, 321],
+            "금천구": [146, 430], "성동구": [297, 318], "동대문구": [307, 277], "중랑구": [354, 262], "중구": [246, 308]
+        };
+
+        let currentAge = '20대';
+        let selectedGu = '마포구';
+        let barChartInstance = null;
+
+        function initSvgMap() {
+            const polyGroup = document.getElementById('polygonsGroup');
+            const labelGroup = document.getElementById('labelsGroup');
+            const tooltip = document.getElementById('mapTooltip');
+
+            polyGroup.innerHTML = '';
+            labelGroup.innerHTML = '';
+
+            Object.keys(seoulSvgPaths).forEach(gu => {
+                const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+                path.setAttribute("id", `poly-${gu}`);
+                path.setAttribute("class", "gu-path");
+                path.setAttribute("d", seoulSvgPaths[gu]);
+
+                path.addEventListener("mouseenter", () => {
+                    const val = seoulAgeData[gu][currentAge].toFixed(2);
+                    tooltip.innerText = `${gu} (${currentAge}) : ${val}%`;
+                    tooltip.style.opacity = 1;
+                });
+
+                path.addEventListener("mouseleave", () => {
+                    tooltip.style.opacity = 0;
+                });
+
+                path.addEventListener("click", () => {
+                    focusDistrict(gu);
+                });
+
+                polyGroup.appendChild(path);
+
+                const [cx, cy] = labelCoords[gu];
+                const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                text.setAttribute("id", `label-${gu}`);
+                text.setAttribute("x", cx);
+                text.setAttribute("y", cy);
+                text.setAttribute("class", "gu-label");
+                text.textContent = gu.replace('구', '');
+                labelGroup.appendChild(text);
+            });
+        }
+
+        function getHeatmapColor(val, min, max) {
+            if (max === min) return { bg: "#FF6D1F", text: "#ffffff" };
+            const t = (val - min) / (max - min);
+            let r, g, b;
+            if (t < 0.7) {
+                const localT = t / 0.7;
+                r = 255;
+                g = Math.round(232 - (232 - 109) * localT);
+                b = Math.round(214 - (214 - 31) * localT);
+            } else {
+                const localT = (t - 0.7) / 0.3;
+                r = Math.round(255 - (255 - 184) * localT);
+                g = Math.round(109 - (109 - 55) * localT);
+                b = Math.round(31 - 31 * localT);
+            }
+            const textColor = t > 0.45 ? "#ffffff" : "#222222";
+            return { bg: `rgb(${r}, ${g}, ${b})`, text: textColor };
+        }
+
+        function initBarChart() {
+            const ctx = document.getElementById('top5BarChart').getContext('2d');
+            barChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: '방문 구성비(%)',
+                        data: [],
+                        backgroundColor: ['#FF6D1F', '#ff8542', '#ff9b63', '#ffb285', '#ffc8a6'],
+                        borderColor: '#222222',
+                        borderWidth: 1,
+                        borderRadius: 10,
+                        barThickness: 28
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    onClick: (e, elements) => {
+                        if (elements.length > 0) {
+                            const idx = elements[0].index;
+                            const guName = barChartInstance.data.labels[idx].replace(/^\d+위\s+/, '');
+                            focusDistrict(guName);
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: '#222222',
+                            padding: 12,
+                            titleFont: { family: 'Pretendard', size: 13, weight: 'bold' },
+                            bodyFont: { family: 'Pretendard', size: 13 },
+                            callbacks: {
+                                label: (ctx) => ` ${currentAge} 구성비: ${ctx.raw.toFixed(2)}%`
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            grid: { color: 'rgba(34,34,34,0.06)' },
+                            ticks: {
+                                font: { family: 'Pretendard', weight: 'bold', size: 11 },
+                                callback: (v) => v + '%'
+                            }
+                        },
+                        y: {
+                            grid: { display: false },
+                            ticks: {
+                                font: { family: 'Pretendard', weight: '800', size: 13 },
+                                color: '#222222'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function selectAge(ageKey, btnElem) {
+            currentAge = ageKey;
+            document.querySelectorAll('#seoulAgeView .age-btn').forEach(b => b.classList.remove('active'));
+            if (btnElem) btnElem.classList.add('active');
+
+            document.getElementById('mapTitle').innerHTML = 
+                `<i class="fa-solid fa-map-location-dot" style="color: var(--palette-orange);"></i> 서울시 ${ageKey} 방문 구성비 히트맵`;
+            document.getElementById('chartTitle').innerHTML = 
+                `<i class="fa-solid fa-trophy" style="color: var(--palette-orange);"></i> ${ageKey} 선호 자치구 TOP 5`;
+
+            const sortedList = Object.keys(seoulAgeData).map(gu => ({
+                gu: gu,
+                val: seoulAgeData[gu][ageKey]
+            })).sort((a, b) => b.val - a.val);
+
+            const vals = sortedList.map(d => d.val);
+            const minVal = Math.min(...vals);
+            const maxVal = Math.max(...vals);
+            const avgVal = (vals.reduce((a, b) => a + b, 0) / vals.length).toFixed(2);
+
+            const minGu = sortedList[sortedList.length - 1].gu;
+            const maxGu = sortedList[0].gu;
+
+            document.getElementById('seoulAvgBadge').innerText = `서울 평균 ${avgVal}%`;
+            document.getElementById('minLegendText').innerText = `최저 ${minVal.toFixed(2)}% (${minGu})`;
+            document.getElementById('maxLegendText').innerText = `최고 ${maxVal.toFixed(2)}% (${maxGu})`;
+
+            const top5Names = sortedList.slice(0, 5).map(d => d.gu);
+
+            sortedList.forEach(item => {
+                const poly = document.getElementById(`poly-${item.gu}`);
+                const label = document.getElementById(`label-${item.gu}`);
+                const colorObj = getHeatmapColor(item.val, minVal, maxVal);
+
+                if (poly) {
+                    poly.style.fill = colorObj.bg;
+                    poly.classList.toggle('top5-border', top5Names.includes(item.gu));
+                }
+                if (label) {
+                    label.style.fill = colorObj.text;
+                }
+            });
+
+            const top5 = sortedList.slice(0, 5);
+            barChartInstance.data.labels = top5.map((d, i) => `${i + 1}위 ${d.gu}`);
+            barChartInstance.data.datasets[0].data = top5.map(d => d.val);
+            barChartInstance.options.scales.x.max = Math.ceil(maxVal + 2);
+            barChartInstance.update();
+
+            const cardsContainer = document.getElementById('top5CardsContainer');
+            cardsContainer.innerHTML = '';
+            top5.forEach((item, idx) => {
+                cardsContainer.innerHTML += `
+                    <div class="top5-mini-card" id="minicard-${item.gu}" onclick="focusDistrict('${item.gu}')">
+                        <span class="mini-rank">${idx + 1}위</span>
+                        <span class="mini-gu">${item.gu}</span>
+                        <span class="mini-val">${item.val.toFixed(2)}%</span>
+                    </div>
+                `;
+            });
+
+            focusDistrict(top5[0].gu);
+        }
+
+        function focusDistrict(guName) {
+            selectedGu = guName;
+
+            document.querySelectorAll('.gu-path').forEach(p => p.classList.remove('selected'));
+            const activePoly = document.getElementById(`poly-${guName}`);
+            if (activePoly) {
+                activePoly.classList.add('selected');
+                activePoly.parentNode.appendChild(activePoly);
+            }
+
+            document.querySelectorAll('.top5-mini-card').forEach(c => c.classList.remove('active'));
+            const activeCard = document.getElementById(`minicard-${guName}`);
+            if (activeCard) activeCard.classList.add('active');
+
+            const rankInAge = Object.keys(seoulAgeData)
+                .sort((a, b) => seoulAgeData[b][currentAge] - seoulAgeData[a][currentAge])
+                .indexOf(guName) + 1;
+
+            document.getElementById('detailGuName').innerText = guName;
+            document.getElementById('detailGuRankBadge').innerText = `${currentAge} 선호 전체 ${rankInAge}위 (${seoulAgeData[guName][currentAge].toFixed(2)}%)`;
+
+            const breakdownGrid = document.getElementById('ageBreakdownGrid');
+            breakdownGrid.innerHTML = '';
+            ['20대', '30대', '40대', '50대', '60대', '70대'].forEach(age => {
+                const val = seoulAgeData[guName][age].toFixed(2);
+                const isCurrent = (age === currentAge) ? 'current-age' : '';
+                breakdownGrid.innerHTML += `
+                    <div class="breakdown-pill ${isCurrent}">
+                        <span>${age}</span>
+                        <strong>${val}%</strong>
+                    </div>
+                `;
+            });
+        }
+
+        // 초기 실행
+        window.addEventListener('DOMContentLoaded', () => {
+            initLineChart();
+            initPieChart();
+            onSliderChange(0);
+        });
+    </script>
+</body>
+</html>

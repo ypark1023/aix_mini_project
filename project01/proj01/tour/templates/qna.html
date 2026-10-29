@@ -1,0 +1,1103 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TravelMate - QnA 게시판</title>
+    
+    <!-- Google Fonts & Font Awesome Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Pretendard:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --bg-bright: #ffffff;
+            --bg-cream-light: #faf3e1;
+            --bg-cream-mid: #f5e7c6;
+            --palette-orange: #FF6D1F;
+            --palette-dark: #222222;
+            --text-muted: #777777;
+            --subtle-border: rgba(34, 34, 34, 0.12);
+            --border-radius-lg: 24px;
+            --border-radius-md: 14px;
+            --transition: all 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Pretendard', sans-serif;
+            background-color: var(--bg-bright);
+            color: var(--palette-dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* =========================================================
+           1. Header Navigation (우리 홈페이지 공통 헤더)
+           ========================================================= */
+        header {
+            padding: 1rem 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: var(--bg-cream-light);
+            border-bottom: 1px solid var(--subtle-border);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background-color: var(--palette-dark);
+            color: #ffffff;
+            padding: 0.55rem 1.2rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.88rem;
+            transition: var(--transition);
+        }
+
+        .back-btn:hover {
+            background-color: var(--palette-orange);
+            transform: translateX(-3px);
+        }
+
+        .brand-logo {
+            font-family: 'Fredoka', cursive;
+            font-size: 1.9rem;
+            font-weight: 700;
+            color: var(--palette-dark);
+            text-decoration: none;
+        }
+
+        .brand-logo span {
+            color: var(--palette-orange);
+        }
+
+        .header-nav {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .header-nav a {
+            text-decoration: none;
+            color: var(--palette-dark);
+            font-weight: 700;
+            font-size: 0.95rem;
+            transition: color 0.2s;
+        }
+
+        .header-nav a:hover,
+        .header-nav a.active {
+            color: var(--palette-orange);
+        }
+
+        /* =========================================================
+           2. Hero Banner ({ QnA } 고정 다크 배너 영역)
+           ========================================================= */
+        .hero-banner {
+            background-color: var(--palette-dark);
+            color: #ffffff;
+            padding: 4.8rem 1.5rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            border-bottom: 4px solid var(--palette-orange);
+        }
+
+        .hero-banner::before {
+            content: '';
+            position: absolute;
+            width: 360px;
+            height: 360px;
+            background: radial-gradient(circle, rgba(255, 109, 31, 0.14) 0%, transparent 70%);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+        }
+
+        .hero-brace-title {
+            font-family: 'Fredoka', 'Pretendard', sans-serif;
+            font-size: 4.2rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            display: inline-flex;
+            align-items: center;
+            gap: 1.2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-brace-title .brace {
+            color: var(--palette-orange);
+            font-size: 5rem;
+            font-weight: 400;
+            line-height: 1;
+        }
+
+        .hero-subtitle {
+            margin-top: 1rem;
+            color: var(--bg-cream-mid);
+            font-size: 1rem;
+            font-weight: 500;
+            opacity: 0.9;
+        }
+
+        /* =========================================================
+           3. Main Content Container
+           ========================================================= */
+        .qna-container {
+            max-width: 980px;
+            width: 100%;
+            margin: 3.5rem auto 5rem;
+            padding: 0 1.5rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 대분류 탭 (FAQ | 1:1 질문 게시판) */
+        .major-tabs {
+            display: flex;
+            align-items: baseline;
+            gap: 1.8rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.2rem;
+            border-bottom: 1px solid var(--subtle-border);
+        }
+
+        .major-tab-btn {
+            background: none;
+            border: none;
+            font-family: 'Pretendard', sans-serif;
+            font-size: 2rem;
+            font-weight: 800;
+            color: #b5b5b5;
+            cursor: pointer;
+            transition: var(--transition);
+            padding: 0;
+        }
+
+        .major-tab-btn:hover {
+            color: #666666;
+        }
+
+        .major-tab-btn.active {
+            color: var(--palette-dark);
+            position: relative;
+        }
+
+        .major-tab-btn.active::after {
+            content: '';
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background-color: var(--palette-orange);
+            border-radius: 50%;
+            margin-left: 6px;
+            vertical-align: super;
+        }
+
+        /* 소분류 카테고리 버튼 바 & 우측 컨트롤 */
+        .sub-controls-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1.8rem;
+        }
+
+        .category-pills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.55rem;
+        }
+
+        .cat-pill-btn {
+            padding: 0.55rem 1.2rem;
+            border-radius: 6px;
+            border: 1px solid transparent;
+            background-color: var(--bg-cream-light);
+            color: #555555;
+            font-family: 'Pretendard', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .cat-pill-btn:hover {
+            background-color: var(--bg-cream-mid);
+            color: var(--palette-dark);
+        }
+
+        .cat-pill-btn.active {
+            background-color: var(--palette-orange);
+            color: #ffffff;
+            box-shadow: 0 3px 10px rgba(255, 109, 31, 0.28);
+        }
+
+        .right-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .search-mini-box {
+            position: relative;
+        }
+
+        .search-mini-box input {
+            padding: 0.5rem 2.2rem 0.5rem 0.9rem;
+            border: 1px solid var(--subtle-border);
+            border-radius: 6px;
+            font-family: 'Pretendard', sans-serif;
+            font-size: 0.86rem;
+            background-color: var(--bg-cream-light);
+            color: var(--palette-dark);
+            outline: none;
+            width: 190px;
+            transition: var(--transition);
+        }
+
+        .search-mini-box input:focus {
+            border-color: var(--palette-orange);
+            background-color: #ffffff;
+            width: 230px;
+        }
+
+        .search-mini-box i {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #888;
+            font-size: 0.85rem;
+        }
+
+        .expand-all-btn {
+            background: none;
+            border: none;
+            color: #777777;
+            font-family: 'Pretendard', sans-serif;
+            font-size: 0.88rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: color 0.2s;
+            padding: 0.3rem 0.4rem;
+        }
+
+        .expand-all-btn:hover {
+            color: var(--palette-orange);
+        }
+
+        /* =========================================================
+           4. Accordion List (질문/답변 아코디언 리스트)
+           ========================================================= */
+        .accordion-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .accordion-item {
+            border-radius: 10px;
+            background-color: #ffffff;
+            transition: var(--transition);
+            border: 1px solid transparent;
+        }
+
+        .accordion-item.open {
+            background-color: var(--bg-cream-light);
+            border-color: var(--subtle-border);
+            padding-bottom: 0.4rem;
+        }
+
+        .accordion-header {
+            width: 100%;
+            padding: 1.25rem 1.5rem;
+            background: none;
+            border: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            text-align: left;
+            cursor: pointer;
+            font-family: 'Pretendard', sans-serif;
+        }
+
+        .accordion-header:hover .q-title {
+            color: var(--palette-orange);
+        }
+
+        .q-left {
+            display: flex;
+            align-items: center;
+            gap: 0.85rem;
+            flex: 1;
+        }
+
+        .q-mark {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--palette-orange);
+            flex-shrink: 0;
+        }
+
+        .q-cat-tag {
+            font-size: 0.74rem;
+            font-weight: 800;
+            padding: 0.2rem 0.55rem;
+            border-radius: 4px;
+            background-color: var(--bg-cream-mid);
+            color: var(--palette-dark);
+            flex-shrink: 0;
+        }
+
+        .q-title {
+            font-size: 1.02rem;
+            font-weight: 700;
+            color: var(--palette-dark);
+            transition: color 0.2s;
+            line-height: 1.45;
+        }
+
+        .q-right {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            flex-shrink: 0;
+        }
+
+        .q-status-badge {
+            font-size: 0.75rem;
+            font-weight: 800;
+            padding: 0.22rem 0.6rem;
+            border-radius: 50px;
+            background-color: var(--palette-dark);
+            color: #ffffff;
+        }
+
+        .q-status-badge.waiting {
+            background-color: #e0d5c1;
+            color: #555555;
+        }
+
+        .chevron-icon {
+            color: #888888;
+            font-size: 0.9rem;
+            transition: transform 0.25s ease, color 0.2s ease;
+        }
+
+        .accordion-item.open .chevron-icon {
+            transform: rotate(180deg);
+            color: var(--palette-orange);
+        }
+
+        /* 답변 본문 영역 */
+        .accordion-body {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .accordion-item.open .accordion-body {
+            max-height: 500px;
+        }
+
+        .answer-content {
+            padding: 0.2rem 1.8rem 1.3rem 1.5rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.85rem;
+            color: #333333;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        .answer-arrow {
+            color: var(--palette-orange);
+            font-weight: 800;
+            font-size: 1.05rem;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        .answer-text {
+            flex: 1;
+        }
+
+        .answer-meta {
+            margin-top: 0.6rem;
+            font-size: 0.8rem;
+            color: #777777;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 1rem;
+            background-color: var(--bg-cream-light);
+            border-radius: 14px;
+            color: #666;
+            font-weight: 600;
+        }
+
+        /* 💡 게시판 우측 하단 <질문 등록하기> 버튼 영역 */
+        .board-bottom-actions {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 1.8rem;
+            min-height: 44px;
+        }
+
+        .write-qna-btn {
+            background-color: var(--palette-orange);
+            color: #ffffff;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            font-family: 'Pretendard', sans-serif;
+            font-weight: 800;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 6px 16px rgba(255, 109, 31, 0.28);
+            display: none; /* 기본(FAQ 탭)에서는 비활성화 */
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* 1:1 질문 게시판 탭에서만 표시 */
+        .write-qna-btn.active-btn {
+            display: inline-flex;
+        }
+
+        .write-qna-btn:hover {
+            background-color: var(--palette-dark);
+            transform: translateY(-2px);
+        }
+
+        /* =========================================================
+           5. 새 질문 작성 모달 (1:1 질문 등록 기능)
+           ========================================================= */
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(34, 34, 34, 0.6);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            padding: 1rem;
+        }
+
+        .modal-backdrop.show {
+            display: flex;
+        }
+
+        .modal-card {
+            background-color: #ffffff;
+            width: 100%;
+            max-width: 540px;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 16px 40px rgba(0,0,0,0.2);
+            border: 1px solid var(--subtle-border);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.3rem;
+        }
+
+        .modal-header h3 {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: var(--palette-dark);
+        }
+
+        .close-modal-btn {
+            background: none;
+            border: none;
+            font-size: 1.3rem;
+            color: #777;
+            cursor: pointer;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.86rem;
+            font-weight: 800;
+            margin-bottom: 0.4rem;
+            color: var(--palette-dark);
+        }
+
+        .form-group select,
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem 0.9rem;
+            border: 1px solid var(--subtle-border);
+            border-radius: 8px;
+            background-color: var(--bg-cream-light);
+            font-family: 'Pretendard', sans-serif;
+            font-size: 0.92rem;
+            outline: none;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 110px;
+        }
+
+        .form-group select:focus,
+        .form-group input:focus,
+        .form-group textarea:focus {
+            border-color: var(--palette-orange);
+            background-color: #ffffff;
+        }
+
+        .modal-submit-btn {
+            width: 100%;
+            padding: 0.85rem;
+            border: none;
+            border-radius: 10px;
+            background-color: var(--palette-orange);
+            color: #ffffff;
+            font-weight: 800;
+            font-size: 0.98rem;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-top: 0.5rem;
+        }
+
+        .modal-submit-btn:hover {
+            background-color: var(--palette-dark);
+        }
+
+        /* =========================================================
+           6. Footer (첨부 이미지 하단 Contact / Partners / Top↑ 구조)
+           ========================================================= */
+        footer {
+            border-top: 1px solid var(--subtle-border);
+            background-color: var(--bg-cream-light);
+            padding: 3rem 1.5rem 2.5rem;
+            margin-top: auto;
+        }
+
+        .footer-inner {
+            max-width: 980px;
+            margin: 0 auto;
+        }
+
+        .footer-top-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr auto;
+            gap: 2rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .footer-col h4 {
+            font-size: 0.9rem;
+            font-weight: 800;
+            color: var(--palette-dark);
+            margin-bottom: 0.9rem;
+        }
+
+        .footer-col p {
+            font-size: 0.84rem;
+            color: #555555;
+            line-height: 1.7;
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-col a {
+            color: var(--palette-dark);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .footer-col a:hover {
+            color: var(--palette-orange);
+        }
+
+        .top-scroll-btn {
+            background: none;
+            border: none;
+            font-family: 'Pretendard', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 800;
+            color: var(--palette-dark);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            align-self: flex-start;
+            transition: color 0.2s, transform 0.2s;
+        }
+
+        .top-scroll-btn:hover {
+            color: var(--palette-orange);
+            transform: translateY(-3px);
+        }
+
+        .footer-bottom-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--subtle-border);
+            font-size: 0.82rem;
+            color: #777777;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 0.9rem;
+            font-size: 1.1rem;
+        }
+
+        .social-links a {
+            color: var(--palette-dark);
+            transition: color 0.2s;
+        }
+
+        .social-links a:hover {
+            color: var(--palette-orange);
+        }
+
+        @media (max-width: 768px) {
+            header { padding: 1rem 1.2rem; }
+            .header-nav { display: none; }
+            .hero-brace-title { font-size: 3rem; }
+            .hero-brace-title .brace { font-size: 3.6rem; }
+            .major-tab-btn { font-size: 1.45rem; }
+            .footer-top-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 1. 상단 네비게이션 헤더 -->
+    <header>
+        <div class="header-left">
+            <a href="trend_analysis.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i> 대시보드로</a>
+            <a href="#" class="brand-logo">TravelMate <span>QnA</span></a>
+        </div>
+
+        <nav class="header-nav">
+            <a href="trend_analysis.html">전국 추이 분석</a>
+            <a href="trend_analysis.html">서울 자치구 히트맵</a>
+            <a href="#" class="active">QnA 게시판</a>
+        </nav>
+    </header>
+
+    <!-- 2. 상단 히어로 배너 (제목을 { QnA }로 고정) -->
+    <section class="hero-banner">
+        <h1 class="hero-brace-title">
+            <span class="brace">{</span>
+            <span>QnA</span>
+            <span class="brace">}</span>
+        </h1>
+        <p class="hero-subtitle">TravelMate 관광 빅데이터 대시보드 이용 안내 및 질문 게시판</p>
+    </section>
+
+    <!-- 3. 메인 QnA 게시판 컨테이너 -->
+    <main class="qna-container">
+        
+        <!-- 대분류 탭 (자주 묻는 질문 | 1:1 질문 게시판) -->
+        <div class="major-tabs">
+            <button class="major-tab-btn active" onclick="switchBoardMode('faq', this)">자주 묻는 질문 (FAQ)</button>
+            <button class="major-tab-btn" onclick="switchBoardMode('qna', this)">1:1 질문 게시판 (Q&A)</button>
+        </div>
+
+        <!-- 소분류 카테고리 버튼 & 우측 검색 / 전체 열기 -->
+        <div class="sub-controls-row">
+            <div class="category-pills" id="categoryPills">
+                <button class="cat-pill-btn active" onclick="filterByCategory('전체', this)">전체</button>
+                <button class="cat-pill-btn" onclick="filterByCategory('데이터 기준', this)">데이터 기준</button>
+                <button class="cat-pill-btn" onclick="filterByCategory('대시보드 기능', this)">대시보드 기능</button>
+                <button class="cat-pill-btn" onclick="filterByCategory('지역·연령 분석', this)">지역·연령 분석</button>
+            </div>
+
+            <div class="right-actions">
+                <div class="search-mini-box">
+                    <input type="text" id="qnaSearchInput" placeholder="질문 키워드 검색..." oninput="renderAccordionList()">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </div>
+                <button class="expand-all-btn" id="expandAllBtn" onclick="toggleExpandAll()">전체 열기</button>
+            </div>
+        </div>
+
+        <!-- 아코디언 리스트 영역 -->
+        <div class="accordion-list" id="accordionList"></div>
+
+        <!-- 💡 우측 하단 <질문 등록하기> 버튼 (1:1 질문 게시판 탭에서만 활성화) -->
+        <div class="board-bottom-actions">
+            <button id="writeQnaBtn" class="write-qna-btn" onclick="openQuestionModal()">
+                <i class="fa-solid fa-pen-to-square"></i> 질문 등록하기
+            </button>
+        </div>
+
+    </main>
+
+    <!-- 4. 새 질문 등록 모달창 -->
+    <div class="modal-backdrop" id="questionModal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-comment-dots" style="color: var(--palette-orange);"></i> 새 질문 등록하기</h3>
+                <button class="close-modal-btn" onclick="closeQuestionModal()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form onsubmit="submitNewQuestion(event)">
+                <div class="form-group">
+                    <label>문의 카테고리</label>
+                    <select id="newQCategory" required>
+                        <option value="데이터 기준">데이터 기준</option>
+                        <option value="대시보드 기능">대시보드 기능</option>
+                        <option value="지역·연령 분석">지역·연령 분석</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>작성자 닉네임</label>
+                    <input type="text" id="newQAuthor" placeholder="예: 여행하는기획자" required>
+                </div>
+                <div class="form-group">
+                    <label>질문 제목</label>
+                    <input type="text" id="newQTitle" placeholder="궁금하신 내용을 한 줄로 입력해 주세요." required>
+                </div>
+                <div class="form-group">
+                    <label>상세 문의 내용</label>
+                    <textarea id="newQContent" placeholder="데이터 기준이나 대시보드 활용과 관련하여 궁금한 점을 자세히 적어주세요." required></textarea>
+                </div>
+                <button type="submit" class="modal-submit-btn">질문 등록 완료</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 5. 하단 푸터 -->
+    <footer>
+        <div class="footer-inner">
+            <div class="footer-top-grid">
+                <div class="footer-col">
+                    <h4>Contact</h4>
+                    <p><strong>데이터 분석 및 대시보드 문의:</strong><br><a href="mailto:data_hub@travelmate.kr">data_hub@travelmate.kr</a></p>
+                    <p><strong>서비스 제휴 및 기술 지원:</strong><br><a href="mailto:support@travelmate.kr">support@travelmate.kr</a></p>
+                </div>
+                <div class="footer-col">
+                    <h4>Data Sources & Partners</h4>
+                    <p>
+                        <a href="https://datalab.visitkorea.or.kr" target="_blank">한국관광 데이터랩 (KTO) <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.75rem;"></i></a><br>
+                        <a href="https://puzzle.geovision.co.kr" target="_blank">SKT 지오비전 퍼즐 관광 API <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.75rem;"></i></a>
+                    </p>
+                    <p style="margin-top:0.5rem;">서울특별시 25개 자치구 연령별 구성비 검증 데이터셋 적용</p>
+                </div>
+                <button class="top-scroll-btn" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+                    Top <i class="fa-solid fa-arrow-up"></i>
+                </button>
+            </div>
+
+            <div class="footer-bottom-row">
+                <span>&copy; 2026 TravelMate Data Hub. All rights reserved.</span>
+                <div class="social-links">
+                    <a href="#" title="GitHub"><i class="fa-brands fa-github"></i></a>
+                    <a href="#" title="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#" title="YouTube"><i class="fa-brands fa-youtube"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        // 1. 초기 FAQ 및 Q&A 데이터셋
+        const boardData = {
+            faq: [
+                {
+                    id: 1,
+                    category: "데이터 기준",
+                    question: "전국 17개 광역시도 및 서울시 자치구 방문객 데이터는 어디에서 수집되었나요?",
+                    answer: "한국관광 데이터랩(KTO)의 이동통신 기반 방문자 통계와 티맵(T map) 목적지 검색 건수 빅데이터를 결합하여 산출되었습니다. 서울시 25개 자치구 연령별 구성비는 2025년 9월부터 2026년 8월까지의 1년간 통합 검증 데이터를 기준으로 제공됩니다.",
+                    open: true
+                },
+                {
+                    id: 2,
+                    category: "데이터 기준",
+                    question: "서울시 연령대별 구성비(%)는 어떤 방식으로 계산되나요?",
+                    answer: "각 자치구 전체 방문객 중 해당 연령대(20대~70대 이상)가 차지하는 비중(%)을 의미합니다. 예를 들어 마포구의 20대 구성비가 24.84%라는 것은 마포구 전체 방문객 중 약 4분의 1이 20대 방문객임을 뜻합니다.",
+                    open: false
+                },
+                {
+                    id: 3,
+                    category: "대시보드 기능",
+                    question: "원 그래프(파이 차트)의 슬라이더와 선 그래프는 어떻게 연동되나요?",
+                    answer: "좌측 하단의 볼륨형 슬라이더를 좌우로 움직이면 2025년 8월부터 2026년 6월까지 월별 17개 광역시도 점유율이 실시간으로 변경됩니다. 또한 원 그래프의 특정 지역 조각을 클릭하면 우측 선 그래프에서도 해당 지역의 추이 선이 굵게 하이라이트됩니다.",
+                    open: false
+                },
+                {
+                    id: 4,
+                    category: "지역·연령 분석",
+                    question: "서울시 히트맵에서 색상이 진한 구와 테두리가 표시된 구의 차이는 무엇인가요?",
+                    answer: "선택하신 연령대(20대~70대)에서 구성비(%)가 높을수록 연한 크림 오렌지색에서 진한 딥 오렌지색으로 칠해집니다. 특히 상위 TOP 5에 해당하는 자치구는 지도상에서 한눈에 식별할 수 있도록 화이트 강조 테두리가 함께 표시됩니다.",
+                    open: false
+                },
+                {
+                    id: 5,
+                    category: "지역·연령 분석",
+                    question: "20대와 30대가 가장 선호하는 서울 자치구가 서로 다른 이유가 궁금합니다.",
+                    answer: "데이터 분석 결과 20대는 홍대·연남·신촌·건대 등 대학가와 핫플레이스가 밀집한 마포구(24.84%), 서대문구(24.10%), 관악구(23.37%), 광진구(21.69%) 순으로 높게 나타나며, 30대는 업무지구 및 프리미엄 상권이 밀집한 강남구(23.31%), 용산구(23.23%), 영등포구(23.05%) 순으로 높게 나타납니다.",
+                    open: false
+                },
+                {
+                    id: 6,
+                    category: "지역·연령 분석",
+                    question: "50대~70대 시니어 연령층에서 도봉구와 중랑구 비율이 높은 이유는 무엇인가요?",
+                    answer: "도봉산·북한산·용마산 등 주요 명산 등산로와 자연 친화적 공원, 전통시장 상권이 발달한 도봉구(60대 19.08%, 70대 11.56% 1위), 중랑구(50대 19.74% 1위), 강북구, 노원구 등이 중장년 및 시니어 세대의 여가 목적지로 큰 인기를 얻고 있기 때문입니다.",
+                    open: false
+                },
+                {
+                    id: 7,
+                    category: "대시보드 기능",
+                    question: "차트 그림이나 원본 엑셀 데이터를 별도로 다운로드할 수 있나요?",
+                    answer: "네, 각 차트 영역에서 마우스 우클릭 후 '이미지로 저장'을 하시거나, 하단 Contact 이메일을 통해 연구·기획 목적의 원본 CSV/엑셀 데이터셋을 요청하실 수 있습니다.",
+                    open: false
+                },
+                {
+                    id: 8,
+                    category: "데이터 기준",
+                    question: "10대 미만 및 10대 구성비 데이터는 왜 버튼에서 제외되었나요?",
+                    answer: "실제 여행 소비 및 이동 주체로서의 경향성을 명확히 비교하기 위해, 핵심 이동 연령층인 20대부터 70대 이상까지의 6개 연령대 그룹을 중심으로 대시보드 필터를 구성했습니다.",
+                    open: false
+                }
+            ],
+            qna: [
+                {
+                    id: 101,
+                    category: "지역·연령 분석",
+                    author: "콘텐츠PD",
+                    date: "2026.10.28",
+                    status: "답변완료",
+                    question: "성수동이 포함된 성동구의 2030 방문 구성비 순위는 전체 몇 위인가요?",
+                    answer: "안녕하세요! 2025.09~2026.08 통합 데이터 기준 성동구는 20대 구성비 20.70%(서울 25개 구 중 6위), 30대 구성비 21.90%(서울 25개 구 중 7위)로 2030 세대 모두에서 최상위권 선호도를 기록하고 있습니다.",
+                    open: true
+                },
+                {
+                    id: 102,
+                    category: "대시보드 기능",
+                    author: "데이터분석러",
+                    date: "2026.10.27",
+                    status: "답변완료",
+                    question: "서울시 히트맵에서 특정 구를 클릭했을 때 하단에 나오는 수치들은 합계가 100%인가요?",
+                    answer: "하단 상세 박스에 표시되는 20대~70대 수치는 해당 자치구의 전체 방문객 중 각 연령대가 차지하는 비중이며, 표기되지 않은 10대 이하 비중(약 4~6%)을 더하면 전체 100%가 됩니다.",
+                    open: false
+                },
+                {
+                    id: 103,
+                    category: "데이터 기준",
+                    author: "여행공감기획자",
+                    date: "2026.10.29",
+                    status: "답변완료",
+                    question: "2025년 10월에 전국 모든 시도의 방문객 수가 급증한 특별한 이유가 있나요?",
+                    answer: "2025년 10월은 개천절·추석 황금연휴·한글날이 이어진 장기 연휴 효과와 가을 단풍철 여행 수요가 겹치면서 경기도(2,167만 건), 서울(892만 건), 강원(706만 건) 등 전국 17개 시도 모두 연중 최고치를 기록했습니다.",
+                    open: false
+                }
+            ]
+        };
+
+        let currentMode = 'faq';       // 'faq' 또는 'qna'
+        let currentCategory = '전체';   // '전체', '데이터 기준', '대시보드 기능', '지역·연령 분석'
+        let isAllExpanded = false;
+
+        // 2. 대분류 탭 전환 (FAQ <-> 1:1 Q&A) 및 우측 하단 <질문 등록하기> 버튼 활성화 제어
+        function switchBoardMode(mode, btnElem) {
+            currentMode = mode;
+            isAllExpanded = false;
+            document.getElementById('expandAllBtn').innerText = '전체 열기';
+
+            document.querySelectorAll('.major-tab-btn').forEach(b => b.classList.remove('active'));
+            if (btnElem) btnElem.classList.add('active');
+
+            // 💡 우측 하단 <질문 등록하기> 버튼은 'qna'(1:1 질문 게시판) 모드일 때만 표시
+            const writeBtn = document.getElementById('writeQnaBtn');
+            if (mode === 'qna') {
+                writeBtn.classList.add('active-btn');
+            } else {
+                writeBtn.classList.remove('active-btn');
+            }
+
+            renderAccordionList();
+        }
+
+        // 3. 소분류 카테고리 필터 전환
+        function filterByCategory(cat, btnElem) {
+            currentCategory = cat;
+            isAllExpanded = false;
+            document.getElementById('expandAllBtn').innerText = '전체 열기';
+
+            document.querySelectorAll('.cat-pill-btn').forEach(b => b.classList.remove('active'));
+            if (btnElem) btnElem.classList.add('active');
+
+            renderAccordionList();
+        }
+
+        // 4. 아코디언 리스트 렌더링
+        function renderAccordionList() {
+            const listEl = document.getElementById('accordionList');
+            const keyword = document.getElementById('qnaSearchInput').value.trim().toLowerCase();
+            const sourceList = boardData[currentMode];
+
+            const filtered = sourceList.filter(item => {
+                const matchCat = (currentCategory === '전체') || (item.category === currentCategory);
+                const matchKw = !keyword || 
+                                item.question.toLowerCase().includes(keyword) || 
+                                item.answer.toLowerCase().includes(keyword);
+                return matchCat && matchKw;
+            });
+
+            if (filtered.length === 0) {
+                listEl.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fa-regular fa-circle-question" style="font-size:2rem; color:var(--palette-orange); margin-bottom:0.6rem; display:block;"></i>
+                        검색 조건에 해당하는 질문이 없습니다.
+                    </div>
+                `;
+                return;
+            }
+
+            listEl.innerHTML = filtered.map(item => {
+                const statusBadgeHtml = (currentMode === 'qna')
+                    ? `<span class="q-status-badge ${item.status === '답변대기' ? 'waiting' : ''}">${item.status}</span>`
+                    : '';
+
+                const metaHtml = (currentMode === 'qna')
+                    ? `<div class="answer-meta"><span>작성자: ${item.author}</span><span>등록일: ${item.date}</span></div>`
+                    : '';
+
+                return `
+                    <div class="accordion-item ${item.open ? 'open' : ''}" id="acc-item-${item.id}">
+                        <button class="accordion-header" onclick="toggleAccordionItem(${item.id})">
+                            <div class="q-left">
+                                <span class="q-mark">Q</span>
+                                <span class="q-cat-tag">${item.category}</span>
+                                <span class="q-title">${item.question}</span>
+                            </div>
+                            <div class="q-right">
+                                ${statusBadgeHtml}
+                                <i class="fa-solid fa-chevron-down chevron-icon"></i>
+                            </div>
+                        </button>
+                        <div class="accordion-body">
+                            <div class="answer-content">
+                                <span class="answer-arrow">&rdsh;</span>
+                                <div class="answer-text">
+                                    <p>${item.answer}</p>
+                                    ${metaHtml}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // 5. 개별 질문 아코디언 열기/닫기
+        function toggleAccordionItem(id) {
+            const list = boardData[currentMode];
+            const target = list.find(item => item.id === id);
+            if (target) {
+                target.open = !target.open;
+                const domItem = document.getElementById(`acc-item-${id}`);
+                if (domItem) {
+                    domItem.classList.toggle('open', target.open);
+                }
+            }
+        }
+
+        // 6. 우측 '전체 열기 / 전체 닫기' 토글 버튼
+        function toggleExpandAll() {
+            isAllExpanded = !isAllExpanded;
+            boardData[currentMode].forEach(item => {
+                item.open = isAllExpanded;
+            });
+            document.getElementById('expandAllBtn').innerText = isAllExpanded ? '전체 닫기' : '전체 열기';
+            renderAccordionList();
+        }
+
+        // 7. 새 질문 등록 모달 제어 및 등록 처리
+        function openQuestionModal() {
+            if (currentMode !== 'qna') return;
+            document.getElementById('questionModal').classList.add('show');
+        }
+
+        function closeQuestionModal() {
+            document.getElementById('questionModal').classList.remove('show');
+        }
+
+        function submitNewQuestion(e) {
+            e.preventDefault();
+            const cat = document.getElementById('newQCategory').value;
+            const author = document.getElementById('newQAuthor').value.trim();
+            const title = document.getElementById('newQTitle').value.trim();
+            const content = document.getElementById('newQContent').value.trim();
+
+            const today = new Date();
+            const dateStr = `${today.getFullYear()}.${String(today.getMonth()+1).padStart(2,'0')}.${String(today.getDate()).padStart(2,'0')}`;
+
+            const newItem = {
+                id: Date.now(),
+                category: cat,
+                author: author,
+                date: dateStr,
+                status: "답변대기",
+                question: title,
+                answer: `[문의 내용] ${content}<br><span style="color:var(--palette-orange); font-weight:700;">※ 담당 데이터 분석팀에서 확인 후 빠르게 답변을 등록해 드리겠습니다.</span>`,
+                open: true
+            };
+
+            boardData.qna.unshift(newItem);
+            closeQuestionModal();
+            e.target.reset();
+
+            const qnaTabBtn = document.querySelectorAll('.major-tab-btn')[1];
+            switchBoardMode('qna', qnaTabBtn);
+        }
+
+        // 초기 렌더링 실행
+        window.addEventListener('DOMContentLoaded', () => {
+            renderAccordionList();
+        });
+    </script>
+</body>
+</html>

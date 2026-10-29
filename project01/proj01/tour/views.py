@@ -12,7 +12,7 @@ def gw_list10(request):
     for place in gw_places:
         # 관광지 이미지 파일명 예시: 관광지명.jpg (없으면 default.jpg 사용)
         # 로컬 폴더: static/images/allimg/강원도/
-        image_url = f"/static/images/allimg/강원도/{place.name}.jpg"
+        image_url = f"/static/images/gw/{place.name}.jpg"
         
         place_data_dict[place.place_id] = {
             "id": place.place_id,
