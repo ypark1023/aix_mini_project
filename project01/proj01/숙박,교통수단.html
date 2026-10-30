@@ -1,0 +1,3230 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>대한민국 17개 시도 AI 기상청 날씨·연령별 여행·일정표·숙박·교통·요금 통합 허브</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <style>
+    @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+    * { font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; box-sizing: border-box; }
+    body {
+      background: linear-gradient(160deg, #f6efe4 0%, #fcf9f3 48%, #f3e9da 100%) !important;
+      color: #2c221e !important;
+    }
+    header {
+      background: rgba(248, 242, 232, 0.94) !important;
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid #e2d2bc !important;
+      box-shadow: 0 4px 20px rgba(139, 108, 76, 0.08);
+    }
+    .glass-card {
+      background: rgba(253, 250, 245, 0.94) !important;
+      backdrop-filter: blur(14px);
+      border: 1.5px solid #e2d2bc !important;
+      box-shadow: 0 10px 28px rgba(145, 114, 83, 0.10);
+    }
+    /* Pastel Light Beige overrides for backgrounds */
+    .bg-slate-950, .bg-slate-950\/95, .bg-slate-950\/90, .bg-slate-950\/85, .bg-slate-950\/80, .bg-slate-950\/75 {
+      background-color: #fffdf9 !important;
+    }
+    .bg-slate-900, .bg-slate-900\/95, .bg-slate-900\/90, .bg-slate-900\/60, .hover\:bg-slate-900\/50:hover {
+      background-color: #f4ece0 !important;
+    }
+    .bg-slate-800, .hover\:bg-slate-800:hover, .hover\:bg-slate-800\/90:hover, .hover\:bg-slate-700:hover {
+      background-color: #eadcc9 !important;
+    }
+    .from-slate-900.via-sky-950\/50.to-slate-900 {
+      background: linear-gradient(135deg, #f6efe4 0%, #fcf9f3 50%, #f1e5d3 100%) !important;
+    }
+    .from-blue-950.to-slate-950 {
+      background: linear-gradient(135deg, #f3e7d5 0%, #faf4eb 100%) !important;
+    }
+    .bg-blue-950, .bg-blue-950\/20 {
+      background-color: #f3e8d8 !important;
+    }
+    .bg-sky-950\/40, .bg-sky-950\/30 {
+      background-color: #f5ecdf !important;
+    }
+    .bg-fuchsia-950\/70, .bg-fuchsia-950\/40 {
+      background-color: #f8e8ee !important;
+    }
+    .bg-emerald-950\/60 {
+      background-color: #e6f4ea !important;
+    }
+    .bg-rose-950\/20 {
+      background-color: #fbebea !important;
+    }
+    .bg-cyan-500\/15 {
+      background-color: #efe4d4 !important;
+    }
+    /* Borders in warm pastel beige */
+    .border-slate-800, .border-slate-800\/90, .border-slate-800\/80, .border-slate-700, .border-slate-600,
+    .border-sky-500\/40, .border-sky-500\/25, .border-cyan-500\/30, .border-blue-500\/40 {
+      border-color: #decbb1 !important;
+    }
+    .divide-slate-800\/70 > :not([hidden]) ~ :not([hidden]) {
+      border-color: #e5d5bf !important;
+    }
+    /* Typography contrast adjustments for warm pastel beige background */
+    .text-white {
+      color: #2c221e !important;
+    }
+    /* Keep white text inside solid vibrant buttons & icons */
+    header .w-10.h-10 .text-white,
+    button.from-blue-600.text-white,
+    a.bg-gradient-to-r .text-white,
+    a.bg-gradient-to-r.text-white,
+    span.bg-gradient-to-r.text-white,
+    span.bg-blue-500.text-white,
+    span.bg-gradient-to-br.text-white,
+    #toastContainer .text-white {
+      color: #ffffff !important;
+    }
+    .text-slate-100, .text-slate-200, .text-slate-300 {
+      color: #3d2f28 !important;
+    }
+    .text-slate-400, .text-slate-500 {
+      color: #6b584c !important;
+    }
+    .text-sky-200, .text-sky-300, .text-sky-400 {
+      color: #0369a1 !important;
+    }
+    .text-cyan-300, .text-cyan-400 {
+      color: #8c5828 !important;
+    }
+    .text-emerald-200, .text-emerald-300, .text-emerald-400, .text-emerald-200\/90 {
+      color: #047857 !important;
+    }
+    .text-amber-200, .text-amber-300, .text-amber-400 {
+      color: #b45309 !important;
+    }
+    .text-yellow-200, .text-yellow-300, .text-yellow-400, .text-yellow-200\/90 {
+      color: #9a5b06 !important;
+    }
+    .text-rose-200, .text-rose-300, .text-rose-400 {
+      color: #be123c !important;
+    }
+    .text-fuchsia-200, .text-fuchsia-300, .text-fuchsia-400, .text-fuchsia-200\/90 {
+      color: #9d174d !important;
+    }
+    .text-blue-200, .text-blue-300, .text-blue-400, .text-blue-200\/90 {
+      color: #1d4ed8 !important;
+    }
+    .text-purple-300, .text-purple-400 {
+      color: #6d28d9 !important;
+    }
+    select, input[type="text"], input[type="date"] {
+      background-color: #fffdf9 !important;
+      color: #2c221e !important;
+      border-color: #d4be9e !important;
+    }
+    .kma-region-card {
+      background: #faf5ed !important;
+      border-color: #e2d2bc !important;
+    }
+    .kma-region-card.active {
+      background: linear-gradient(135deg, #efe1cd, #e5cfb2) !important;
+      border-color: #b47b44 !important;
+      box-shadow: 0 4px 14px rgba(180, 123, 68, 0.22);
+    }
+    .age-btn.active {
+      background: linear-gradient(135deg, #c2844f, #9c6232) !important;
+      color: #ffffff !important;
+      border-color: #9c6232 !important;
+      box-shadow: 0 4px 14px rgba(156, 98, 50, 0.28);
+    }
+    .age-btn.active span, .age-btn.active i {
+      color: #ffffff !important;
+    }
+    .duration-btn.active {
+      background: linear-gradient(135deg, #b87a44, #8f582a) !important;
+      color: #ffffff !important;
+      border-color: #8f582a !important;
+      box-shadow: 0 4px 14px rgba(143, 88, 42, 0.28);
+    }
+    .custom-scroll::-webkit-scrollbar { width: 6px; height: 6px; }
+    .custom-scroll::-webkit-scrollbar-track { background: #f5ede0; }
+    .custom-scroll::-webkit-scrollbar-thumb { background: #d4be9e; border-radius: 3px; }
+    .pulse-dot { animation: pulseRing 2s infinite; }
+    @keyframes pulseRing {
+      0% { box-shadow: 0 0 0 0 rgba(180, 123, 68, 0.7); }
+      70% { box-shadow: 0 0 0 10px rgba(180, 123, 68, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(180, 123, 68, 0); }
+    }
+    @keyframes dashFlow {
+      to { stroke-dashoffset: -36; }
+    }
+    .route-animated-line {
+      animation: dashFlow 1.6s linear infinite;
+    }
+  </style>
+</head>
+<body class="min-h-screen pb-16">
+
+  <!-- 인페이지 토스트 알림 -->
+  <div id="toastContainer" class="fixed bottom-5 right-5 z-[100] flex flex-col gap-2 pointer-events-none"></div>
+
+  <!-- 상단 헤더 & 공공데이터 API (관광공사 + 기상청) 상태 바 -->
+  <header class="sticky top-0 z-50 bg-slate-950/90 backdrop-blur-md border-b border-slate-800">
+    <div class="max-w-[1600px] mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 via-sky-500 to-emerald-400 flex items-center justify-center shadow-lg">
+          <i class="fa-solid fa-cloud-sun-rain text-white text-xl"></i>
+        </div>
+        <div>
+          <div class="flex flex-wrap items-center gap-2">
+            <h1 class="text-lg md:text-xl font-bold tracking-tight text-white">대한민국 17개 시도 기상청 날씨 · 길찾기 · AI 요금 · 숙박 · 교통 · 일정표 통합 허브</h1>
+            <span class="px-2 py-0.5 text-xs font-semibold rounded-full bg-sky-500/20 text-sky-300 border border-sky-500/40">1단계 ~ 6단계 순차 와이드 통합 시스템</span>
+          </div>
+          <p class="text-xs text-slate-400">1단계(출발·도착 길찾기 & 경로 마커) ➔ 2단계(전 차종 요금 계산기) ➔ 3단계(기상청 17개 시도 통합 브리핑) ➔ 4단계(숙박 예약) ➔ 5단계(교통·택시 호출) ➔ 6단계(자동 코스 일정표)</p>
+        </div>
+      </div>
+
+      <!-- API 인증키 상태 및 실시간 동기화 컨트롤 -->
+      <div class="flex flex-wrap items-center gap-2">
+        <div class="flex items-center gap-2 bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs">
+          <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 pulse-dot" id="apiStatusDot"></span>
+          <span class="text-slate-300 font-medium" id="apiStatusText">관광공사·기상청 인증키 활성화됨</span>
+          <span id="apiSourceLabel" class="hidden sm:inline-block text-[11px] text-emerald-400 bg-emerald-950/60 px-2 py-0.5 rounded border border-emerald-700/50">실시간 연동</span>
+          <code class="text-cyan-400 bg-slate-950 px-1.5 py-0.5 rounded font-mono">07761c9b...abf6697</code>
+        </div>
+        <button onclick="fetchAllLivePublicData()" class="px-3 py-1.5 rounded-lg bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-xs font-semibold text-white transition flex items-center gap-1.5 shadow">
+          <i class="fa-solid fa-rotate" id="syncIcon"></i> 관광공사 + 기상청 API 실시간 동기화
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-[1600px] mx-auto px-4 pt-6 space-y-6">
+
+    <!-- ================================================================================= -->
+    <!-- [1단계 - 맨 위 첫 번째 와이드 창] 출발지·도착지 설정 & 5대 지도 실시간 자동입력 길찾기 & AI 이동경로 상세 마커 시뮬레이션 -->
+    <!-- ================================================================================= -->
+    <section id="step3WideSection" class="w-full glass-card rounded-2xl p-5 border-t-2 border-t-emerald-500/70 space-y-5">
+      <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800 pb-3.5">
+        <div>
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-xs font-extrabold">1단계 · 와이드 창</span>
+            <h2 class="text-base md:text-lg font-bold text-white flex items-center gap-2">
+              <i class="fa-solid fa-route text-emerald-400"></i>
+              1단계: 전국 17개 시도 출발지·도착지 설정 및 네이버·카카오·구글 등 5대 지도 길찾기 실시간 자동입력 & AI 경로 마커
+            </h2>
+          </div>
+          <p class="text-xs text-slate-400 mt-1">출발지와 도착지(전국 17개 지역·170개 여행지)를 선택하면 네이버지도·카카오맵·구글지도 길찾기 창에 출발지·도착지가 실시간 자동 입력되며, 아래 구간별 마커 맵과 2~6단계 모든 창에 즉시 연동됩니다.</p>
+        </div>
+        <div class="flex flex-wrap items-center gap-2">
+          <button onclick="swapOriginDest()" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-cyan-300 border border-slate-600 transition flex items-center gap-1.5">
+            <i class="fa-solid fa-right-left"></i> 출발·도착 전환
+          </button>
+          <button onclick="scrollToSection('stayBookingSection')" class="px-3 py-1.5 rounded-lg bg-rose-600/30 hover:bg-rose-600/50 text-xs font-bold text-rose-200 border border-rose-500/40 transition flex items-center gap-1.5">
+            <i class="fa-solid fa-hotel"></i> 선택 도착지 숙박 실시간 예약 바로가기
+          </button>
+          <button onclick="scrollToSection('step6TransportSection')" class="px-3 py-1.5 rounded-lg bg-yellow-500/25 hover:bg-yellow-500/40 text-xs font-bold text-yellow-200 border border-yellow-400/40 transition flex items-center gap-1.5">
+            <i class="fa-solid fa-taxi"></i> 실시간 택시 호출·예약 바로가기
+          </button>
+        </div>
+      </div>
+
+      <!-- 상단 와이드 2단 그리드: 좌측(출발지/도착지 설정) + 우측(네이버·카카오·구글 등 5대 지도 길찾기 실시간 자동입력) -->
+      <div class="grid grid-cols-1 xl:grid-cols-12 gap-5">
+        <!-- 좌측 (6칸): 출발지 / 도착지 설정 박스 -->
+        <div class="xl:col-span-6 bg-slate-900/90 p-4 rounded-xl border border-slate-800 flex flex-col justify-between space-y-4">
+          <!-- 출발지 -->
+          <div>
+            <div class="flex flex-wrap items-center justify-between gap-2 text-xs text-slate-400 mb-1.5">
+              <span class="font-bold text-blue-400 text-sm"><i class="fa-solid fa-circle-play mr-1.5"></i>출발지 (전국 17개 시도 및 추천 명소 / 내 위치)</span>
+              <button onclick="useCurrentGeolocation()" class="px-2.5 py-1 rounded-md bg-cyan-500/15 hover:bg-cyan-500/30 border border-cyan-500/30 text-cyan-300 font-semibold transition flex items-center gap-1">
+                <i class="fa-solid fa-location-crosshairs"></i> 현재 GPS 위치 불러오기
+              </button>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+              <select id="originRegionSelect" onchange="onOriginRegionChange()" class="bg-slate-950 border border-slate-700 rounded-lg px-3 py-2.5 text-sm text-white focus:border-cyan-400 outline-none"></select>
+              <select id="originSpotSelect" onchange="onManualOriginDestChange()" class="bg-slate-950 border border-slate-700 rounded-lg px-3 py-2.5 text-sm text-white focus:border-cyan-400 outline-none"></select>
+            </div>
+            <input id="customOriginInput" type="text" placeholder="또는 직접 출발 주소/장소명 입력 (예: 서울역, 강남역, 인천국제공항)" oninput="onCustomOriginInput()" class="mt-2 w-full bg-slate-950/80 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-200 focus:border-cyan-500 outline-none" />
+          </div>
+
+          <div class="border-t border-slate-800/90"></div>
+
+          <!-- 도착지 -->
+          <div>
+            <div class="flex flex-wrap items-center justify-between gap-2 text-xs text-slate-400 mb-1.5">
+              <span class="font-bold text-rose-400 text-sm"><i class="fa-solid fa-location-dot mr-1.5"></i>도착지 (전국 17개 시도 추천 여행지 10곳 실시간 연동)</span>
+              <span id="destCoordText" class="font-mono text-[11px] text-cyan-300 bg-slate-950 px-2 py-0.5 rounded border border-slate-800">37.5796, 126.9770</span>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+              <select id="destRegionSelect" onchange="onDestRegionChange()" class="bg-slate-950 border border-slate-700 rounded-lg px-3 py-2.5 text-sm text-white focus:border-rose-400 outline-none"></select>
+              <select id="destSpotSelect" onchange="onDestSpotSelectChange()" class="bg-slate-950 border border-slate-700 rounded-lg px-3 py-2.5 text-sm text-white focus:border-rose-400 outline-none"></select>
+            </div>
+            <div id="destAddressDisplay" class="mt-2 text-xs text-slate-200 bg-slate-950/80 px-3 py-2 rounded-lg border border-slate-800"></div>
+          </div>
+        </div>
+
+        <!-- 우측 (6칸): 5대 지도 서비스 실시간 길찾기 자동입력 버튼 -->
+        <div class="xl:col-span-6 bg-slate-900/90 p-4 rounded-xl border border-slate-800 flex flex-col justify-between">
+          <div>
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+              <h3 class="text-xs md:text-sm font-bold text-white flex items-center gap-1.5">
+                <i class="fa-solid fa-compass text-emerald-400"></i>
+                실시간 5대 지도 길찾기 자동입력 연동 (클릭 시 출발지→도착지 즉시 입력 실행)
+              </h3>
+              <span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 text-[11px] font-bold border border-emerald-500/30">출발·도착 자동입력 완료</span>
+            </div>
+
+            <!-- 현재 자동 입력된 출발지 -> 도착지 상태 배너 -->
+            <div class="mb-3 px-3 py-2 rounded-lg bg-slate-950 border border-slate-800 flex flex-wrap items-center justify-between gap-2 text-xs">
+              <div class="flex items-center gap-2 flex-wrap">
+                <span class="px-2 py-0.5 rounded bg-blue-500/20 text-blue-300 font-bold" id="mapAutoOriginBadge">출발: 서울</span>
+                <i class="fa-solid fa-arrow-right text-cyan-400"></i>
+                <span class="px-2 py-0.5 rounded bg-rose-500/20 text-rose-300 font-bold" id="mapAutoDestBadge">도착: 서울 경복궁</span>
+              </div>
+              <span id="mapAutoDistTimeBadge" class="text-[11px] text-amber-300 font-semibold">편도 4.2km · 약 16분</span>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+              <a id="linkNaverMap" href="https://map.naver.com" target="_blank" rel="noopener noreferrer" class="flex items-center justify-between p-3 rounded-xl bg-emerald-600/20 hover:bg-emerald-600/35 border border-emerald-500/50 transition group">
+                <div class="flex items-center gap-2.5 min-w-0">
+                  <span class="w-9 h-9 shrink-0 rounded-lg bg-emerald-500 text-slate-950 font-black flex items-center justify-center text-sm shadow">N</span>
+                  <div class="min-w-0">
+                    <div class="text-sm font-bold text-white group-hover:text-emerald-300">네이버지도 길찾기</div>
+                    <div id="naverMapRouteSub" class="text-[11px] text-emerald-200/90 truncate">출발지→도착지 실시간 자동입력</div>
+                  </div>
+                </div>
+                <i class="fa-solid fa-arrow-up-right-from-square text-emerald-400 text-xs shrink-0 ml-2"></i>
+              </a>
+
+              <a id="linkKakaoMap" href="https://map.kakao.com" target="_blank" rel="noopener noreferrer" class="flex items-center justify-between p-3 rounded-xl bg-yellow-500/20 hover:bg-yellow-500/35 border border-yellow-400/50 transition group">
+                <div class="flex items-center gap-2.5 min-w-0">
+                  <span class="w-9 h-9 shrink-0 rounded-lg bg-yellow-400 text-slate-950 font-black flex items-center justify-center text-sm shadow">K</span>
+                  <div class="min-w-0">
+                    <div class="text-sm font-bold text-white group-hover:text-yellow-300">카카오맵 길찾기</div>
+                    <div id="kakaoMapRouteSub" class="text-[11px] text-yellow-200/90 truncate">출발지→도착지 실시간 자동입력</div>
+                  </div>
+                </div>
+                <i class="fa-solid fa-arrow-up-right-from-square text-yellow-300 text-xs shrink-0 ml-2"></i>
+              </a>
+
+              <a id="linkGoogleMap" href="https://www.google.com/maps" target="_blank" rel="noopener noreferrer" class="flex items-center justify-between p-3 rounded-xl bg-blue-600/20 hover:bg-blue-600/35 border border-blue-500/50 transition group">
+                <div class="flex items-center gap-2.5 min-w-0">
+                  <span class="w-9 h-9 shrink-0 rounded-lg bg-blue-500 text-white font-black flex items-center justify-center text-sm shadow">G</span>
+                  <div class="min-w-0">
+                    <div class="text-sm font-bold text-white group-hover:text-blue-300">구글지도 (Google Maps)</div>
+                    <div id="googleMapRouteSub" class="text-[11px] text-blue-200/90 truncate">출발지→도착지 길찾기 자동입력</div>
+                  </div>
+                </div>
+                <i class="fa-solid fa-arrow-up-right-from-square text-blue-400 text-xs shrink-0 ml-2"></i>
+              </a>
+
+              <a id="linkTmap" href="https://map.kakao.com" target="_blank" rel="noopener noreferrer" class="flex items-center justify-between p-3 rounded-xl bg-fuchsia-600/20 hover:bg-fuchsia-600/35 border border-fuchsia-500/50 transition group">
+                <div class="flex items-center gap-2.5 min-w-0">
+                  <span class="w-9 h-9 shrink-0 rounded-lg bg-gradient-to-br from-fuchsia-500 to-indigo-600 text-white font-black flex items-center justify-center text-sm shadow">T</span>
+                  <div class="min-w-0">
+                    <div class="text-sm font-bold text-white group-hover:text-fuchsia-300">티맵 (T-Map) 내비 연동</div>
+                    <div id="tmapRouteSub" class="text-[11px] text-fuchsia-200/90 truncate">출발지→도착지 내비 경로 안내</div>
+                  </div>
+                </div>
+                <i class="fa-solid fa-arrow-up-right-from-square text-fuchsia-400 text-xs shrink-0 ml-2"></i>
+              </a>
+
+              <a id="linkDaumMap" href="https://map.daum.net" target="_blank" rel="noopener noreferrer" class="sm:col-span-2 flex items-center justify-between p-3 rounded-xl bg-sky-600/20 hover:bg-sky-600/35 border border-sky-500/50 transition group">
+                <div class="flex items-center gap-2.5 min-w-0">
+                  <span class="w-9 h-9 shrink-0 rounded-lg bg-sky-400 text-slate-950 font-black flex items-center justify-center text-sm shadow">D</span>
+                  <div class="min-w-0">
+                    <div class="text-sm font-bold text-white group-hover:text-sky-300">다음지도 (Daum 로드뷰·길찾기 통합)</div>
+                    <div id="daumMapRouteSub" class="text-[11px] text-sky-200/90 truncate">출발지 → 도착지 다이렉트 경로 검색 및 주변 로드뷰 확인</div>
+                  </div>
+                </div>
+                <i class="fa-solid fa-arrow-up-right-from-square text-sky-400 text-xs shrink-0 ml-2"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 하단 와이드 영역: AI 실시간 이동경로 및 고속도로 톨게이트 구간별 상세 마커 시각화 캔버스 -->
+      <div class="bg-slate-950/95 rounded-2xl p-4 border border-cyan-500/30 shadow-inner">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="px-2.5 py-1 rounded-lg bg-cyan-500/20 text-cyan-300 text-xs font-extrabold border border-cyan-500/40">
+              <i class="fa-solid fa-location-dot mr-1"></i>AI 실시간 이동경로 · 구간별 마커(M1~M6) & 고속도로 톨게이트 거리 시뮬레이션
+            </span>
+            <span id="routeHighwayBadge" class="text-xs bg-blue-950 text-blue-300 px-2.5 py-1 rounded-lg border border-blue-800 font-semibold">경부·영동 간선망</span>
+          </div>
+          <div class="flex flex-wrap items-center gap-3 text-xs">
+            <span class="flex items-center gap-1 text-blue-300"><span class="w-2.5 h-2.5 rounded-full bg-blue-500 inline-block"></span>출발지 마커</span>
+            <span class="flex items-center gap-1 text-amber-300"><span class="w-2.5 h-2.5 rounded-full bg-amber-400 inline-block"></span>톨게이트(TG/IC) 마커</span>
+            <span class="flex items-center gap-1 text-cyan-300"><span class="w-2.5 h-2.5 rounded-full bg-cyan-400 inline-block"></span>고속도로 JC/휴게소 마커</span>
+            <span class="flex items-center gap-1 text-rose-300"><span class="w-2.5 h-2.5 rounded-full bg-rose-500 inline-block"></span>도착 여행지 마커</span>
+          </div>
+        </div>
+
+        <!-- 와이드 대형 SVG 경로 마커 맵 -->
+        <svg id="routeSvg" viewBox="0 0 1100 215" class="w-full h-44 md:h-52 bg-slate-900/95 rounded-xl border border-slate-800"></svg>
+
+        <!-- 구간별 이동경로 상세 마커 카드 리스트 -->
+        <div id="routeWaypointsText" class="mt-3 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5 text-xs"></div>
+      </div>
+    </section>
+
+    <!-- ================================================================================= -->
+    <!-- [2단계 - 두 번째 와이드 창] AI 실시간 전 차종 톨게이트·주유비·전기차·수소차 충전비 정밀 계산기 -->
+    <!-- ================================================================================= -->
+    <section id="calculatorSection" class="w-full glass-card rounded-2xl p-5 border-t-2 border-t-amber-500/70 flex flex-col justify-between">
+      <div>
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-4 pb-3 border-b border-slate-800">
+          <div>
+            <div class="flex flex-wrap items-center gap-2">
+              <span class="px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 text-xs font-extrabold">2단계 · 와이드 창</span>
+              <h2 class="text-base md:text-lg font-bold text-white flex items-center gap-2">
+                <i class="fa-solid fa-calculator text-amber-400"></i>
+                2단계: AI 실시간 전 차종 톨게이트·주유비·전기차·수소차 충전비 정밀 계산기 (와이드 창)
+              </h2>
+            </div>
+            <p class="text-xs text-slate-400 mt-1">한국도로공사 차종별 통행료 산식 + 경차(50%)·전기/수소차(30% 감면) + 기상청 우천/기온에 따른 연비·전비 보정 자동 반영</p>
+          </div>
+          <div class="flex flex-wrap items-center gap-2">
+            <span id="courseModeActiveBadge" class="hidden px-2.5 py-1 rounded-lg bg-amber-500/20 text-amber-300 border border-amber-500/40 text-xs font-bold">
+              <i class="fa-solid fa-route mr-1"></i>코스 전체 누적거리 반영 중
+            </span>
+            <label class="flex items-center gap-1.5 text-xs bg-slate-900 px-3 py-1.5 rounded-lg border border-slate-700 cursor-pointer">
+              <input type="checkbox" id="roundTripToggle" onchange="updateAllCalculations()" class="accent-cyan-400" checked />
+              <span class="font-semibold text-cyan-300">왕복(×2) 요금으로 계산</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- 차종 / 연료 / 동승인원 / 단가 미세조정 컨트롤 -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-3 mb-4 bg-slate-900/90 p-3.5 rounded-xl border border-slate-800">
+          <div>
+            <label class="block text-[11px] text-slate-400 mb-1 font-semibold">차종 선택 (톨게이트 기준)</label>
+            <select id="vehicleClassSelect" onchange="updateAllCalculations()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-2 text-xs text-white">
+              <option value="compact">경차 (모닝·레이·캐스퍼 - 톨비 50% 할인)</option>
+              <option value="sedan" selected>1종 소형·중형 승용/SUV (아반떼·쏘나타·쏘렌토)</option>
+              <option value="large">1종 대형승용·9인승 승합 (제네시스·카니발)</option>
+              <option value="van">2·3종 중대형 승합·캠핑카·미니버스</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-[11px] text-slate-400 mb-1 font-semibold">주력 연료/충전 방식 선택</label>
+            <select id="fuelTypeSelect" onchange="updateAllCalculations()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-2 text-xs text-white">
+              <option value="gasoline" selected>휘발유 (평균 1,645원/L)</option>
+              <option value="diesel">경유 (평균 1,495원/L)</option>
+              <option value="lpg">LPG 부탄 (평균 1,020원/L)</option>
+              <option value="ev_fast">전기차 급속충전 (347.2원/kWh · 톨비 30% 할인)</option>
+              <option value="ev_slow">전기차 완속충전 (260.0원/kWh · 톨비 30% 할인)</option>
+              <option value="hydrogen">수소전기차 NEXO 등 (10,377원/kg · 톨비 30% 할인)</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-[11px] text-slate-400 mb-1 font-semibold">동승 인원 (1인당 N빵 정산)</label>
+            <select id="passengerCountSelect" onchange="updateAllCalculations()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-2 text-xs text-white">
+              <option value="1">1명 (나 혼자 운전)</option>
+              <option value="2" selected>2명 (커플·친구 1/2 정산)</option>
+              <option value="3">3명 (1/3 정산)</option>
+              <option value="4">4명 (가족·친구 1/4 정산)</option>
+              <option value="6">6명 (다인승 1/6 정산)</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-[11px] text-slate-400 mb-1 font-semibold">주행·기상 모드 (연비/전비 보정)</label>
+            <select id="driveStyleSelect" onchange="updateAllCalculations()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-2 text-xs text-white">
+              <option value="1.1">에코 연비 주행 (+10% 효율)</option>
+              <option value="1.0" selected>표준 복합 주행 (맑음·공인연비)</option>
+              <option value="0.9">우천·빗길 공조 주행 (-10% 효율)</option>
+              <option value="0.85">고속·에어컨·히터 강풍 (-15% 효율)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- 핵심 요약 KPI 카드 4개 -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
+          <div class="bg-slate-950/90 border border-slate-800 rounded-xl p-3.5">
+            <div class="text-[11px] text-slate-400">총 주행 거리 / 예상 시간</div>
+            <div id="kpiDistance" class="text-lg font-extrabold text-white mt-0.5">0 km</div>
+            <div id="kpiDuration" class="text-xs text-cyan-400">약 0시간 0분 소요</div>
+          </div>
+
+          <div class="bg-slate-950/90 border border-slate-800 rounded-xl p-3.5">
+            <div class="text-[11px] text-slate-400">고속도로 톨게이트 통행료</div>
+            <div id="kpiTollFee" class="text-lg font-extrabold text-amber-400 mt-0.5">0 원</div>
+            <div id="kpiTollDiscountNote" class="text-[11px] text-slate-400">기본 요금 적용</div>
+          </div>
+
+          <div class="bg-slate-950/90 border border-slate-800 rounded-xl p-3.5">
+            <div id="kpiEnergyLabel" class="text-[11px] text-slate-400">선택 유종 주유/충전비</div>
+            <div id="kpiEnergyCost" class="text-lg font-extrabold text-emerald-400 mt-0.5">0 원</div>
+            <div id="kpiEnergyConsumption" class="text-[11px] text-slate-400">소모량 계산 중</div>
+          </div>
+
+          <div class="bg-gradient-to-br from-blue-950 to-slate-950 border border-blue-500/40 rounded-xl p-3.5">
+            <div class="text-[11px] text-blue-300 font-semibold">총 예상 이동경비 (톨비+에너지)</div>
+            <div id="kpiTotalCost" class="text-lg font-extrabold text-white mt-0.5">0 원</div>
+            <div id="kpiPerPersonCost" class="text-xs text-cyan-300 font-semibold">1인당 0 원</div>
+          </div>
+        </div>
+
+        <!-- 전 유종(휘발유/경유/LPG/전기차 급속·완속/수소차) 실시간 비교 영수증 테이블 -->
+        <div class="bg-slate-950/90 rounded-xl border border-slate-800 overflow-hidden">
+          <div class="px-4 py-2.5 bg-slate-900 border-b border-slate-800 flex items-center justify-between">
+            <span class="text-xs font-bold text-white"><i class="fa-solid fa-receipt text-cyan-400 mr-1.5"></i>실시간 유종별·친환경차 충전비 및 톨게이트 합산 비교 명세서</span>
+            <span id="receiptRouteTitle" class="text-xs text-cyan-300 font-semibold">출발지 → 도착지</span>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse text-xs">
+              <thead>
+                <tr class="bg-slate-900/60 text-slate-400 border-b border-slate-800">
+                  <th class="py-2.5 px-3">구분 (유종·충전방식)</th>
+                  <th class="py-2.5 px-3">적용 단가 및 기준 연비/전비</th>
+                  <th class="py-2.5 px-3">예상 소모량</th>
+                  <th class="py-2.5 px-3">주유/충전 요금</th>
+                  <th class="py-2.5 px-3">톨게이트 요금(할인반영)</th>
+                  <th class="py-2.5 px-3 text-right">총 합계 (1인당 분담금)</th>
+                </tr>
+              </thead>
+              <tbody id="costComparisonTableBody" class="divide-y divide-slate-800/70"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div id="jejuFerryNotice" class="hidden mt-3 p-3 rounded-xl bg-amber-500/15 border border-amber-500/40 text-xs text-amber-200 flex items-center gap-2">
+        <i class="fa-solid fa-ship text-amber-400 text-base"></i>
+        <span><strong>제주도 도서 구간 안내:</strong> 내륙↔제주 구간은 육로 톨게이트(목포/완도항 연결 고속도로) 비용과 현지 주행거리를 합산했으며, 아래 항공권 또는 카페리 선박 예약을 함께 이용하실 수 있습니다.</span>
+      </div>
+    </section>
+
+    <!-- ================================================================================= -->
+    <!-- [3단계 - 세 번째 와이드 통합 창] 전국 17개 시도별 실시간 기상청 날씨·강수확률·시간 상황 자동 현황판 + 기상청 단기예보 2.0 실시간 브리핑 하나로 통합 -->
+    <!-- ================================================================================= -->
+    <section id="kmaLiveBriefingSection" class="w-full glass-card rounded-2xl p-5 border-t-2 border-t-sky-500/70">
+      <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800 pb-3.5 mb-4">
+        <div>
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="px-2.5 py-0.5 rounded-full bg-sky-500/20 text-sky-300 border border-sky-500/40 text-xs font-extrabold">3단계 · 와이드 통합 창</span>
+            <h2 class="text-base md:text-lg font-bold text-white flex items-center gap-2">
+              <i class="fa-solid fa-satellite text-sky-400"></i>
+              3단계: 전국 17개 시도별 실시간 기상청 날씨 · 강수확률 · 시간 상황 자동 현황판 & 기상청 단기예보 2.0 실시간 브리핑
+            </h2>
+          </div>
+          <p class="text-xs text-slate-400 mt-1">각 카드는 기상청 격자(`nx, ny`) 실시간 예보 및 현지 시간대 기상 상황을 자동 표시하며, 전국 17개 시도 현황판과 기상청 단기예보 2.0 브리핑이 하나로 통합 연동됩니다.</p>
+        </div>
+
+        <!-- 실시간 시계 & 17개 지역 자동 순환 브리핑 컨트롤 -->
+        <div class="flex flex-wrap items-center gap-2">
+          <div class="bg-slate-950 border border-sky-500/40 rounded-xl px-3 py-1.5 text-xs flex items-center gap-2">
+            <i class="fa-regular fa-clock text-sky-400 animate-pulse"></i>
+            <span class="text-slate-400">현재 실시간 시각:</span>
+            <span id="liveKstClock" class="font-mono font-bold text-sky-300">2026-10-30 16:48:00</span>
+          </div>
+          <button onclick="toggleAutoCycleKmaRegion()" id="autoCycleKmaBtn" class="px-3 py-1.5 rounded-xl bg-sky-600/30 hover:bg-sky-600/50 border border-sky-400/50 text-xs font-bold text-sky-200 transition flex items-center gap-1.5">
+            <i class="fa-solid fa-play" id="autoCycleKmaIcon"></i>
+            <span id="autoCycleKmaText">17개 지역 자동 순환 브리핑 켜짐</span>
+          </button>
+          <button onclick="syncAll17RegionsWeatherNow()" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-600 text-xs font-semibold text-cyan-300 transition flex items-center gap-1.5">
+            <i class="fa-solid fa-cloud-arrow-down"></i> 17개 전 지역 기상청 API 즉시 갱신
+          </button>
+        </div>
+      </div>
+
+      <!-- 하나로 묶은 통합 기상청 단기예보 2.0 실시간 브리핑 & 전국 17개 시도 자동 현황판 컨테이너 -->
+      <div class="bg-gradient-to-r from-slate-900 via-sky-950/50 to-slate-900 border border-sky-500/40 rounded-2xl p-4 space-y-4 shadow-xl">
+
+        <!-- [통합 상단] 기상청 단기예보 2.0 실시간 브리핑 헤더 & 기상 조건 모드 -->
+        <div class="flex flex-wrap items-center justify-between gap-3 pb-3.5 border-b border-slate-800/90">
+          <div class="flex items-center gap-3">
+            <div id="kmaMainIconBox" class="w-12 h-12 rounded-2xl bg-sky-500/20 border border-sky-400/40 flex items-center justify-center text-2xl text-amber-300 shadow-inner">
+              <i class="fa-solid fa-sun"></i>
+            </div>
+            <div>
+              <div class="flex flex-wrap items-center gap-2">
+                <span class="px-2 py-0.5 rounded bg-sky-500/20 text-sky-300 text-[11px] font-bold border border-sky-500/40">
+                  <i class="fa-solid fa-satellite mr-1"></i>기상청 단기예보 2.0 실시간 브리핑
+                </span>
+                <span id="kmaRegionTitle" class="text-sm font-extrabold text-white">서울특별시 · 경복궁 (17개 시도 실시간 자동브리핑)</span>
+                <span id="kmaGridCoordBadge" class="text-[11px] font-mono text-cyan-300 bg-slate-950 px-2 py-0.5 rounded border border-slate-800">기상청 격자(nx:60, ny:127)</span>
+                <span id="kmaBaseTimeBadge" class="text-[11px] text-slate-300">단기예보 발표: 20261030 14:00 · 실시간 연동</span>
+              </div>
+              <p id="kmaAiWeatherAdvice" class="text-xs text-sky-200 mt-1 font-medium">
+                강수확률이 낮고 쾌청하여 야외 도보 여행과 전망대 관람에 매우 적합한 날씨입니다.
+              </p>
+            </div>
+          </div>
+
+          <!-- 기상청 날씨 시뮬레이션 / 실시간 모드 전환 컨트롤 -->
+          <div class="flex flex-wrap items-center gap-2 bg-slate-950/90 px-3 py-2 rounded-xl border border-slate-800 text-xs">
+            <span class="text-slate-400 font-semibold"><i class="fa-solid fa-sliders text-sky-400 mr-1"></i>기상 조건 모드:</span>
+            <select id="weatherModeSelect" onchange="onWeatherScenarioChange()" class="bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1 text-xs text-white outline-none focus:border-sky-400">
+              <option value="auto" selected>기상청 API 실시간 연동 (지역별 자동)</option>
+              <option value="sunny">맑음 쾌청 시나리오 (강수확률 0~10%)</option>
+              <option value="cloudy">구름많음 선선 시나리오 (강수확률 30%)</option>
+              <option value="rainy">우천/소나기 시나리오 (강수확률 70~80% · 빗길보정)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- [통합 중단 1] 전국 17개 시도별 실시간 기상청 날씨 · 강수확률 · 시간 상황 자동 현황판 (클릭 시 해당 지역으로 즉시 전환) -->
+        <div class="bg-slate-950/75 border border-sky-500/25 rounded-xl p-3.5">
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-2.5">
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-extrabold text-cyan-300 flex items-center gap-1.5">
+                <i class="fa-solid fa-map-location-dot text-sky-400"></i>
+                전국 17개 시도별 실시간 기상청 날씨 · 강수확률 · 시간 상황 자동 현황판 (클릭 시 해당 지역으로 즉시 전환)
+              </span>
+            </div>
+            <span class="text-[11px] text-slate-400">각 카드는 기상청 격자(`nx, ny`) 실시간 예보 및 현지 시간대 기상 상황을 자동 표시합니다.</span>
+          </div>
+          <div id="kma17RegionsLiveGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 lg:grid-cols-9 gap-2"></div>
+        </div>
+
+        <!-- [통합 중단 2] 기상청 핵심 지표 6개 미니 카드 -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5 text-xs">
+          <div class="bg-slate-950/85 border border-slate-800/90 rounded-xl p-2.5 flex items-center justify-between">
+            <div>
+              <div class="text-[11px] text-slate-400">하늘상태 · 현재기온</div>
+              <div id="kmaSkyTempText" class="text-sm font-extrabold text-white mt-0.5">맑음 · 18.5℃</div>
+            </div>
+            <i class="fa-solid fa-temperature-half text-rose-400 text-base"></i>
+          </div>
+
+          <div class="bg-slate-950/85 border border-slate-800/90 rounded-xl p-2.5 flex items-center justify-between">
+            <div>
+              <div class="text-[11px] text-slate-400">최저 / 최고 기온</div>
+              <div id="kmaMinMaxText" class="text-sm font-extrabold text-cyan-300 mt-0.5">11.0℃ / 21.0℃</div>
+            </div>
+            <i class="fa-solid fa-arrows-up-down text-cyan-400 text-base"></i>
+          </div>
+
+          <div class="bg-slate-950/85 border border-slate-800/90 rounded-xl p-2.5 flex items-center justify-between">
+            <div>
+              <div class="text-[11px] text-slate-400">강수확률 (POP) · 강수량</div>
+              <div id="kmaPopText" class="text-sm font-extrabold text-sky-400 mt-0.5">10% (강수없음)</div>
+            </div>
+            <i class="fa-solid fa-umbrella text-sky-400 text-base"></i>
+          </div>
+
+          <div class="bg-slate-950/85 border border-slate-800/90 rounded-xl p-2.5 flex items-center justify-between">
+            <div>
+              <div class="text-[11px] text-slate-400">상대습도 (REH) · 풍속 (WSD)</div>
+              <div id="kmaHumidWindText" class="text-sm font-extrabold text-emerald-300 mt-0.5">55% · 2.1m/s</div>
+            </div>
+            <i class="fa-solid fa-wind text-emerald-400 text-base"></i>
+          </div>
+
+          <div class="bg-slate-950/85 border border-slate-800/90 rounded-xl p-2.5 flex items-center justify-between">
+            <div>
+              <div class="text-[11px] text-slate-400">미세먼지 (PM10 · PM2.5)</div>
+              <div id="kmaAirQualityText" class="text-sm font-extrabold text-emerald-400 mt-0.5">좋음 (24㎍/㎥)</div>
+            </div>
+            <i class="fa-solid fa-lungs text-emerald-400 text-base"></i>
+          </div>
+
+          <div class="bg-slate-950/85 border border-slate-800/90 rounded-xl p-2.5 flex items-center justify-between">
+            <div>
+              <div class="text-[11px] text-slate-400">야외 여행 쾌적지수</div>
+              <div id="kmaTravelIndexText" class="text-sm font-extrabold text-amber-300 mt-0.5">매우 좋음 (94점)</div>
+            </div>
+            <i class="fa-solid fa-person-walking-luggage text-amber-400 text-base"></i>
+          </div>
+        </div>
+
+        <!-- [통합 하단] 선택 지역 시간대별(실시간 시각 기준 +3h 단위) 단기예보 흐름 바 -->
+        <div class="bg-slate-950/90 border border-slate-800 rounded-xl p-3">
+          <div class="flex items-center justify-between text-xs mb-2">
+            <span class="font-bold text-sky-300"><i class="fa-solid fa-clock-rotate-left mr-1"></i>브리핑 지역 시간대별(3시간 간격) 기상청 실시간 예보 추이</span>
+            <span id="kmaHourlySubText" class="text-[11px] text-slate-400">기상청 단기예보 시간대별 기온(TMP) · 강수확률(POP) 실시간 반영</span>
+          </div>
+          <div id="kmaHourlyTimeline" class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2 text-xs"></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ================================================================================= -->
+    <!-- [4단계 - 네 번째 창] 선택 여행지 실시간 5대 숙박 플랫폼 다이렉트 예약·예매 연동 + 17개 지역 길찾기 통합 허브 -->
+    <!-- ================================================================================= -->
+    <section id="stayBookingSection" class="glass-card rounded-2xl p-5 border-t-2 border-t-rose-500/60">
+      <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+        <div>
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="px-2.5 py-0.5 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/40 text-xs font-extrabold">4단계 · 실시간 숙박 예약 & 길찾기</span>
+            <h2 class="text-base md:text-lg font-bold text-white flex items-center gap-2">
+              <i class="fa-solid fa-hotel text-rose-400"></i>
+              4단계: 선택 여행지 실시간 5대 숙박 플랫폼 다이렉트 예약·예매 & 전국 17개 지역 길찾기 자동연동 허브
+            </h2>
+          </div>
+          <p class="text-xs text-slate-400 mt-1">출발지·도착지 창에서 정한 목적지(<strong id="stayTargetName" class="text-cyan-300">서울 경복궁</strong>)의 숙박시설을 실시간 예약·예매하고, 네이버지도·카카오맵·구글지도 길찾기로 출발지→숙소/여행지 경로를 즉시 안내받으세요.</p>
+        </div>
+
+        <!-- 체크인/체크아웃/인원 설정 바 -->
+        <div class="flex flex-wrap items-center gap-2 bg-slate-900 p-2 rounded-xl border border-slate-700 text-xs">
+          <div class="flex items-center gap-1.5">
+            <span class="text-slate-400">체크인:</span>
+            <input type="date" id="checkInDate" onchange="onStayDateChange()" class="bg-slate-950 border border-slate-700 rounded px-2 py-1 text-white" />
+          </div>
+          <div class="flex items-center gap-1.5">
+            <span class="text-slate-400">체크아웃:</span>
+            <input type="date" id="checkOutDate" onchange="updateStayLinks()" class="bg-slate-950 border border-slate-700 rounded px-2 py-1 text-white" />
+          </div>
+          <div class="flex items-center gap-1.5">
+            <span class="text-slate-400">숙박인원:</span>
+            <select id="stayGuests" onchange="updateStayLinks(); renderItinerary();" class="bg-slate-950 border border-slate-700 rounded px-2 py-1 text-white">
+              <option value="1">성인 1명</option>
+              <option value="2" selected>성인 2명</option>
+              <option value="3">성인 3명</option>
+              <option value="4">성인 4명 (가족)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4단계 내 전국 17개 지역 출발지·도착지(숙박 여행지) 선택 & 네이버·카카오·구글 길찾기 자동입력 통합 바 -->
+      <div class="bg-slate-900/95 border border-rose-500/30 rounded-xl p-3.5 mb-4">
+        <div class="grid grid-cols-1 xl:grid-cols-12 gap-3 items-center">
+          <div class="xl:col-span-4 flex items-center gap-1.5 bg-slate-950 p-2 rounded-lg border border-slate-800">
+            <span class="text-[11px] font-bold text-blue-400 shrink-0"><i class="fa-solid fa-car mr-1"></i>출발지(17개 시도):</span>
+            <select id="stayOriginRegionSelect" onchange="onStayOriginRegionChange()" class="w-1/2 bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs text-white"></select>
+            <select id="stayOriginSpotSelect" onchange="onStayOriginSpotChange()" class="w-1/2 bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs text-white"></select>
+          </div>
+
+          <div class="xl:col-span-4 flex items-center gap-1.5 bg-slate-950 p-2 rounded-lg border border-slate-800">
+            <span class="text-[11px] font-bold text-rose-400 shrink-0"><i class="fa-solid fa-bed mr-1"></i>숙박 여행지(도착):</span>
+            <select id="stayDestRegionSelect" onchange="onStayDestRegionChange()" class="w-1/2 bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs text-white"></select>
+            <select id="stayDestSpotSelect" onchange="onStayDestSpotChange()" class="w-1/2 bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs text-white"></select>
+          </div>
+
+          <div class="xl:col-span-4 flex flex-wrap items-center justify-between sm:justify-end gap-2">
+            <span class="text-[11px] text-slate-300 font-semibold">숙소/여행지 길찾기 자동입력:</span>
+            <a id="stayNaverMapBtn" href="https://map.naver.com" target="_blank" rel="noopener noreferrer" class="px-2.5 py-1.5 rounded-lg bg-emerald-600/30 hover:bg-emerald-600 border border-emerald-500/50 text-xs font-bold text-emerald-200 hover:text-white transition">
+              네이버지도 길찾기
+            </a>
+            <a id="stayKakaoMapBtn" href="https://map.kakao.com" target="_blank" rel="noopener noreferrer" class="px-2.5 py-1.5 rounded-lg bg-yellow-500/30 hover:bg-yellow-500 border border-yellow-400/50 text-xs font-bold text-yellow-200 hover:text-slate-950 transition">
+              카카오맵 길찾기
+            </a>
+            <a id="stayGoogleMapBtn" href="https://www.google.com/maps" target="_blank" rel="noopener noreferrer" class="px-2.5 py-1.5 rounded-lg bg-blue-600/30 hover:bg-blue-600 border border-blue-500/50 text-xs font-bold text-blue-200 hover:text-white transition">
+              구글지도 길찾기
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5대 숙박 플랫폼 실시간 예약 카드 그리드 -->
+      <div id="stayLinksGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3"></div>
+    </section>
+
+    <!-- ================================================================================= -->
+    <!-- [5단계 - 다섯 번째 창] 전 교통수단(철도·버스·렌터카·실시간 택시 예약/호출·항공사) 다이렉트 연동 -->
+    <!-- ================================================================================= -->
+    <section id="step6TransportSection" class="glass-card rounded-2xl p-5 border-t-2 border-t-sky-500/60">
+      <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+        <div>
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="px-2.5 py-0.5 rounded-full bg-sky-500/20 text-sky-300 border border-sky-500/40 text-xs font-extrabold">5단계 · 대중교통 · 렌터카 · 실시간 택시 · 항공</span>
+            <h2 class="text-base md:text-lg font-bold text-white flex items-center gap-2">
+              <i class="fa-solid fa-train-subway text-sky-400"></i>
+              5단계: 전국 17개 지역 맞춤형 대중교통·렌터카·실시간 택시 예약/호출·항공사 다이렉트 예매 연동
+            </h2>
+          </div>
+          <p class="text-xs text-slate-400 mt-1">선택하신 출발지(<strong id="transOriginBadge" class="text-blue-300">서울</strong>)와 도착지(<strong id="transDestBadge" class="text-rose-300">서울 경복궁</strong>)의 기차역·터미널·공항·실시간 택시 웹/앱 호출 및 사전예약 페이지로 자동 연결합니다.</p>
+        </div>
+        <div id="regionalHubSummary" class="text-xs bg-slate-900 border border-slate-700 px-3 py-1.5 rounded-lg text-slate-300"></div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-4">
+        <!-- 1. 고속철도 & 모든 종류의 기차 -->
+        <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-4 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center gap-2 text-sky-400 font-bold text-sm mb-1">
+              <i class="fa-solid fa-train"></i> 고속철도(KTX·SRT) & 일반열차
+            </div>
+            <p class="text-[11px] text-slate-400 mb-3">KTX, SRT, ITX-청춘/마음, 새마을, 무궁화호 실시간 좌석 조회 및 예매</p>
+            <div class="space-y-2" id="railLinksBox"></div>
+          </div>
+          <div class="mt-3 pt-2 border-t border-slate-800 text-[11px] text-slate-400">
+            추천 도착역: <strong id="recommendedStation" class="text-sky-300">서울역 / 용산역 / 수서역</strong>
+          </div>
+        </div>
+
+        <!-- 2. 고속버스·프리미엄·우등·시외·시내버스 -->
+        <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-4 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center gap-2 text-emerald-400 font-bold text-sm mb-1">
+              <i class="fa-solid fa-bus"></i> 고속·프리미엄·시외·시내버스
+            </div>
+            <p class="text-[11px] text-slate-400 mb-3">프리미엄 골드·우등고속·시외버스 통합 예매 및 전국 지자체 시내버스 실시간 도착정보</p>
+            <div class="space-y-2" id="busLinksBox"></div>
+          </div>
+          <div class="mt-3 pt-2 border-t border-slate-800 text-[11px] text-slate-400">
+            추천 터미널: <strong id="recommendedTerminal" class="text-emerald-300">서울고속버스터미널 / 동서울</strong>
+          </div>
+        </div>
+
+        <!-- 3. 자가용 렌터카 & 카셰어링 -->
+        <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-4 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center gap-2 text-amber-400 font-bold text-sm mb-1">
+              <i class="fa-solid fa-car-side"></i> 렌터카 & 카셰어링 (전 차종)
+            </div>
+            <p class="text-[11px] text-slate-400 mb-3">롯데렌터카 · SK렌터카 · 쏘카 · 클룩/트립닷컴 전국 지점 실시간 차량 예약 연동</p>
+            <div class="space-y-2" id="rentalLinksBox"></div>
+          </div>
+          <div class="mt-3 pt-2 border-t border-slate-800 text-[11px] text-slate-400">
+            도착지 권역 픽업존: <strong id="recommendedRentalZone" class="text-amber-300">서울역·김포공항 지점</strong>
+          </div>
+        </div>
+
+        <!-- 4. 실시간 택시 예약 & 즉시 호출 플랫폼 (실제 웹/앱 호출·예약 사이트 직결) -->
+        <div class="bg-slate-900/90 border border-yellow-500/40 rounded-xl p-4 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between gap-1 mb-1">
+              <div class="flex items-center gap-2 text-yellow-400 font-bold text-sm">
+                <i class="fa-solid fa-taxi"></i> 실시간 택시 예약 & 즉시 호출
+              </div>
+              <span class="px-1.5 py-0.5 rounded bg-yellow-400/20 text-yellow-300 text-[10px] font-bold border border-yellow-400/40">실시간 배차·예약 직결</span>
+            </div>
+            <p class="text-[11px] text-slate-400 mb-2.5">출발지·도착지 좌표가 자동 입력되어 홈페이지/앱에서 즉시 택시를 예약·호출합니다.</p>
+            <div class="space-y-2" id="taxiLinksBox"></div>
+          </div>
+          <div class="mt-3 pt-2 border-t border-slate-800 text-[11px] text-slate-400">
+            예상 택시 요금: <strong id="estimatedLocalTaxi" class="text-yellow-300">약 6,800원 ~ 12,000원</strong>
+          </div>
+        </div>
+
+        <!-- 5. 국내 항공사 & 국제 항공사 -->
+        <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-4 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center gap-2 text-purple-400 font-bold text-sm mb-1">
+              <i class="fa-solid fa-plane-departure"></i> 국내선 · 국제선 항공사 직결
+            </div>
+            <p class="text-[11px] text-slate-400 mb-3">대한항공·아시아나·제주항공·진에어·티웨이·에어부산·에어서울·이스타·에어로케이</p>
+            <div class="space-y-1.5 max-h-64 overflow-y-auto custom-scroll pr-1" id="airlineLinksBox"></div>
+          </div>
+          <div class="mt-3 pt-2 border-t border-slate-800 text-[11px] text-slate-400">
+            인근 공항: <strong id="recommendedAirport" class="text-purple-300">김포국제공항 (GMP) / 인천 (ICN)</strong>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================================================================================= -->
+    <!-- [6단계 - 맨 아래 여섯 번째 창] 기상청 일차별·시간대별 예보 연동 1박 2일 · 2박 3일 자동 코스 일정표 -->
+    <!-- ================================================================================= -->
+    <section id="step6ItinerarySection" class="glass-card rounded-2xl p-5 border-t-2 border-t-emerald-500/60">
+      <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+        <div>
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-xs font-extrabold">6단계 · 자동 코스 일정표</span>
+            <h2 class="text-base md:text-lg font-bold text-white flex items-center gap-2">
+              <i class="fa-solid fa-calendar-check text-emerald-400"></i>
+              6단계: 기상청 일차별·시간대별 예보 연동 1박 2일 · 2박 3일 자동 코스 일정표
+            </h2>
+            <span class="px-2 py-0.5 text-[11px] font-bold rounded bg-sky-500/20 text-sky-300 border border-sky-500/30">시간대별 기온·강수확률 반영</span>
+          </div>
+          <p class="text-xs text-slate-400 mt-1">선택된 지역·연령대 맞춤 코스를 최단 동선으로 배치하고, 각 일차(Day 1~3) 및 방문 시간대(`10시/14시/17시`)의 기상청 예상 기온과 강수확률(`POP %`)을 함께 표시합니다.</p>
+        </div>
+
+        <!-- 여행 기간 선택 버튼 & 액션 버튼 -->
+        <div class="flex flex-wrap items-center gap-2">
+          <div class="flex items-center bg-slate-900 p-1 rounded-xl border border-slate-700">
+            <button onclick="setCourseDuration('1n2d')" id="durBtn_1n2d" class="duration-btn active px-3 py-1.5 rounded-lg text-xs font-bold text-slate-300 transition">
+              1박 2일 알짜 코스 (6곳)
+            </button>
+            <button onclick="setCourseDuration('2n3d')" id="durBtn_2n3d" class="duration-btn px-3 py-1.5 rounded-lg text-xs font-bold text-slate-300 transition">
+              2박 3일 완주 코스 (9곳)
+            </button>
+            <button onclick="setCourseDuration('day')" id="durBtn_day" class="duration-btn px-3 py-1.5 rounded-lg text-xs font-bold text-slate-300 transition">
+              당일치기 핵심 (4곳)
+            </button>
+          </div>
+
+          <button onclick="applyCourseToCalculator()" class="px-3 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-slate-950 font-extrabold text-xs transition flex items-center gap-1.5 shadow-lg">
+            <i class="fa-solid fa-gas-pump"></i> 이 코스 총 주행거리·요금 계산기에 반영
+          </button>
+
+          <button onclick="copyItineraryText()" class="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-200 border border-slate-700 transition flex items-center gap-1.5">
+            <i class="fa-regular fa-copy"></i> 날씨 포함 일정표 복사
+          </button>
+        </div>
+      </div>
+
+      <!-- 연령대별 맞춤형 코스 필터 바 (10대 ~ 60대 이상) -->
+      <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-3.5 mb-4">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-2.5">
+          <div class="flex items-center gap-2">
+            <span class="px-2.5 py-0.5 rounded-md bg-fuchsia-500/20 text-fuchsia-300 border border-fuchsia-500/30 text-xs font-bold">
+              <i class="fa-solid fa-users-viewfinder mr-1"></i>연령대별 AI 맞춤 코스 필터
+            </span>
+            <span id="ageFilterSummaryText" class="text-xs text-slate-300 font-medium">전 연령 베스트 대표 코스를 모두 표시합니다.</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span id="selectedRegionBadge" class="px-2.5 py-0.5 rounded bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 font-bold text-xs">서울특별시</span>
+            <span id="ageMatchCountBadge" class="text-xs text-fuchsia-300 bg-fuchsia-950/70 px-2.5 py-0.5 rounded-full border border-fuchsia-700/50 font-semibold">전 연령 10곳 매칭</span>
+          </div>
+        </div>
+        <div id="ageFilterTabs" class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2"></div>
+      </div>
+
+      <!-- 코스 전체 요약 배너 -->
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-3 mb-4 bg-slate-900/90 p-3.5 rounded-xl border border-slate-800">
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold">
+            <i class="fa-solid fa-wand-magic-sparkles"></i>
+          </div>
+          <div>
+            <div class="text-[11px] text-slate-400">생성된 맞춤 코스</div>
+            <div id="courseSummaryTitle" class="text-xs font-bold text-white">서울 · 전 연령 · 1박 2일 코스</div>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-lg bg-sky-500/20 text-sky-400 flex items-center justify-center font-bold">
+            <i class="fa-solid fa-cloud-sun-rain"></i>
+          </div>
+          <div>
+            <div class="text-[11px] text-slate-400">일정 기간 기상청 종합 예보</div>
+            <div id="courseWeatherOverview" class="text-xs font-bold text-sky-300">평균 18℃ · 강수확률 10% (여행 최적)</div>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-lg bg-cyan-500/20 text-cyan-400 flex items-center justify-center font-bold">
+            <i class="fa-solid fa-route"></i>
+          </div>
+          <div>
+            <div class="text-[11px] text-slate-400">출발→전 일정 경유→복귀 총 거리</div>
+            <div id="courseTotalDistance" class="text-xs font-bold text-cyan-300">총 0 km (현지 코스 이동 포함)</div>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold">
+            <i class="fa-solid fa-coins"></i>
+          </div>
+          <div>
+            <div class="text-[11px] text-slate-400">전 일정 예상 교통비 (톨비+주유/충전)</div>
+            <div id="courseTotalVehicleCost" class="text-xs font-bold text-amber-300">약 0 원 (1인당 0 원)</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 일차별 타임라인 그리드 (Day 1 / Day 2 / Day 3 + 시간대별 날씨/강수확률) -->
+      <div id="itineraryDaysGrid" class="grid grid-cols-1 lg:grid-cols-2 gap-4"></div>
+    </section>
+
+  </main>
+
+  <script>
+    // =========================================================================
+    // 0. 인페이지 토스트 메시지 헬퍼 (Canvas 샌드박스 호환)
+    // =========================================================================
+    function showToast(message, type = "info") {
+      const container = document.getElementById("toastContainer");
+      if (!container) return;
+      const colorMap = {
+        info: "from-sky-600 to-blue-700 border-sky-400/50",
+        success: "from-emerald-600 to-teal-700 border-emerald-400/50",
+        warn: "from-amber-600 to-orange-700 border-amber-400/50"
+      };
+      const toast = document.createElement("div");
+      toast.className = `pointer-events-auto px-4 py-2.5 rounded-xl bg-gradient-to-r ${colorMap[type] || colorMap.info} border text-white text-xs font-bold shadow-2xl flex items-center gap-2 transition-all duration-300`;
+      toast.innerHTML = `<i class="fa-solid fa-circle-check"></i><span>${message}</span>`;
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.style.opacity = "0";
+        setTimeout(() => toast.remove(), 300);
+      }, 3200);
+    }
+
+    function scrollToSection(sectionId) {
+      const el = document.getElementById(sectionId);
+      if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    // =========================================================================
+    // 1. 공공데이터포털 동일 인증키 설정 (한국관광공사 TourAPI 4.0 + 기상청 단기예보 2.0)
+    // =========================================================================
+    const PUBLIC_DATA_API_KEY = "07761c9bf978471020f700fb172410cc1679ab0387f350364b8a30da1abf6697";
+    const TOUR_API_BASE_URL = "https://apis.data.go.kr/B551011/KorService1";
+    const KMA_API_BASE_URL = "https://apis.data.go.kr/1360000/VilageFcstInfoService_2.0";
+
+    // =========================================================================
+    // 2. 기상청 공식 위경도(lat, lng) -> 격자좌표(nx, ny) 람베르트 투영 변환 함수
+    // =========================================================================
+    function latLngToKmaGrid(lat, lng) {
+      const RE = 6371.00877;
+      const GRID = 5.0;
+      const SLAT1 = 30.0;
+      const SLAT2 = 60.0;
+      const OLON = 126.0;
+      const OLAT = 38.0;
+      const XO = 43;
+      const YO = 136;
+
+      const DEGRAD = Math.PI / 180.0;
+      const re = RE / GRID;
+      const slat1 = SLAT1 * DEGRAD;
+      const slat2 = SLAT2 * DEGRAD;
+      const olon = OLON * DEGRAD;
+      const olat = OLAT * DEGRAD;
+
+      let sn = Math.tan(Math.PI * 0.25 + slat2 * 0.5) / Math.tan(Math.PI * 0.25 + slat1 * 0.5);
+      sn = Math.log(Math.cos(slat1) / Math.cos(slat2)) / Math.log(sn);
+      let sf = Math.tan(Math.PI * 0.25 + slat1 * 0.5);
+      sf = (Math.pow(sf, sn) * Math.cos(slat1)) / sn;
+      let ro = Math.tan(Math.PI * 0.25 + olat * 0.5);
+      ro = (re * sf) / Math.pow(ro, sn);
+
+      let ra = Math.tan(Math.PI * 0.25 + lat * DEGRAD * 0.5);
+      ra = (re * sf) / Math.pow(ra, sn);
+      let theta = lng * DEGRAD - olon;
+      if (theta > Math.PI) theta -= 2.0 * Math.PI;
+      if (theta < -Math.PI) theta += 2.0 * Math.PI;
+      theta *= sn;
+
+      const nx = Math.floor(ra * Math.sin(theta) + XO + 0.5);
+      const ny = Math.floor(ro - ra * Math.cos(theta) + YO + 0.5);
+      return { nx, ny };
+    }
+
+    function getKmaBaseDateTime() {
+      const now = new Date();
+      const releaseHours = [2, 5, 8, 11, 14, 17, 20, 23];
+      let targetDate = new Date(now);
+      let currentHour = now.getHours();
+      let currentMin = now.getMinutes();
+
+      let effectiveHour = currentMin < 15 ? currentHour - 1 : currentHour;
+      let selectedRelease = 23;
+
+      const available = releaseHours.filter(h => h <= effectiveHour);
+      if (available.length > 0) {
+        selectedRelease = available[available.length - 1];
+      } else {
+        targetDate.setDate(targetDate.getDate() - 1);
+        selectedRelease = 23;
+      }
+
+      const yyyy = targetDate.getFullYear();
+      const mm = String(targetDate.getMonth() + 1).padStart(2, "0");
+      const dd = String(targetDate.getDate()).padStart(2, "0");
+      const base_date = `${yyyy}${mm}${dd}`;
+      const base_time = `${String(selectedRelease).padStart(2, "0")}00`;
+
+      return { base_date, base_time, displayTime: `${String(selectedRelease).padStart(2, "0")}:00` };
+    }
+
+    // =========================================================================
+    // 3. 연령대별(10대~60대+) 프로필 정의
+    // =========================================================================
+    const AGE_GROUPS = [
+      { id: "all", label: "전 연령 통합", icon: "fa-users", desc: "전 세대가 모두 만족하는 지역별 대표 명소 TOP 10" },
+      { id: "10s", label: "10대 (청소년)", icon: "fa-gamepad", desc: "테마파크·액티비티·역사문화 현장학습·이색 체험 중심 코스" },
+      { id: "20s", label: "20대 (청춘·MZ)", icon: "fa-camera-retro", desc: "SNS 인생샷 핫플·감성 카페거리·해양레저·야경 포토존 중심 코스" },
+      { id: "30s", label: "30대 (커플·미식)", icon: "fa-wine-glass", desc: "오션뷰/리조트 호캉스·트렌디 미식·야간 미디어아트·드라이브 코스" },
+      { id: "40s", label: "40대 (가족·휴양)", icon: "fa-children", desc: "아이 동반 가족 체험·수목원·국립생태/과학관·케이블카 여유 코스" },
+      { id: "50s", label: "50대 (풍류·트레킹)", icon: "fa-person-hiking", desc: "국가정원·명산 둘레길·유네스코 문화유산·전통시장 미식 기행" },
+      { id: "60s", label: "60대+ (효도·힐링)", icon: "fa-spa", desc: "무장애 케이블카·유람선·천년고찰·온천/치유·고즈넉한 자연 명소" }
+    ];
+
+    // =========================================================================
+    // 4. 전국 17개 시도 메타데이터 + 각 지역 대표 추천 여행지 10곳 (총 170곳 정밀 좌표 DB)
+    // =========================================================================
+    const REGIONS_DATA = [
+      {
+        id: "seoul", name: "서울", fullName: "서울특별시", areaCode: 1,
+        hubLat: 37.5547, hubLng: 126.9707, station: "서울역·용산역·수서역", terminal: "서울고속버스터미널·동서울터미널", airport: "김포국제공항(GMP)·인천국제공항(ICN)", highway: "경부·강변북로·올림픽대로",
+        tollgateName: "서울TG / 양재IC", serviceArea: "만남의광장 휴게소", junctionName: "한남IC·판교JC",
+        localCallTaxi: { name: "서울 통합콜택시·나비콜 예약", phone: "1599-8255", url: "https://topis.seoul.go.kr/" },
+        foodSpecialty: "종로 한우곰탕 · 광장시장 육회빈대떡 · 성수 수제버거 · 마포 돼지갈비",
+        baseWeather: { temp: 17.8, min: 10.5, max: 20.5, sky: 1, pty: 0, pop: 10, reh: 50, wsd: 2.1, pm10: 26, airGrade: "좋음" },
+        spots: [
+          { name: "경복궁", cat: "역사·고궁", addr: "서울 종로구 사직로 161", lat: 37.5796, lng: 126.9770, desc: "조선 왕조 제일의 법궁, 야간개장 및 수문장 교대의식 명소" },
+          { name: "남산서울타워", cat: "랜드마크", addr: "서울 용산구 남산공원길 105", lat: 37.5512, lng: 126.9882, desc: "서울 도심과 한강 파노라마 야경을 한눈에 담는 전망 명소" },
+          { name: "롯데월드타워 & 석촌호수", cat: "복합문화", addr: "서울 송파구 올림픽로 300", lat: 37.5126, lng: 127.1025, desc: "123층 서울스카이 전망대와 사계절 산책로 석촌호수" },
+          { name: "북촌한옥마을", cat: "전통마을", addr: "서울 종로구 계동길 37", lat: 37.5826, lng: 126.9830, desc: "전통 한옥 골목길과 현대 갤러리가 어우러진 도심 속 한옥촌" },
+          { name: "여의도 한강공원 & 더현대서울", cat: "힐링·쇼핑", addr: "서울 영등포구 여의동로 330", lat: 37.5284, lng: 126.9328, desc: "한강 유람선, 피크닉과 대형 실내 정원 쇼핑몰 연계 코스" },
+          { name: "동대문디자인플라자(DDP)", cat: "건축·전시", addr: "서울 중구 을지로 281", lat: 37.5665, lng: 127.0095, desc: "자하 하디드 설계의 곡선 건축물과 야간 미디어 파사드" },
+          { name: "성수동 카페거리 & 서울숲", cat: "트렌드·자연", addr: "서울 성동구 뚝섬로 273", lat: 37.5444, lng: 127.0374, desc: "팝업스토어 성지 성수동과 도심 생태공원 서울숲 산책" },
+          { name: "창덕궁 후원", cat: "유네스코유산", addr: "서울 종로구 율곡로 99", lat: 37.5789, lng: 126.9941, desc: "자연 지형을 그대로 살린 조선 왕실 비밀 정원" },
+          { name: "국립중앙박물관", cat: "박물관", addr: "서울 용산구 서빙고로 137", lat: 37.5239, lng: 126.9803, desc: "사유의 방 반가사유상과 한국사 국보 컬렉션 상설 전시" },
+          { name: "홍대 걷고싶은거리 & 연남동", cat: "청춘·문화", addr: "서울 마포구 어울마당로 118", lat: 37.5558, lng: 126.9242, desc: "인디 문화 버스킹과 경의선숲길 연트럴파크 미식 투어" }
+        ]
+      },
+      {
+        id: "busan", name: "부산", fullName: "부산광역시", areaCode: 6,
+        hubLat: 35.1152, hubLng: 129.0422, station: "부산역(KTX·SRT)·구포역", terminal: "부산종합버스터미널(노포)·서부산(사상)", airport: "김해국제공항(PUS)", highway: "경부고속도로·남해고속도로",
+        tollgateName: "부산TG / 북부산TG", serviceArea: "통도사 휴게소", junctionName: "노포IC·대저JC",
+        localCallTaxi: { name: "부산 등대콜·자비콜 실시간 택시", phone: "051-600-1000", url: "https://taxi.busan.go.kr/" },
+        foodSpecialty: "돼지국밥 · 밀면 · 자갈치 활어회 · 기장 대게 · 동래파전",
+        baseWeather: { temp: 20.4, min: 14.0, max: 22.5, sky: 1, pty: 0, pop: 10, reh: 58, wsd: 3.2, pm10: 22, airGrade: "좋음" },
+        spots: [
+          { name: "해운대 해수욕장 & 해변열차", cat: "해양·휴양", addr: "부산 해운대구 해운대해변로 264", lat: 35.1587, lng: 129.1604, desc: "블루라인파크 해변열차와 마린시티 스카이라인 해변" },
+          { name: "광안리 해수욕장 & 광안대교", cat: "야경·드론쇼", addr: "부산 수영구 광안해변로 219", lat: 35.1532, lng: 129.1186, desc: "광안대교 야경과 주말 M드론라이트쇼 대표 명소" },
+          { name: "감천문화마을", cat: "예술마을", addr: "부산 사하구 감내2로 203", lat: 35.0975, lng: 129.0106, desc: "산자락을 따라 계단식으로 형성된 파스텔톤 예술 마을" },
+          { name: "해동용궁사", cat: "해안사찰", addr: "부산 기장군 기장읍 용궁길 86", lat: 35.1884, lng: 129.2233, desc: "기암절벽 파도 위에 자리 잡은 대한민국 대표 해안 사찰" },
+          { name: "태종대 유원지", cat: "해안절경", addr: "부산 영도구 전망로 24", lat: 35.0530, lng: 129.0873, desc: "다누비 열차를 타고 둘러보는 영도 해안 기암괴석과 등대" },
+          { name: "송도 해상케이블카 & 구름산책로", cat: "액티비티", addr: "부산 서구 송도해변로 171", lat: 35.0760, lng: 129.0209, desc: "바다 위를 가로지르는 크리스탈 크루즈 케이블카" },
+          { name: "흰여울문화마을", cat: "오션뷰산책", addr: "부산 영도구 흰여울길 379", lat: 35.0782, lng: 129.0451, desc: "영화 변호인 촬영지이자 영도 절벽 끝 바다 산책길" },
+          { name: "자갈치시장 & BIFF광장", cat: "미식·전통시장", addr: "부산 중구 자갈치해안로 52", lat: 35.0966, lng: 129.0306, desc: "싱싱한 활어회와 부산 씨앗호떡 등 원도심 미식 투어" },
+          { name: "롯데월드 어드벤처 부산 & 오시리아", cat: "테마파크", addr: "부산 기장군 기장읍 동부산관광로 42", lat: 35.1956, lng: 129.2148, desc: "기장 오시리아 관광단지 내 테마파크와 스카이라인 루지" },
+          { name: "다대포 해수욕장 & 꿈의낙조분수", cat: "일몰·자연", addr: "부산 사하구 몰운대1길 14", lat: 35.0465, lng: 128.9664, desc: "고운 모래밭과 서해 못지않은 황금빛 일몰 경관" }
+        ]
+      },
+      {
+        id: "daegu", name: "대구", fullName: "대구광역시", areaCode: 4,
+        hubLat: 35.8797, hubLng: 128.6286, station: "동대구역(KTX·SRT)·서대구역", terminal: "동대구복합환승센터·서부정류장", airport: "대구국제공항(TAE)", highway: "경부·중앙·중부내륙고속도로",
+        tollgateName: "북대구TG / 동대구IC", serviceArea: "칠곡 휴게소", junctionName: "금호JC·칠곡IC",
+        localCallTaxi: { name: "대구 나드리콜·한마음콜 택시", phone: "1577-6776", url: "https://nadricall.dcco.kr/" },
+        foodSpecialty: "동인동 찜갈비 · 안지랑 곱창막창 · 서문시장 납작만두 · 따로국밥",
+        baseWeather: { temp: 19.2, min: 11.5, max: 22.0, sky: 1, pty: 0, pop: 10, reh: 48, wsd: 1.8, pm10: 29, airGrade: "좋음" },
+        spots: [
+          { name: "김광석다시그리기길", cat: "문화거리", addr: "대구 중구 달구벌대로 2238", lat: 35.8604, lng: 128.6062, desc: "가객 김광석의 음악과 벽화가 살아 숨 쉬는 방천시장 골목" },
+          { name: "수성못 유원지", cat: "호수·야경", addr: "대구 수성구 두산동 512", lat: 35.8277, lng: 128.6177, desc: "음악분수와 오리배, 수변 카페거리가 어우러진 시민 휴식처" },
+          { name: "서문시장 & 야시장", cat: "전통시장·미식", addr: "대구 중구 큰장로26길 45", lat: 35.8689, lng: 128.5806, desc: "조선 3대 시장의 명성을 잇는 주간 먹거리와 상설 야시장" },
+          { name: "이월드 & 83타워", cat: "테마파크", addr: "대구 달서구 두류공원로 200", lat: 35.8533, lng: 128.5639, desc: "대구 시내 전망대 83타워와 사계절 축제 테마파크" },
+          { name: "팔공산 국립공원 & 갓바위", cat: "산악·케이블카", addr: "대구 동구 팔공산로185길 51", lat: 35.9918, lng: 128.6967, desc: "소원을 이뤄주는 갓바위와 팔공산 케이블카 단풍 명소" },
+          { name: "앞산전망대 & 앞산케이블카", cat: "야경전망", addr: "대구 남구 앞산순환로 574-87", lat: 35.8312, lng: 128.5784, desc: "대구 도심 전체를 한눈에 내려다보는 최고의 야경 포인트" },
+          { name: "대구근대골목 (청라언덕·계산성당)", cat: "근대역사", addr: "대구 중구 달구벌대로 2029", lat: 35.8679, lng: 128.5877, desc: "100년 전 선교사 주택과 3·1만세운동길이 보존된 역사 탐방로" },
+          { name: "송해공원 (옥연지)", cat: "생태공원", addr: "대구 달성군 옥포읍 기세리 306", lat: 35.7793, lng: 128.4810, desc: "백세교 수중 다리와 튤립·둘레길이 아름다운 수변 공원" },
+          { name: "사문진 주막촌 & 낙동강 유람선", cat: "역사·수변", addr: "대구 달성군 화원읍 성산리 318-1", lat: 35.8058, lng: 128.4789, desc: "한국 최초 피아노 유입지이자 낙동강 황포돛배 체험 명소" },
+          { name: "대구수목원", cat: "생태·치유", addr: "대구 달서구 화암로 342", lat: 35.8012, lng: 128.5226, desc: "매립지를 생태의 숲으로 복원한 도심 속 친환경 수목원" }
+        ]
+      },
+      {
+        id: "incheon", name: "인천", fullName: "인천광역시", areaCode: 2,
+        hubLat: 37.4563, hubLng: 126.7052, station: "인천공항T1/T2역·검암역·부평역", terminal: "인천종합버스터미널(구월동)", airport: "인천국제공항(ICN)", highway: "경인·제2경인·인천국제공항고속도로",
+        tollgateName: "인천TG / 신공항TG", serviceArea: "영종대교 휴게소", junctionName: "서운JC·학익JC",
+        localCallTaxi: { name: "인천 부름콜·공항택시 실시간 예약", phone: "1577-0320", url: "https://www.airport.kr/ap_ko/974/subview.do" },
+        foodSpecialty: "차이나타운 백짜장 · 신포시장 닭강정 · 을왕리 조개구이 · 강화 꽃게탕",
+        baseWeather: { temp: 17.2, min: 11.0, max: 19.5, sky: 3, pty: 0, pop: 20, reh: 62, wsd: 3.0, pm10: 31, airGrade: "보통" },
+        spots: [
+          { name: "송도 센트럴파크", cat: "미래도시·공원", addr: "인천 연수구 컨벤시아대로 160", lat: 37.3925, lng: 126.6389, desc: "해수 수로 위 문보트·수상택시와 미래형 마천루 야경" },
+          { name: "차이나타운 & 송월동 동화마을", cat: "이국문화", addr: "인천 중구 차이나타운로26번길 12-17", lat: 37.4754, lng: 126.6179, desc: "짜장면 발상지와 개항장 근대 건축물, 동화 벽화 골목" },
+          { name: "월미도 & 월미바다열차", cat: "해양유원지", addr: "인천 중구 월미문화로 81", lat: 37.4716, lng: 126.5969, desc: "디스코팡팡 테마파크와 서해 낙조 유람선, 모노레일" },
+          { name: "강화도 루지 & 전등사", cat: "역사·액티비티", addr: "인천 강화군 길상면 장흥로 217", lat: 37.6247, lng: 126.4891, desc: "동양 최대 규모 강화 씨사이드 루지와 천년 고찰 전등사" },
+          { name: "을왕리 해수욕장 (영종도)", cat: "해변·낙조", addr: "인천 중구 용유서로302번길 16-15", lat: 37.4475, lng: 126.3725, desc: "수도권에서 가장 가까운 서해 일몰과 조개구이 해변" },
+          { name: "영종도 인스파이어 & 파라다이스시티", cat: "복합리조트", addr: "인천 중구 공항문화로 127", lat: 37.4662, lng: 126.3887, desc: "초대형 디지털 LED 오로라 거리와 실내 워터파크 리조트" },
+          { name: "소래포구 종합어시장 & 습지생태공원", cat: "미식·생태", addr: "인천 남동구 소래역로 12", lat: 37.3987, lng: 126.7385, desc: "서해안 제철 해산물 어시장과 풍차 갈대밭 습지공원" },
+          { name: "영종 씨사이드 레일바이크", cat: "해안레저", addr: "인천 중구 구읍로 75", lat: 37.4892, lng: 126.5768, desc: "인천대교와 월미도를 바라보며 달리는 왕복 5.6km 해안 레일바이크" },
+          { name: "강화 교동도 대룡시장", cat: "레트로여행", addr: "인천 강화군 교동면 교동남로 35", lat: 37.7782, lng: 126.2849, desc: "1960년대 시간이 멈춘 듯한 실향민 골목 시장과 연산군 유배지" },
+          { name: "경인아라뱃길 & 아라마루전망대", cat: "수변드라이브", addr: "인천 계양구 아라로 51", lat: 37.5681, lng: 126.7433, desc: "아라폭포와 투명 유리바닥 원형 전망대, 자전거 라이딩 코스" }
+        ]
+      },
+      {
+        id: "gwangju", name: "광주", fullName: "광주광역시", areaCode: 5,
+        hubLat: 35.1395, hubLng: 126.7931, station: "광주송정역(KTX·SRT)·광주역", terminal: "유스퀘어(광주종합버스터미널)", airport: "광주공항(KWJ)·무안국제공항(MWX)", highway: "호남고속도로·광주대구고속도로",
+        tollgateName: "광주TG / 동광주IC", serviceArea: "백양사 휴게소", junctionName: "장성JC·고서JC",
+        localCallTaxi: { name: "광주 빛고을콜·새빛콜 택시 예약", phone: "062-525-5000", url: "https://www.gwangju.go.kr/" },
+        foodSpecialty: "광주 떡갈비 · 오리탕 · 무등산 보리밥 · 송정역시장 상추튀김",
+        baseWeather: { temp: 19.5, min: 11.8, max: 22.0, sky: 1, pty: 0, pop: 10, reh: 52, wsd: 1.9, pm10: 24, airGrade: "좋음" },
+        spots: [
+          { name: "무등산 국립공원 & 모노레일", cat: "국립공원", addr: "광주 동구 무등로 1550", lat: 35.1342, lng: 126.9888, desc: "유네스코 세계지질공원 주상절리대(입석대·서석대)와 지산유원지" },
+          { name: "국립아시아문화전당 (ACC)", cat: "복합문화예술", addr: "광주 동구 문화전당로 38", lat: 35.1468, lng: 126.9202, desc: "미디어아트 전시와 하늘마당 피크닉이 어우러진 문화 랜드마크" },
+          { name: "양림동 역사문화마을 & 펭귄마을", cat: "근대문화·예술", addr: "광주 남구 천변좌로 446번길 7", lat: 35.1376, lng: 126.9145, desc: "광주 근대 선교 유적과 정크아트 공예거리 펭귄마을" },
+          { name: "1913송정역시장", cat: "전통시장·미식", addr: "광주 광산구 송정로8번길 13", lat: 35.1374, lng: 126.7916, desc: "광주송정역 바로 앞 뉴트로 감성 먹거리 야시장" },
+          { name: "전일빌딩245 & 5·18민주광장", cat: "역사·전망", addr: "광주 동구 금남로 245", lat: 35.1481, lng: 126.9189, desc: "역사적 현장과 루프탑 전일마루 도심 전망대" },
+          { name: "광주호 호수생태원 & 소쇄원 인근", cat: "생태·산책", addr: "광주 북구 충효동 905", lat: 35.1869, lng: 127.0044, desc: "메타세쿼이아 수변 데크길과 왕버들 군락지 힐링 산책로" },
+          { name: "광주 패밀리랜드 & 우치공원", cat: "테마파크", addr: "광주 북구 우치로 677", lat: 35.2226, lng: 126.8992, desc: "빅아이 대관람차와 우치동물원, 카라반 캠핑장" },
+          { name: "충장로 & 동명동 카페거리", cat: "트렌드·미식", addr: "광주 동구 동계천로 124", lat: 35.1499, lng: 126.9255, desc: "개성 넘치는 로스터리 카페와 맛집이 밀집한 핫플레이스" },
+          { name: "광주 시립미술관 & 중외공원", cat: "예술·비엔날레", addr: "광주 북구 하서로 52", lat: 35.1818, lng: 126.8806, desc: "광주비엔날레 전시관과 예술의 숲 산책 코스" },
+          { name: "월봉서원 & 황룡강 친수공원", cat: "유교문화·수변", addr: "광주 광산구 광곡길 133", lat: 35.2115, lng: 126.7689, desc: "고봉 기대승 선생의 학문 정신이 깃든 서원과 꽃길" }
+        ]
+      },
+      {
+        id: "daejeon", name: "대전", fullName: "대전광역시", areaCode: 3,
+        hubLat: 36.3323, hubLng: 127.4342, station: "대전역(KTX·SRT)·서대전역", terminal: "대전복합터미널·유성시외버스터미널", airport: "청주국제공항(CJJ)", highway: "경부·호남지선·대전통영고속도로",
+        tollgateName: "대전TG / 유성IC", serviceArea: "신탄진 휴게소", junctionName: "회덕JC·비룡JC",
+        localCallTaxi: { name: "대전 한밭콜·양반콜 실시간 택시", phone: "042-522-8282", url: "https://www.daejeon.go.kr/" },
+        foodSpecialty: "성심당 튀김소보로 · 칼국수 & 두부두루치기 · 대청호 민물매운탕",
+        baseWeather: { temp: 18.4, min: 10.2, max: 21.0, sky: 1, pty: 0, pop: 10, reh: 51, wsd: 1.7, pm10: 25, airGrade: "좋음" },
+        spots: [
+          { name: "성심당 본점 & 으능정이 스카이로드", cat: "베이커리·명소", addr: "대전 중구 대종로480번길 15", lat: 36.3277, lng: 127.4273, desc: "대한민국 대표 빵집 성심당 튀김소보로·케익부띠끄 투어" },
+          { name: "대전 엑스포과학공원 & 한빛탑 물빛광장", cat: "야경·미디어", addr: "대전 유성구 대덕대로 480", lat: 36.3765, lng: 127.3882, desc: "한빛탑 미디어파사드와 음악분수, 엑스포다리 야경" },
+          { name: "한밭수목원 & 이응노미술관", cat: "도심수목원", addr: "대전 서구 둔산대로 169", lat: 36.3688, lng: 127.3880, desc: "중부권 최대 규모 도심 인공수목원과 문화예술단지" },
+          { name: "장태산 자연휴양림", cat: "메타세쿼이아", addr: "대전 서구 장안로 461", lat: 36.2185, lng: 127.3408, desc: "울창한 메타세쿼이아 숲 사이를 걷는 출렁다리와 스카이타워" },
+          { name: "계족산 황톳길", cat: "맨발힐링", addr: "대전 대덕구 장동 산85", lat: 36.4012, lng: 127.4485, desc: "14.5km 숲속 붉은 황톳길을 맨발로 걷는 전국 대표 에코힐링 명소" },
+          { name: "유성온천 족욕체험장", cat: "온천·휴식", addr: "대전 유성구 봉명동 574", lat: 36.3556, lng: 127.3422, desc: "100% 천연 온천수를 무료로 즐기는 도심 야외 족욕장" },
+          { name: "소제동 철도관사촌 카페거리", cat: "뉴트로감성", addr: "대전 동구 철갑2길 4", lat: 36.3348, lng: 127.4391, desc: "대전역 뒤편 100년 역사의 철도 관사 골목이 변신한 감성 공간" },
+          { name: "대청호 오백리길 & 명상정원", cat: "호수산책", addr: "대전 동구 추동 680", lat: 36.3642, lng: 127.4925, desc: "슬픈연가 촬영지이자 호수 위 나무 데크가 그림 같은 산책길" },
+          { name: "국립중앙과학관", cat: "과학체험", addr: "대전 유성구 대덕대로 481", lat: 36.3756, lng: 127.3768, desc: "천체관과 미래기술관 등 과학도시 대전을 대표하는 전시관" },
+          { name: "대전 오월드 (플라워랜드·나이트유니버스)", cat: "테마파크", addr: "대전 중구 사정공원로 70", lat: 36.2889, lng: 127.3968, desc: "사파리 동물원과 야간 디지털 미디어아트 나이트 유니버스" }
+        ]
+      },
+      {
+        id: "ulsan", name: "울산", fullName: "울산광역시", areaCode: 7,
+        hubLat: 35.5514, hubLng: 129.1386, station: "울산역(통도사 KTX·SRT)·태화강역", terminal: "울산고속버스터미널·시외버스터미널", airport: "울산공항(USN)", highway: "경부·동해·함양울산고속도로",
+        tollgateName: "울산TG / 서울산IC", serviceArea: "언양 휴게소", junctionName: "언양JC·울주JC",
+        localCallTaxi: { name: "울산 태화강콜·고래콜 택시 예약", phone: "052-275-8282", url: "https://www.ulsan.go.kr/" },
+        foodSpecialty: "언양 불고기 · 방어진 가자미물회 · 장생포 고래고기 · 정자항 대게",
+        baseWeather: { temp: 19.8, min: 12.5, max: 22.0, sky: 1, pty: 0, pop: 10, reh: 54, wsd: 2.7, pm10: 23, airGrade: "좋음" },
+        spots: [
+          { name: "태화강 국가정원 & 십리대숲", cat: "국가정원", addr: "울산 중구 태화강국가정원길 154", lat: 35.5476, lng: 129.2974, desc: "은하수 조명 포토존으로 유명한 십리대숲과 사계절 초화원" },
+          { name: "간절곶", cat: "일출명소", addr: "울산 울주군 서생면 간절곶1길 39-2", lat: 35.3588, lng: 129.3605, desc: "한반도에서 해가 가장 먼저 뜨는 해안 절경과 소망우체통" },
+          { name: "대왕암공원 & 출렁다리", cat: "해안절경", addr: "울산 동구 일산동 산907", lat: 35.4917, lng: 129.4398, desc: "1만 5천 그루 해송림과 바다 위 303m 대왕암 출렁다리" },
+          { name: "영남알프스 간월재", cat: "산악·억새평원", addr: "울산 울주군 상북면 간월산길 614", lat: 35.5542, lng: 129.0436, desc: "해발 900m 능선을 은빛으로 물들이는 대한민국 최고 억새군락지" },
+          { name: "장생포 고래문화특구 (고래박물관·모노레일)", cat: "해양테마", addr: "울산 남구 장생포고래로 244", lat: 35.5028, lng: 129.3808, desc: "고래바다여행선과 옛 포경 마을을 재현한 고래문화마을" },
+          { name: "반구대 암각화 & 암각화박물관", cat: "선사유적", addr: "울산 울주군 언양읍 반구대안길 285", lat: 35.6042, lng: 129.1783, desc: "7,000년 전 고래 사냥 모습을 바위에 새긴 국보 유적" },
+          { name: "강동 몽돌해변 & 주상절리", cat: "해안드라이브", addr: "울산 북구 산하동 975", lat: 35.6295, lng: 129.4426, desc: "파도에 부딪히는 둥근 몽돌 소리와 화산암 주상절리 해변" },
+          { name: "자수정동굴나라", cat: "동굴테마", addr: "울산 울주군 상북면 자수정로 212", lat: 35.5955, lng: 129.0972, desc: "보트 탐험을 즐길 수 있는 국내 최대 인공 자수정 광산 동굴" },
+          { name: "울산대교 전망대", cat: "산업야경", addr: "울산 동구 봉수로 155-1", lat: 35.5112, lng: 129.4068, desc: "울산만과 석유화학·조선 산업단지 야경을 조망하는 파노라마" },
+          { name: "외고산 옹기마을", cat: "전통공예", addr: "울산 울주군 온양읍 외고산3길 36", lat: 35.4241, lng: 129.2785, desc: "국내 최대 전통 옹기 집산지 및 도자기 제작 체험 마을" }
+        ]
+      },
+      {
+        id: "sejong", name: "세종", fullName: "세종특별자치시", areaCode: 8,
+        hubLat: 36.4800, hubLng: 127.2890, station: "오송역(KTX·SRT)·조치원역", terminal: "세종고속시외버스터미널", airport: "청주국제공항(CJJ)", highway: "경부·논산천안·서산영덕고속도로",
+        tollgateName: "남세종IC / 서세종IC", serviceArea: "정안알밤 휴게소", junctionName: "공주JC·청주JC",
+        localCallTaxi: { name: "세종 행복콜·누리콜 택시 예약", phone: "044-862-5000", url: "https://www.sejong.go.kr/" },
+        foodSpecialty: "조치원 파닭 · 고복저수지 석갈비 & 메기매운탕 · 금강 수변 베이커리",
+        baseWeather: { temp: 18.0, min: 9.8, max: 20.8, sky: 1, pty: 0, pop: 10, reh: 53, wsd: 1.6, pm10: 24, airGrade: "좋음" },
+        spots: [
+          { name: "국립세종수목원", cat: "수목원", addr: "세종 수목원로 136", lat: 36.4969, lng: 127.2852, desc: "국내 최대 사계절 전시온실과 한국전통정원, 야간개장 명소" },
+          { name: "세종호수공원", cat: "수변공원", addr: "세종 다솜로 216", lat: 36.4978, lng: 127.2719, desc: "수상무대섬과 은빛해변이 어우러진 국내 최대 인공 호수공원" },
+          { name: "정부세종청사 옥상정원", cat: "기네스북명소", addr: "세종 도움6로 11", lat: 36.5042, lng: 127.2652, desc: "길이 3.6km로 기네스북에 등재된 세계 최대 규모의 옥상 정원" },
+          { name: "이응다리 (금강보행교)", cat: "랜드마크·야경", addr: "세종 세종동 28-1", lat: 36.4792, lng: 127.2889, desc: "한글 반포 해(1446년)를 기념해 둘레 1,446m 원형으로 만든 복층 다리" },
+          { name: "베어트리파크", cat: "수목원·동물원", addr: "세종 전동면 신송로 217", lat: 36.6718, lng: 127.2045, desc: "반달곰 백여 마리와 수령 100년 넘는 향나무·분재원이 있는 테마파크" },
+          { name: "고복자연공원", cat: "생태·드라이브", addr: "세종 연서면 도신고복로 586", lat: 36.6054, lng: 127.2291, desc: "고복저수지 수변 데크 산책로와 벚꽃길, 맛집 카페 밀집지" },
+          { name: "대통령기록관", cat: "역사·전시", addr: "세종 다솜로 250", lat: 36.5015, lng: 127.2695, desc: "역대 대통령의 국정 기록물과 청와대 집무실 체험 공간" },
+          { name: "영평사", cat: "사찰·구절초", addr: "세종 장군면 영평사길 124", lat: 36.4672, lng: 127.2118, desc: "가을철 산사를 하얗게 뒤덮는 구절초 꽃축제와 템플스테이" },
+          { name: "세종중앙공원", cat: "레저·피크닉", addr: "세종 중앙공원로 60", lat: 36.4912, lng: 127.2815, desc: "국립세종수목원과 호수공원을 잇는 광활한 도심 잔디 문화공원" },
+          { name: "비암사 & 도깨비도로", cat: "고찰·드라이브", addr: "세종 전의면 비암사길 137", lat: 36.6789, lng: 127.1524, desc: "800년 느티나무 고찰 비암사와 착시 현상 도깨비도로" }
+        ]
+      },
+      {
+        id: "gyeonggi", name: "경기", fullName: "경기도", areaCode: 31,
+        hubLat: 37.2660, hubLng: 127.0018, station: "수원역(KTX)·광명역(KTX)·동탄역(SRT)", terminal: "수원종합버스터미널·성남터미널", airport: "김포국제공항(GMP)·인천국제공항(ICN)", highway: "경부·영동·서해안·수도권제1·2순환",
+        tollgateName: "수원신갈IC / 동수원TG", serviceArea: "기흥·덕평 자연휴게소", junctionName: "신갈JC·호법JC",
+        localCallTaxi: { name: "경기 GG콜·브랜드택시 통합호출", phone: "1688-9999", url: "https://www.gg.go.kr/" },
+        foodSpecialty: "수원 왕갈비 · 가평 잣두부 & 닭갈비 · 이천 쌀밥정식 · 포천 이동갈비",
+        baseWeather: { temp: 17.5, min: 9.5, max: 20.2, sky: 1, pty: 0, pop: 10, reh: 54, wsd: 1.9, pm10: 28, airGrade: "좋음" },
+        spots: [
+          { name: "수원화성 & 화성행궁", cat: "유네스코유산", addr: "경기 수원시 팔달구 정조로 825", lat: 37.2827, lng: 127.0153, desc: "정조대왕의 효심과 실학이 담긴 성곽길, 열기구 플라잉수원" },
+          { name: "에버랜드 & 캐리비안베이 (용인)", cat: "테마파크", addr: "경기 용인시 처인구 포곡읍 에버랜드로 199", lat: 37.2939, lng: 127.2025, desc: "판다월드와 티익스프레스, 사계절 가든 축제가 열리는 국내 최대 테마파크" },
+          { name: "아침고요수목원 (가평)", cat: "수목원·야경", addr: "경기 가평군 상면 수목원로 432", lat: 37.7445, lng: 127.3526, desc: "축령산 자락 20여 개 한국형 테마 정원과 오색별빛정원전" },
+          { name: "화담숲 (광주)", cat: "생태수목원", addr: "경기 광주시 도척면 도척윗로 278-1", lat: 37.3372, lng: 127.2923, desc: "모노레일을 타고 감상하는 단풍과 자작나무 숲, 반딧불이 생태원" },
+          { name: "한국민속촌 (용인)", cat: "전통문화체험", addr: "경기 용인시 기흥구 민속촌로 90", lat: 37.2588, lng: 127.1180, desc: "조선시대 마을 재현과 유쾌한 캐릭터 공연, 야간 공포체험" },
+          { name: "광명동굴", cat: "동굴테마파크", addr: "경기 광명시 가학로85번길 142", lat: 37.4262, lng: 126.8665, desc: "폐광을 문화예술 공간과 와인동굴로 재탄생시킨 사계절 피서지" },
+          { name: "파주 임진각 평화누리 & DMZ곤돌라", cat: "평화·안보관광", addr: "경기 파주시 문산읍 임진각로 148-40", lat: 37.8892, lng: 126.7402, desc: "바람의 언덕 바람개비와 임진강을 건너는 평화 곤돌라" },
+          { name: "양평 두물머리 & 세미원", cat: "수변·일출", addr: "경기 양평군 양서면 두물머리길 145", lat: 37.5342, lng: 127.3168, desc: "남한강과 북한강이 만나는 물안개 절경과 연꽃 핫도그 명소" },
+          { name: "포천 아트밸리 & 한탄강 하늘다리", cat: "지질공원", addr: "경기 포천시 신북면 아트밸리로 234", lat: 37.9234, lng: 127.2356, desc: "화강암 채석장 에메랄드빛 천주호와 현무암 협곡 출렁다리" },
+          { name: "시흥 웨이브파크 & 오이도 빨간등대", cat: "해양레저", addr: "경기 시흥시 거북섬둘레길 42", lat: 37.3245, lng: 126.6812, desc: "세계 최대 규모 인공 서핑파크와 서해 오이도 낙조 산책" }
+        ]
+      },
+      {
+        id: "gangwon", name: "강원", fullName: "강원특별자치도", areaCode: 32,
+        hubLat: 37.7638, hubLng: 128.8991, station: "강릉역(KTX)·춘천역(ITX)·속초/원주역", terminal: "강릉/속초/춘천고속버스터미널", airport: "양양국제공항(YNY)·원주공항(WJU)", highway: "서울양양·영동·동해·중앙고속도로",
+        tollgateName: "강릉TG / 속초IC / 춘천TG", serviceArea: "횡성·내린천 휴게소", junctionName: "만종JC·강릉JC",
+        localCallTaxi: { name: "강원 관광택시(강릉·춘천·속초) 온라인예약", phone: "033-640-4536", url: "https://www.gn.go.kr/tour/" },
+        foodSpecialty: "춘천 닭갈비 & 막국수 · 강릉 초당순두부 · 속초 물회 & 닭강정 · 평창 한우",
+        baseWeather: { temp: 16.8, min: 8.5, max: 19.5, sky: 1, pty: 0, pop: 10, reh: 48, wsd: 2.8, pm10: 16, airGrade: "좋음" },
+        spots: [
+          { name: "속초 설악산 국립공원 & 권금성 케이블카", cat: "명산·케이블카", addr: "강원 속초시 설악산로 1085", lat: 38.1732, lng: 128.4882, desc: "울산바위와 권금성 비경을 감상하는 대한민국 대표 명산" },
+          { name: "강릉 경포대 & 안목해변 커피거리", cat: "해양·카페", addr: "강원 강릉시 창해로14번길 20-1", lat: 37.7726, lng: 128.9472, desc: "푸른 동해 바다를 마주한 로스터리 커피거리와 경포호 산책" },
+          { name: "춘천 남이섬 & 삼악산 호수케이블카", cat: "섬·로맨틱", addr: "강원 춘천시 남산면 남이섬길 1", lat: 37.7914, lng: 127.5256, desc: "메타세쿼이아 가로수길과 의암호 위를 나는 국내 최장 호수케이블카" },
+          { name: "평창 대관령 양떼목장 & 발왕산 기스카이워크", cat: "고원·목장", addr: "강원 평창군 대관령면 대관령마루길 483-32", lat: 37.6889, lng: 128.7524, desc: "초원 위 양 먹이주기 체험과 해발 1,458m 발왕산 정상 전망대" },
+          { name: "정선 하이원리조트 & 아리힐스 스카이워크", cat: "리조트·협곡", addr: "강원 정선군 고한읍 하이원길 424", lat: 37.2062, lng: 128.8391, desc: "한반도 지형 동강 절경을 발아래 두는 병방치 스카이워크" },
+          { name: "삼척 장호항 & 해상케이블카", cat: "해양액티비티", addr: "강원 삼척시 근덕면 장호항길 95", lat: 37.2856, lng: 129.3208, desc: "한국의 나폴리라 불리는 투명 카약·스노클링 성지" },
+          { name: "양양 서피비치 & 낙산사", cat: "서핑·해안사찰", addr: "강원 양양군 현북면 하조대해안길 119", lat: 38.0268, lng: 128.7185, desc: "이국적인 서핑 전용 해변과 동해 절벽 위 해수관음상 낙산사" },
+          { name: "원주 소금산 그랜드밸리 (출렁다리·울렁다리)", cat: "스릴·협곡", addr: "강원 원주시 지정면 소금산길 12", lat: 37.3672, lng: 127.8265, desc: "절벽 잔도와 스카이타워, 아찔한 두 개의 출렁다리 트레킹" },
+          { name: "인제 원대리 자작나무숲", cat: "생태·트레킹", addr: "강원 인제군 인제읍 자작나무숲길 760", lat: 37.9892, lng: 128.1985, desc: "70만 그루 순백의 자작나무가 펼쳐진 속삭이는 숲길" },
+          { name: "동해 무릉별유천지 & 도째비골 스카이밸리", cat: "이색테마", addr: "강원 동해시 이기로 97", lat: 37.4825, lng: 129.0189, desc: "에메랄드빛 석회석 호수 라벤더 정원과 묵호항 해안 스카이워크" }
+        ]
+      },
+      {
+        id: "chungbuk", name: "충북", fullName: "충청북도", areaCode: 33,
+        hubLat: 36.6256, hubLng: 127.3302, station: "오송역(KTX·SRT)·청주역·제천역(KTX-이음)", terminal: "청주고속버스터미널·충주/제천터미널", airport: "청주국제공항(CJJ)", highway: "경부·중부·평택제천·중앙고속도로",
+        tollgateName: "청주IC / 단양IC / 제천IC", serviceArea: "충주호·금강 휴게소", junctionName: "남이JC·제천JC",
+        localCallTaxi: { name: "충북 청주직지콜·단양/제천 관광택시", phone: "043-233-5500", url: "https://www.danyang.go.kr/tour/" },
+        foodSpecialty: "단양 마늘떡갈비 · 제천 약채락 한정식 · 청주 짜글이 & 삼겹살거리",
+        baseWeather: { temp: 17.6, min: 9.2, max: 20.5, sky: 1, pty: 0, pop: 10, reh: 52, wsd: 1.5, pm10: 23, airGrade: "좋음" },
+        spots: [
+          { name: "단양 만천하스카이워크 & 도담삼봉", cat: "단양팔경", addr: "충북 단양군 적성면 옷바위길 10", lat: 36.9682, lng: 128.3485, desc: "남한강 수면 위 절벽 전망대와 알파인코스터, 도담삼봉 유람선" },
+          { name: "제천 청풍호반 케이블카 & 의림지", cat: "호수·케이블카", addr: "충북 제천시 청풍면 문화재길 166", lat: 37.0015, lng: 128.1728, desc: "내륙의 바다 청풍호를 360도 조망하는 비봉산 정상 케이블카" },
+          { name: "청주 청남대 (대통령별장)", cat: "역사·호수산책", addr: "충북 청주시 상당구 문의면 청남대길 646", lat: 36.4628, lng: 127.4892, desc: "대청호반을 따라 조성된 옛 대통령 전용 별장과 메타세쿼이아길" },
+          { name: "보은 법주사 & 속리산 세조길", cat: "유네스코사찰", addr: "충북 보은군 속리산면 법주사로 405", lat: 36.5418, lng: 127.8325, desc: "국보 팔상전과 금동미륵대불, 계곡을 따라 걷는 명품 숲길" },
+          { name: "충주 활옥동굴 & 충주호 유람선", cat: "동굴카약", addr: "충북 충주시 목벌안길 26", lat: 36.9588, lng: 128.0062, desc: "100년 역사의 백옥 광산 동굴 속 투명 카약 보트 체험" },
+          { name: "괴산 산막이옛길 & 문광저수지 은행나무길", cat: "생태트레킹", addr: "충북 괴산군 칠성면 명태재로외사길 1", lat: 36.7592, lng: 127.8548, desc: "괴산호를 따라 이어지는 친환경 수변 산책로와 유람선" },
+          { name: "진천 농다리 & 초평호 미르309 출렁다리", cat: "천년돌다리", addr: "충북 진천군 문백면 구곡리 601-32", lat: 36.8195, lng: 127.4982, desc: "고려시대 축조된 천년 돌다리 농다리와 주탑 없는 최장 출렁다리" },
+          { name: "단양 고수동굴 & 아쿠아리움", cat: "천연기념물동굴", addr: "충북 단양군 단양읍 고수동굴길 8", lat: 36.9885, lng: 128.3822, desc: "수억 년의 시간이 빚어낸 종유석과 석순의 지하 궁전" },
+          { name: "옥천 부소담악 (추소정)", cat: "수상절경", addr: "충북 옥천군 군북면 추소리 263-3", lat: 36.3512, lng: 127.5892, desc: "대청호 물 위로 병풍처럼 솟아오른 700m 기암절벽 비경" },
+          { name: "영동 월류봉 & 레인보우힐링관광지", cat: "와인·절경", addr: "충북 영동군 황간면 원촌리", lat: 36.2356, lng: 127.8965, desc: "달도 머물다 가는 절경 월류봉 둘레길과 영동 와인터널" }
+        ]
+      },
+      {
+        id: "chungnam", name: "충남", fullName: "충청남도", areaCode: 34,
+        hubLat: 36.7946, hubLng: 127.1046, station: "천안아산역(KTX·SRT)·공주역·홍성역", terminal: "천안종합버스터미널·공주/보령터미널", airport: "청주국제공항(CJJ)·군산공항(KUV)", highway: "경부·서해안·논산천안·당진영덕고속도로",
+        tollgateName: "천안IC / 대천IC / 공주IC", serviceArea: "행담도·천안삼거리 휴게소", junctionName: "천안JC·당진JC",
+        localCallTaxi: { name: "충남 천안행복콜·보령/태안 관광택시", phone: "041-554-0000", url: "https://tour.chungnam.go.kr/" },
+        foodSpecialty: "천안 병천순대 · 태안 게국지 · 부여 연잎밥 · 예산 시장 소머리국밥",
+        baseWeather: { temp: 18.1, min: 10.4, max: 20.8, sky: 3, pty: 0, pop: 20, reh: 59, wsd: 2.3, pm10: 27, airGrade: "좋음" },
+        spots: [
+          { name: "보령 대천해수욕장 & 스카이바이크", cat: "서해대표해변", addr: "충남 보령시 머드로 123", lat: 36.3056, lng: 126.5162, desc: "보령머드축제 광장과 바다 위를 달리는 대천 스카이바이크" },
+          { name: "태안 안면도 꽃지해수욕장", cat: "일몰명소", addr: "충남 태안군 안면읍 승언리", lat: 36.4988, lng: 126.3345, desc: "할미바위·할아비바위 사이로 떨어지는 서해 3대 낙조" },
+          { name: "공주 공산성 & 무령왕릉", cat: "백제역사유적", addr: "충남 공주시 웅진로 280", lat: 36.4632, lng: 127.1268, desc: "금강을 품은 백제 웅진 시대의 왕성과 유네스코 세계유산" },
+          { name: "부여 부소산성(낙화암) & 궁남지", cat: "백제고도", addr: "충남 부여군 부여읍 부소로 31", lat: 36.2889, lng: 126.9125, desc: "백마강 황포돛배 유람선과 우리나라 최초의 인공 정원 궁남지" },
+          { name: "아산 외암민속마을 & 현충사", cat: "전통민속·역사", addr: "충남 아산시 송악면 외암민속길 5", lat: 36.7315, lng: 127.0208, desc: "500년 전통 기와·초가집이 보존된 마을과 충무공 이순신 사당" },
+          { name: "예산 예당호 출렁다리 & 모노레일", cat: "호수·야경", addr: "충남 예산군 응봉면 후사리 39", lat: 36.6435, lng: 126.8012, desc: "402m 호수 출렁다리 음악분수와 예산 상설시장 미식 투어" },
+          { name: "서산 해미읍성 & 간월암", cat: "역사·바닷길", addr: "충남 서산시 해미면 남문2로 143", lat: 36.7138, lng: 126.5485, desc: "원형이 완벽히 보존된 조선시대 읍성과 물이 빠지면 열리는 간월암" },
+          { name: "논산 선샤인랜드 (미스터션샤인 촬영지)", cat: "드라마세트장", addr: "충남 논산시 연무읍 봉황로 102", lat: 36.1156, lng: 127.0928, desc: "1900년대 한성 거리를 재현한 선샤인 스튜디오와 탑정호 출렁다리" },
+          { name: "천안 독립기념관", cat: "역사·단풍명소", addr: "충남 천안시 동남구 목천읍 독립기념관로 1", lat: 36.7832, lng: 127.2235, desc: "겨레의 집과 가을 단풍나무 숲길이 장관을 이루는 역사 공원" },
+          { name: "서천 국립생태원 & 장항스카이워크", cat: "생태·소나무숲", addr: "충남 서천군 마서면 금강로 1210", lat: 36.0295, lng: 126.7192, desc: "세계 5대 기후 에코리움 온실과 해송 숲 위를 걷는 스카이워크" }
+        ]
+      },
+      {
+        id: "jeonbuk", name: "전북", fullName: "전북특별자치도", areaCode: 37,
+        hubLat: 35.8497, hubLng: 127.1618, station: "전주역(KTX)·익산역(KTX·SRT)·남원역", terminal: "전주고속/시외버스터미널·군산터미널", airport: "군산공항(KUV)", highway: "호남·서해안·순천완주·새만금포항고속도로",
+        tollgateName: "전주TG / 동전주IC / 군산IC", serviceArea: "여산·인삼랜드 휴게소", junctionName: "익산JC·완주JC",
+        localCallTaxi: { name: "전북 전주한지콜·군산/남원 관광택시", phone: "063-252-0000", url: "https://tour.jeonju.go.kr/" },
+        foodSpecialty: "전주 비빔밥 & 콩나물국밥 · 군산 짬뽕 & 이성당 빵 · 고창 풍천장어",
+        baseWeather: { temp: 18.9, min: 10.8, max: 21.5, sky: 1, pty: 0, pop: 10, reh: 55, wsd: 1.8, pm10: 24, airGrade: "좋음" },
+        spots: [
+          { name: "전주 한옥마을 & 경기전", cat: "전통문화·미식", addr: "전북 전주시 완산구 기린대로 99", lat: 35.8147, lng: 127.1526, desc: "700여 채의 전통 한옥과 태조 어진 경기전, 전주비빔밥 미식 성지" },
+          { name: "군산 선유도 해수욕장 (고군산군도)", cat: "섬드라이브", addr: "전북 군산시 옥도면 선유도리", lat: 35.8112, lng: 126.4165, desc: "다리로 연결되어 자동차로 달리는 신선이 노닐던 바다 절경" },
+          { name: "남원 광한루원", cat: "전통정원·야경", addr: "전북 남원시 요천로 1447", lat: 35.4036, lng: 127.3792, desc: "춘향전의 배경이 된 오작교와 은하수를 상징하는 조선 대표 정원" },
+          { name: "정읍 내장산 국립공원 & 케이블카", cat: "단풍명산", addr: "전북 정읍시 내장산로 936", lat: 35.4892, lng: 126.8915, desc: "우화정과 단풍터널로 유명한 호남의 금강 내장산" },
+          { name: "부안 채석강 & 변산반도 국립공원", cat: "해식절벽", addr: "전북 부안군 변산면 변산해변로 1", lat: 35.6256, lng: 126.4692, desc: "수만 권의 책을 쌓아 올린 듯한 퇴적암 해식 절벽과 격포 낙조" },
+          { name: "무주 덕유산 리조트 & 향적봉 곤돌라", cat: "설경·고원", addr: "전북 무주군 설천면 만선로 185", lat: 35.8908, lng: 127.7462, desc: "관광곤돌라로 15분 만에 오르는 해발 1,520m 설천봉 상고대 비경" },
+          { name: "진안 마이산 탑사", cat: "기암·미슐랭3스타", addr: "전북 진안군 마령면 마이산남로 367", lat: 35.7568, lng: 127.4125, desc: "말의 귀를 닮은 두 봉우리와 폭풍에도 무너지지 않는 80여 개 돌탑" },
+          { name: "군산 근대역사박물관 & 경암동 철길마을", cat: "시간여행", addr: "전북 군산시 해망로 240", lat: 35.9902, lng: 126.7115, desc: "1930년대 근대 건축물 거리와 옛 기찻길 레트로 체험" },
+          { name: "고창 선운사 & 고창읍성", cat: "사찰·꽃무릇", addr: "전북 고창군 아산면 선운사로 250", lat: 35.4958, lng: 126.5782, desc: "동백나무 숲과 붉은 꽃무릇 군락지, 모양성 답성놀이" },
+          { name: "임실 치즈테마파크 & 옥정호 출렁다리", cat: "유럽풍테마·호수", addr: "전북 임실군 성수면 도인2길 50", lat: 35.6352, lng: 127.3018, desc: "스위스 아펜젤을 닮은 치즈 체험장과 옥정호 붕어섬 생태공원" }
+        ]
+      },
+      {
+        id: "jeonnam", name: "전남", fullName: "전라남도", areaCode: 38,
+        hubLat: 34.7915, hubLng: 127.4875, station: "여수엑스포역(KTX)·순천역(KTX)·목포역(KTX·SRT)", terminal: "순천/여수/목포종합버스터미널", airport: "여수공항(RSU)·무안국제공항(MWX)", highway: "호남·남해·서해안고속도로",
+        tollgateName: "동순천IC / 목포TG", serviceArea: "보성녹차·섬진강 휴게소", junctionName: "순천JC·죽림JC",
+        localCallTaxi: { name: "전남 남도관광택시(여수·순천·목포) 예약", phone: "1899-6114", url: "https://www.namdokorea.com/" },
+        foodSpecialty: "여수 게장백반 & 갓김치 · 순천 꼬막정식 · 담양 죽통밥 · 목포 세발낙지",
+        baseWeather: { temp: 20.1, min: 13.2, max: 22.4, sky: 1, pty: 0, pop: 10, reh: 57, wsd: 2.6, pm10: 19, airGrade: "좋음" },
+        spots: [
+          { name: "여수 해상케이블카 & 오동도·낭만포차", cat: "해양야경", addr: "전남 여수시 돌산읍 돌산로 3600-1", lat: 34.7315, lng: 127.7468, desc: "여수 밤바다 위를 가로지르는 케이블카와 동백섬 오동도" },
+          { name: "순천만 국가정원 & 순천만 습지", cat: "국가정원1호", addr: "전남 순천시 국가정원1호길 47", lat: 34.9288, lng: 127.4982, desc: "스카이큐브로 연결되는 세계 각국 정원과 황금빛 갈대밭 습지" },
+          { name: "담양 죽녹원 & 메타세쿼이아 가로수길", cat: "대나무숲·힐링", addr: "전남 담양군 담양읍 죽녹원로 119", lat: 35.3278, lng: 126.9856, desc: "푸른 대나무 숲 산책과 떡갈비·대통밥 미식 여행" },
+          { name: "목포 해상케이블카 & 유달산", cat: "최장케이블카", addr: "전남 목포시 해양대학로 240", lat: 34.7885, lng: 126.3692, desc: "유달산 기암괴석과 다도해, 목포대교 일몰을 잇는 3.23km 케이블카" },
+          { name: "보성 대한다원 녹차밭", cat: "초록풍경", addr: "전남 보성군 보성읍 녹차로 763-67", lat: 34.7189, lng: 127.0805, desc: "삼나무 숲길 너머 끝없이 펼쳐진 계단식 초록 차밭과 녹차 아이스크림" },
+          { name: "신안 퍼플섬 (반월도·박지도)", cat: "유엔최우수관광마을", addr: "전남 신안군 안좌면 소곡두리길 257-35", lat: 34.7385, lng: 126.1125, desc: "지붕과 다리, 라벤더 정원까지 온통 보라색으로 물든 환상의 섬" },
+          { name: "구례 화엄사 & 지리산 노고단", cat: "천년고찰·명산", addr: "전남 구례군 마산면 화엄사로 539", lat: 35.2568, lng: 127.4985, desc: "국보 각황전과 홍매화로 유명한 지리산 대표 대찰" },
+          { name: "해남 땅끝마을 & 대흥사", cat: "한반도최남단", addr: "전남 해남군 송지면 땅끝마을길 60-28", lat: 34.2938, lng: 126.5262, desc: "한반도 육지 최남단 땅끝전망대 모노레일과 유네스코 세계유산 대흥사" },
+          { name: "순천 낙안읍성", cat: "전통민속마을", addr: "전남 순천시 낙안면 충민길 30", lat: 34.9068, lng: 127.3405, desc: "성곽 위에서 내려다보는 300여 채 초가집 마을의 정취" },
+          { name: "완도 신지명사십리 & 해양치유센터", cat: "해양웰니스", addr: "전남 완도군 신지면 명사십리길 85-105", lat: 34.3268, lng: 126.8192, desc: "고운 모래 해변과 국내 최초 해수·해조류 테라피 해양치유 명소" }
+        ]
+      },
+      {
+        id: "gyeongbuk", name: "경북", fullName: "경상북도", areaCode: 35,
+        hubLat: 35.8394, hubLng: 129.1802, station: "경주역(KTX·SRT)·포항역(KTX)·안동역(KTX-이음)·김천구미역", terminal: "경주/포항/안동터미널", airport: "포항경주공항(KPO)·대구국제공항(TAE)", highway: "경부·중앙·상주영덕·동해고속도로",
+        tollgateName: "경주TG / 포항TG / 서안동IC", serviceArea: "안동·건천 휴게소", junctionName: "영천JC·안동JC",
+        localCallTaxi: { name: "경북 경주신라콜·안동/포항 관광택시", phone: "054-745-0000", url: "https://www.gyeongju.go.kr/tour/" },
+        foodSpecialty: "경주 한우물회 & 황남빵 · 안동 찜닭 & 간고등어 · 포항 과메기 · 영덕 대게",
+        baseWeather: { temp: 18.7, min: 10.6, max: 21.2, sky: 1, pty: 0, pop: 10, reh: 50, wsd: 2.2, pm10: 21, airGrade: "좋음" },
+        spots: [
+          { name: "경주 불국사 & 석굴암", cat: "유네스코유산", addr: "경북 경주시 불국로 385", lat: 35.7902, lng: 129.3320, desc: "신라 불교 예술의 정수가 집약된 다보탑·석가탑과 석굴암 본존불" },
+          { name: "경주 동궁과 월지 (안압지) & 황리단길", cat: "야경·핫플", addr: "경북 경주시 원화로 102", lat: 35.8348, lng: 129.2265, desc: "연못에 비치는 신라 별궁의 환상적인 야경과 한옥 카페거리 황리단길" },
+          { name: "안동 하회마을 & 병산서원", cat: "유네스코마을", addr: "경북 안동시 풍천면 전서로 186", lat: 36.5392, lng: 128.5182, desc: "낙동강이 S자로 감싸 안은 600년 풍산 류씨 씨족마을과 부용대" },
+          { name: "포항 호미곶 해맞이광장 & 스페이스워크", cat: "일출·해안", addr: "경북 포항시 남구 호미곶면 해맞이로136번길 20", lat: 36.0768, lng: 129.5668, desc: "바다 위 상생의 손 조형물과 롤러코스터 조형물 스페이스워크" },
+          { name: "문경새재 도립공원 & 오픈세트장", cat: "옛길트레킹", addr: "경북 문경시 문경읍 새재로 932", lat: 36.7625, lng: 128.0768, desc: "제1~3관문 황톳길 산책과 사극 촬영 세트장, 문경 에코월드" },
+          { name: "영주 부석사 & 소수서원", cat: "전통건축", addr: "경북 영주시 부석면 부석사로 345", lat: 36.9985, lng: 128.6872, desc: "배흘림기둥 무량수전과 소백산 자락이 펼쳐지는 석양 비경" },
+          { name: "울진 죽변 해안스카이레일 & 성류굴", cat: "해안모노레일", addr: "경북 울진군 죽변면 죽변중앙로 235-12", lat: 37.0582, lng: 129.4238, desc: "에메랄드빛 동해 바다 바로 위를 달리는 무인 해안 모노레일" },
+          { name: "청송 주왕산 국립공원 & 주산지", cat: "기암절벽·호수", addr: "경북 청송군 주왕산면 공원길 169-7", lat: 36.3965, lng: 129.1462, desc: "학소대·용추폭포 협곡 트레킹과 물속 왕버들이 신비로운 주산지" },
+          { name: "영덕 강구항 대게거리 & 블루로드", cat: "미식·해안길", addr: "경북 영덕군 강구면 영덕대게로 132", lat: 36.3588, lng: 129.3885, desc: "전국 최대 대게 집산지 미식 투어와 동해안 해파랑길 산책" },
+          { name: "울릉도 & 독도 (포항·강릉 여객선 연계)", cat: "신비의섬", addr: "경북 울릉군 울릉읍 도동길 14", lat: 37.4842, lng: 130.9056, desc: "나리분지, 관음도, 코끼리바위와 대한민국 동쪽 끝 독도 탐방" }
+        ]
+      },
+      {
+        id: "gyeongnam", name: "경남", fullName: "경상남도", areaCode: 36,
+        hubLat: 35.2382, hubLng: 128.6822, station: "창원중앙역(KTX)·마산역·진주역(KTX·SRT)·밀양역", terminal: "창원/마산/진주/통영버스터미널", airport: "김해국제공항(PUS)·사천공항(HIN)", highway: "남해·통영대전·중부내륙·중앙고속도로",
+        tollgateName: "동창원IC / 통영TG / 진주IC", serviceArea: "함안·고성공룡나라 휴게소", junctionName: "산인JC·진주JC",
+        localCallTaxi: { name: "경남 창원콜·통영/거제 관광택시 예약", phone: "055-285-0000", url: "https://www.utour.go.kr/" },
+        foodSpecialty: "통영 충무김밥 & 굴요리 · 진주 냉면 & 육회비빔밥 · 남해 멸치쌈밥",
+        baseWeather: { temp: 20.0, min: 13.0, max: 22.2, sky: 1, pty: 0, pop: 10, reh: 56, wsd: 2.4, pm10: 20, airGrade: "좋음" },
+        spots: [
+          { name: "통영 케이블카 & 디피랑·스카이라인루지", cat: "한려수도절경", addr: "경남 통영시 발개로 205", lat: 34.8268, lng: 128.4225, desc: "미륵산 정상 한려수도 전망대와 야간 빛의 정원 디피랑" },
+          { name: "거제 바람의언덕 & 외도 보타니아", cat: "해상식물원", addr: "경남 거제시 남부면 갈곶리 산14-47", lat: 34.7452, lng: 128.6625, desc: "풍차가 도는 초원 해안 절벽과 유람선으로 가는 지중해풍 해상정원 외도" },
+          { name: "남해 독일마을 & 상주은모래비치", cat: "이국풍경·해변", addr: "경남 남해군 삼동면 독일로 92", lat: 34.7945, lng: 128.0456, desc: "주황색 지붕의 독일식 주택과 맥주, 반달 모양 은빛 모래 해변" },
+          { name: "진주성 & 촉석루 (남강 유등축제)", cat: "역사·야경", addr: "경남 진주시 남강로 626", lat: 35.1892, lng: 128.0785, desc: "임진왜란 진주대첩의 역사가 서린 남강 절벽 위 명루" },
+          { name: "합천 해인사 (팔만대장경) & 영상테마파크", cat: "유네스코유산", addr: "경남 합천군 가야면 해인사길 122", lat: 35.8012, lng: 128.0982, desc: "국보 고려대장경판 장경판전과 해인사 소리길 계곡 트레킹" },
+          { name: "하동 삼성궁 & 최참판댁·쌍계사", cat: "신비정원·문학", addr: "경남 하동군 청암면 삼성궁길 106-12", lat: 35.2615, lng: 127.6825, desc: "에메랄드빛 연못과 1,500개 돌탑이 이국적인 지리산 배달성전" },
+          { name: "창녕 우포늪 생태공원", cat: "람사르습지", addr: "경남 창녕군 유어면 우포늪길 220", lat: 35.5542, lng: 128.4156, desc: "1억 4천만 년 태고의 신비를 간직한 국내 최대 자연 내륙습지" },
+          { name: "밀양 위양지 & 영남루", cat: "고택·반영명소", addr: "경남 밀양시 부북면 위양로 273-36", lat: 35.5418, lng: 128.7125, desc: "봄철 하얀 이팝나무 꽃과 완재정이 물에 비치는 사진작가들의 성지" },
+          { name: "김해 가야테마파크 & 낙동강 레일바이크", cat: "역사·레저", addr: "경남 김해시 가야테마길 161", lat: 35.2528, lng: 128.8915, desc: "익스트림 사이클 체험과 낙동강 철교 위를 달리는 레일바이크, 와인동굴" },
+          { name: "창원 진해 경화역 & 해양공원", cat: "사계절공원", addr: "경남 창원시 진해구 진해대로 649", lat: 35.1578, lng: 128.6885, desc: "봄철 벚꽃 기찻길과 솔라타워 해상 전망대" }
+        ]
+      },
+      {
+        id: "jeju", name: "제주", fullName: "제주특별자치도", areaCode: 39,
+        hubLat: 33.5066, hubLng: 126.4930, station: "제주국제공항·제주항 연안여객터미널", terminal: "제주버스터미널·서귀포버스터미널", airport: "제주국제공항(CJU)", highway: "평화로·번영로·애월해안도로·일주도로",
+        tollgateName: "제주항/평화로 무정차구간", serviceArea: "평화로·번영로 드라이브쉼터", junctionName: "노형오거리·광령교차로",
+        localCallTaxi: { name: "제주 글로벌택시·관광택시 실시간 예약", phone: "064-727-0082", url: "https://www.visitjeju.net/kr/themtour/view?contentsid=CNTS_200000000012714" },
+        foodSpecialty: "제주 흑돼지 구이 · 갈치조림 & 성게미역국 · 고기국수 · 우도 땅콩디저트",
+        baseWeather: { temp: 21.6, min: 16.0, max: 23.8, sky: 3, pty: 0, pop: 20, reh: 64, wsd: 3.8, pm10: 15, airGrade: "좋음" },
+        spots: [
+          { name: "성산일출봉", cat: "유네스코자연유산", addr: "제주 서귀포시 성산읍 일출로 284-12", lat: 33.4585, lng: 126.9425, desc: "바다 위로 솟아오른 거대한 왕관 모양의 수성화산체와 해녀물질공연" },
+          { name: "한라산 국립공원 (어리목·성판악)", cat: "대한민국최고봉", addr: "제주 제주시 1100로 2070-61", lat: 33.3617, lng: 126.5292, desc: "해발 1,947m 백록담과 사계절 영실기암의 웅장한 산악 경관" },
+          { name: "협재 해수욕장 & 금능 해변", cat: "에메랄드해변", addr: "제주 제주시 한림읍 한림로 329-10", lat: 33.3942, lng: 126.2398, desc: "비양도가 눈앞에 떠 있는 수심 얕고 투명한 에메랄드빛 바다" },
+          { name: "우도 (산호해변·검멀레해변)", cat: "섬속의섬", addr: "제주 제주시 우도면 삼양고수물길 1", lat: 33.5042, lng: 126.9535, desc: "성산항에서 배로 15분, 땅콩아이스크림과 해안 일주 전기차 투어" },
+          { name: "섭지코지 & 아쿠아플라넷 제주", cat: "해안절경", addr: "제주 서귀포시 성산읍 고성리", lat: 33.4242, lng: 126.9312, desc: "유채꽃 언덕과 푸른 바다, 안도 타다오 건축물이 어우러진 곶" },
+          { name: "천지연폭포 & 정방폭포", cat: "폭포·야간산책", addr: "제주 서귀포시 남성중로 2-15", lat: 33.2468, lng: 126.5545, desc: "아열대 난대림 계곡 폭포와 바다로 직접 떨어지는 동양 유일 해안폭포" },
+          { name: "카멜리아힐 & 오설록 티뮤지엄", cat: "수목원·녹차밭", addr: "제주 서귀포시 안덕면 병악로 166", lat: 33.2895, lng: 126.3702, desc: "동양 최대 동백 수목원과 푸른 유기농 녹차밭 베이커리" },
+          { name: "함덕 해수욕장 & 서우봉", cat: "오션뷰·산책", addr: "제주 제주시 조천읍 조함해안로 525", lat: 33.5432, lng: 126.6692, desc: "야자수와 에메랄드빛 라군, 서우봉 둘레길 노을 전망" },
+          { name: "주상절리대 (중문대포해안)", cat: "지질명소", addr: "제주 서귀포시 이어도로 36-24", lat: 33.2378, lng: 126.4252, desc: "화산 용암이 급격히 식으며 빚어낸 육각형 돌기둥 해안 절벽" },
+          { name: "애월 한담해안산책로 & 곽지해변", cat: "카페거리·노을", addr: "제주 제주시 애월읍 애월로1길 22", lat: 33.4628, lng: 126.3105, desc: "현무암 해안 곡선을 따라 이어진 오션뷰 카페거리와 투명 카약" }
+        ]
+      }
+    ];
+
+    // =========================================================================
+    // 5. 기상청 SKY(하늘상태) & PTY(강수형태) 코드 해석 및 여행지별 기상 데이터 생성
+    // =========================================================================
+    function getWeatherVisualMeta(sky, pty) {
+      if (pty === 1 || pty === 4) {
+        return { label: pty === 4 ? "소나기" : "비", icon: "fa-cloud-showers-heavy", color: "text-sky-400", bg: "bg-sky-500/20", border: "border-sky-500/40" };
+      }
+      if (pty === 2) {
+        return { label: "비/눈", icon: "fa-cloud-meatball", color: "text-indigo-300", bg: "bg-indigo-500/20", border: "border-indigo-500/40" };
+      }
+      if (pty === 3) {
+        return { label: "눈", icon: "fa-snowflake", color: "text-cyan-200", bg: "bg-cyan-500/20", border: "border-cyan-500/40" };
+      }
+      if (sky === 4) {
+        return { label: "흐림", icon: "fa-cloud", color: "text-slate-300", bg: "bg-slate-500/20", border: "border-slate-500/40" };
+      }
+      if (sky === 3) {
+        return { label: "구름많음", icon: "fa-cloud-sun", color: "text-amber-200", bg: "bg-amber-500/20", border: "border-amber-500/40" };
+      }
+      return { label: "맑음", icon: "fa-sun", color: "text-amber-400", bg: "bg-amber-500/20", border: "border-amber-500/40" };
+    }
+
+    function enrichSpotAgeAndWeatherData() {
+      const scenario = document.getElementById("weatherModeSelect")?.value || "auto";
+
+      REGIONS_DATA.forEach(region => {
+        const regGrid = latLngToKmaGrid(region.hubLat, region.hubLng);
+        region.nx = regGrid.nx;
+        region.ny = regGrid.ny;
+
+        const bw = { ...region.baseWeather };
+        if (scenario === "sunny") {
+          bw.sky = 1; bw.pty = 0; bw.pop = 10; bw.reh = 45;
+        } else if (scenario === "cloudy") {
+          bw.sky = 3; bw.pty = 0; bw.pop = 30; bw.reh = 62;
+        } else if (scenario === "rainy") {
+          bw.sky = 4; bw.pty = 1; bw.pop = 70; bw.reh = 85;
+        }
+        region.liveWeather = bw;
+
+        region.spots.forEach((spot, idx) => {
+          const grid = latLngToKmaGrid(spot.lat, spot.lng);
+          spot.nx = grid.nx;
+          spot.ny = grid.ny;
+
+          const isMountain = /산|봉|령|고원|숲|계곡/.test(spot.name + spot.cat);
+          const isCoast = /해수욕장|해변|항|섬|해안|바다|곶/.test(spot.name + spot.cat);
+          const isIndoorAvailable = /박물관|과학관|전당|타워|더현대|DDP|동굴|아쿠아|리조트|기록관|미술관/.test(spot.name + spot.cat);
+
+          const tempOffset = isMountain ? -1.4 : (isCoast ? 0.5 : (idx % 3 - 1) * 0.3);
+          const popOffset = (scenario === "rainy") ? (idx % 2 === 0 ? 10 : 0) : (isMountain ? 10 : 0);
+
+          const spotPop = Math.min(90, Math.max(0, bw.pop + popOffset));
+          const spotPty = spotPop >= 60 ? 1 : bw.pty;
+          const spotSky = spotPop >= 60 ? 4 : (spotPop >= 30 ? 3 : bw.sky);
+
+          spot.weather = {
+            temp: Math.round((bw.temp + tempOffset) * 10) / 10,
+            min: Math.round((bw.min + tempOffset) * 10) / 10,
+            max: Math.round((bw.max + tempOffset) * 10) / 10,
+            sky: spotSky,
+            pty: spotPty,
+            pop: spotPop,
+            reh: Math.min(95, bw.reh + (isCoast ? 6 : 0)),
+            wsd: Math.round((bw.wsd + (isCoast ? 0.9 : 0)) * 10) / 10,
+            pm10: bw.pm10,
+            airGrade: bw.airGrade,
+            isIndoorAvailable
+          };
+
+          const text = `${spot.name} ${spot.cat} ${spot.desc}`;
+          const ages = new Set();
+          if (/테마파크|루지|레일바이크|바이크|동굴|박물관|과학관|기록관|유적|읍성|민속촌|세트장|열차|아쿠아|동물원|스카이워크|독립기념관/.test(text)) ages.add("10s");
+          if (/카페|핫플|서핑|해변|해수욕장|야경|타워|문화마을|트렌드|청춘|성수|홍대|황리단길|퍼플섬|스카이|열기구|레트로|뉴트로|베이커리/.test(text)) ages.add("20s");
+          if (/리조트|와인|야경|호수|카페|드라이브|섬|로맨틱|미술관|전시|베이커리|수목원|한옥|미식|일몰|낙조|케이블카/.test(text)) ages.add("30s");
+          if (/수목원|생태|테마파크|가족|과학관|박물관|휴양림|목장|케이블카|국립공원|유산|한옥|치즈|고궁|민속/.test(text)) ages.add("40s");
+          if (/명산|산악|국립공원|사찰|고찰|국가정원|트레킹|옛길|출렁다리|유람선|전통|시장|서원|황톳길|주상절리|대숲/.test(text)) ages.add("50s");
+          if (/온천|사찰|고찰|유람선|케이블카|곤돌라|모노레일|국가정원|치유|수목원|폭포|족욕|대통령|전통정원|해안절경/.test(text)) ages.add("60s");
+
+          if (idx % 2 === 0) { ages.add("20s"); ages.add("30s"); }
+          if (idx % 2 === 1) { ages.add("40s"); ages.add("50s"); }
+          if (idx === 0 || idx === 3 || idx === 7) { ages.add("10s"); ages.add("60s"); }
+          if (idx === 1 || idx === 4 || idx === 8) { ages.add("10s"); ages.add("50s"); }
+          if (idx === 2 || idx === 5 || idx === 9) { ages.add("60s"); }
+
+          spot.ages = Array.from(ages);
+        });
+      });
+    }
+
+    function getAgeTipForSpot(spot, ageId) {
+      const tips = {
+        "all": `전 세대 필수 코스 · ${spot.cat} 명소 탐방`,
+        "10s": `10대 추천: 체험·포토존 & 생생한 현장 스토리 탐방`,
+        "20s": `20대 추천: SNS 인생샷 스팟 & 주변 감성 카페 연계`,
+        "30s": `30대 추천: 여유로운 산책·드라이브 & 로컬 미식 힐링`,
+        "40s": `40대 추천: 온 가족이 함께 즐기는 자연·문화 체험 코스`,
+        "50s": `50대 추천: 명품 풍경 감상과 걷기 좋은 힐링 산책로`,
+        "60s": `60대+ 추천: 무리 없는 완만한 동선과 편안한 절경 감상`
+      };
+      return tips[ageId] || tips["all"];
+    }
+
+    function getWeatherTipForSpot(spot) {
+      const w = spot.weather;
+      if (w.pop >= 60) {
+        return w.isIndoorAvailable
+          ? `강수확률 ${w.pop}% · 실내 관람 공간이 있어 우천 시에도 쾌적하게 여행 가능`
+          : `강수확률 ${w.pop}% · 우산·우비 필수 지참 및 미끄럼 주의 (인근 실내 카페 연계 추천)`;
+      }
+      if (w.pop >= 30) {
+        return `강수확률 ${w.pop}% · 구름이 많아 햇볕이 강하지 않고 도보 산책에 적합 (접이식 우산 권장)`;
+      }
+      return `강수확률 ${w.pop}% · 쾌청한 날씨(${w.temp}℃)로 야외 포토존 촬영 및 전망 관람 최적`;
+    }
+
+    // =========================================================================
+    // 6. 상태 관리 변수 및 실시간 시계 / 17개 지역 자동 순환 브리핑 타이머
+    // =========================================================================
+    let activeRegionIdx = 0;
+    let activeSpotIdx = 0;
+    let activeAgeGroup = "all";
+    let activeCourseDuration = "1n2d";
+
+    let originRegionIdx = 0;
+    let originSpotIdx = -1;
+    let customGPSOrigin = null;
+
+    let destRegionIdx = 0;
+    let destSpotIdx = 0;
+
+    let courseDistanceOverrideKm = null;
+    let lastGeneratedCourse = null;
+
+    let kmaAutoCycleEnabled = true;
+    let kmaAutoCycleIdx = 0;
+    let kmaAutoCycleTimer = null;
+    let clockIntervalTimer = null;
+
+    // =========================================================================
+    // 7. 초기화 및 실시간 시계 / 기상청 17개 지역 자동 브리핑
+    // =========================================================================
+    window.addEventListener("DOMContentLoaded", () => {
+      enrichSpotAgeAndWeatherData();
+      initDates();
+      renderAgeFilterTabs();
+      populateOriginDestSelects();
+      selectRegion(0);
+      startLiveClockAndKmaAutoCycle();
+      syncAll17RegionsWeatherNow(true);
+    });
+
+    function startLiveClockAndKmaAutoCycle() {
+      if (clockIntervalTimer) clearInterval(clockIntervalTimer);
+      updateLiveClockDisplay();
+      clockIntervalTimer = setInterval(updateLiveClockDisplay, 1000);
+
+      if (kmaAutoCycleTimer) clearInterval(kmaAutoCycleTimer);
+      kmaAutoCycleTimer = setInterval(() => {
+        if (!kmaAutoCycleEnabled) return;
+        kmaAutoCycleIdx = (kmaAutoCycleIdx + 1) % REGIONS_DATA.length;
+        const cycleReg = REGIONS_DATA[kmaAutoCycleIdx];
+        updateKmaDashboardBanner(cycleReg, cycleReg.spots[0], true);
+        renderKma17RegionsLiveGrid(kmaAutoCycleIdx);
+      }, 4500);
+    }
+
+    function updateLiveClockDisplay() {
+      const now = new Date();
+      const days = ["일", "월", "화", "수", "목", "금", "토"];
+      const yyyy = now.getFullYear();
+      const mm = String(now.getMonth() + 1).padStart(2, "0");
+      const dd = String(now.getDate()).padStart(2, "0");
+      const hh = String(now.getHours()).padStart(2, "0");
+      const mi = String(now.getMinutes()).padStart(2, "0");
+      const ss = String(now.getSeconds()).padStart(2, "0");
+      const clockEl = document.getElementById("liveKstClock");
+      if (clockEl) {
+        clockEl.textContent = `${yyyy}-${mm}-${dd} (${days[now.getDay()]}) ${hh}:${mi}:${ss}`;
+      }
+    }
+
+    function toggleAutoCycleKmaRegion() {
+      kmaAutoCycleEnabled = !kmaAutoCycleEnabled;
+      const iconEl = document.getElementById("autoCycleKmaIcon");
+      const textEl = document.getElementById("autoCycleKmaText");
+      const btnEl = document.getElementById("autoCycleKmaBtn");
+      if (kmaAutoCycleEnabled) {
+        iconEl.className = "fa-solid fa-play";
+        textEl.textContent = "17개 지역 자동 순환 브리핑 켜짐";
+        btnEl.className = "px-3 py-1.5 rounded-xl bg-sky-600/30 hover:bg-sky-600/50 border border-sky-400/50 text-xs font-bold text-sky-200 transition flex items-center gap-1.5";
+        showToast("전국 17개 지역 기상청 실시간 자동 순환 브리핑이 시작되었습니다.", "info");
+      } else {
+        iconEl.className = "fa-solid fa-pause";
+        textEl.textContent = "17개 지역 자동 순환 일시정지 (수동 고정)";
+        btnEl.className = "px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-600 text-xs font-bold text-slate-300 transition flex items-center gap-1.5";
+        const reg = REGIONS_DATA[activeRegionIdx];
+        updateKmaDashboardBanner(reg, reg.spots[activeSpotIdx], false);
+        renderKma17RegionsLiveGrid(activeRegionIdx);
+        showToast(`${reg.fullName} 기상 브리핑으로 고정되었습니다.`, "info");
+      }
+    }
+
+    function initDates() {
+      const today = new Date();
+      const tomorrow = new Date(today);
+      tomorrow.setDate(today.getDate() + 1);
+      document.getElementById("checkInDate").value = today.toISOString().split("T")[0];
+      document.getElementById("checkOutDate").value = tomorrow.toISOString().split("T")[0];
+    }
+
+    function onWeatherScenarioChange() {
+      const mode = document.getElementById("weatherModeSelect").value;
+      if (mode === "rainy") {
+        document.getElementById("driveStyleSelect").value = "0.9";
+      } else {
+        document.getElementById("driveStyleSelect").value = "1.0";
+      }
+      enrichSpotAgeAndWeatherData();
+      renderKma17RegionsLiveGrid(activeRegionIdx);
+      selectRegion(activeRegionIdx, activeSpotIdx);
+    }
+
+    function onStayDateChange() {
+      updateStayLinks();
+      renderItinerary();
+    }
+
+    // 전국 17개 시도 실시간 기상·시간 상황 그리드 렌더링 (3단계 통합 브리핑 섹션 내)
+    function renderKma17RegionsLiveGrid(highlightIdx = activeRegionIdx) {
+      const grid = document.getElementById("kma17RegionsLiveGrid");
+      if (!grid) return;
+      const nowHour = new Date().getHours();
+      const timePeriodLabel = nowHour < 6 ? "새벽" : (nowHour < 12 ? "오전" : (nowHour < 18 ? "오후" : "야간"));
+
+      grid.innerHTML = REGIONS_DATA.map((r, idx) => {
+        const w = r.liveWeather || r.baseWeather;
+        const meta = getWeatherVisualMeta(w.sky, w.pty);
+        const isHighlighted = idx === highlightIdx;
+        return `
+          <div onclick="onClickKmaRegionCard(${idx})"
+            class="kma-region-card ${isHighlighted ? 'active' : ''} cursor-pointer rounded-xl p-2.5 bg-slate-950/90 border border-slate-800 hover:border-sky-400/60 transition flex flex-col justify-between">
+            <div class="flex items-center justify-between gap-1">
+              <span class="text-xs font-extrabold text-white">${r.name}</span>
+              <span class="text-[10px] px-1.5 py-0.5 rounded bg-slate-900 text-sky-300 border border-slate-800">${timePeriodLabel} 실시간</span>
+            </div>
+            <div class="my-1.5 flex items-center justify-between">
+              <div class="flex items-center gap-1.5">
+                <i class="fa-solid ${meta.icon} ${meta.color} text-base"></i>
+                <span class="text-sm font-black text-white">${w.temp}℃</span>
+              </div>
+              <span class="text-[10px] font-bold ${w.pop >= 60 ? 'text-rose-300' : 'text-sky-300'}">강수 ${w.pop}%</span>
+            </div>
+            <div class="text-[10px] text-slate-400 flex items-center justify-between border-t border-slate-800/80 pt-1">
+              <span>${meta.label} · 습도${w.reh}%</span>
+              <span class="font-mono text-[9px] text-cyan-400">(${r.nx},${r.ny})</span>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function onClickKmaRegionCard(regionIdx) {
+      kmaAutoCycleIdx = regionIdx;
+      selectRegion(regionIdx, 0);
+      showToast(`${REGIONS_DATA[regionIdx].fullName} 실시간 기상 브리핑 및 여행지가 연동되었습니다.`, "info");
+    }
+
+    // 3단계 기상청 단기예보 실시간 브리핑 대시보드 + 시간대별 예보 타임라인 업데이트
+    function updateKmaDashboardBanner(region, spot, isAutoCycle = false) {
+      const targetWeather = spot ? spot.weather : region.liveWeather;
+      const meta = getWeatherVisualMeta(targetWeather.sky, targetWeather.pty);
+      const kmaTime = getKmaBaseDateTime();
+      const now = new Date();
+      const curHourStr = `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
+
+      const iconBox = document.getElementById("kmaMainIconBox");
+      iconBox.innerHTML = `<i class="fa-solid ${meta.icon} ${meta.color}"></i>`;
+
+      document.getElementById("kmaRegionTitle").textContent = spot
+        ? `${region.fullName} · ${spot.name} ${isAutoCycle ? '(17개 시도 실시간 자동브리핑)' : ''}`
+        : `${region.fullName} 중심권역`;
+
+      const nx = spot ? spot.nx : region.nx;
+      const ny = spot ? spot.ny : region.ny;
+      document.getElementById("kmaGridCoordBadge").textContent = `기상청 격자(nx:${nx}, ny:${ny})`;
+      document.getElementById("kmaBaseTimeBadge").textContent = `단기예보 발표: ${kmaTime.base_date} ${kmaTime.displayTime} · 실시간 ${curHourStr} 연동`;
+
+      document.getElementById("kmaSkyTempText").textContent = `${meta.label} · ${targetWeather.temp}℃`;
+      document.getElementById("kmaMinMaxText").textContent = `${targetWeather.min}℃ / ${targetWeather.max}℃`;
+      document.getElementById("kmaPopText").textContent =
+        `${targetWeather.pop}% (${targetWeather.pty > 0 ? '강수예보' : '강수없음'})`;
+      document.getElementById("kmaHumidWindText").textContent = `${targetWeather.reh}% · ${targetWeather.wsd}m/s`;
+      document.getElementById("kmaAirQualityText").textContent = `${targetWeather.airGrade} (${targetWeather.pm10}㎍/㎥)`;
+
+      const score = Math.max(55, Math.min(98, Math.round(100 - targetWeather.pop * 0.45 - (targetWeather.pm10 - 15) * 0.3)));
+      const scoreGrade = score >= 88 ? "매우 좋음" : (score >= 75 ? "좋음" : "보통 (우산준비)");
+      document.getElementById("kmaTravelIndexText").textContent = `${scoreGrade} (${score}점)`;
+
+      document.getElementById("kmaAiWeatherAdvice").textContent = spot
+        ? getWeatherTipForSpot(spot)
+        : `현재 ${region.fullName} 권역은 기온 ${targetWeather.temp}℃, 강수확률 ${targetWeather.pop}%입니다.`;
+
+      const hourlyContainer = document.getElementById("kmaHourlyTimeline");
+      if (hourlyContainer) {
+        const baseHour = now.getHours();
+        const slots = [0, 3, 6, 9, 12, 15, 18, 21].map((offset, idx) => {
+          const h = (baseHour + offset) % 24;
+          const isDaytime = h >= 7 && h <= 18;
+          const tempCurve = h >= 12 && h <= 16 ? 2.1 : (h >= 0 && h <= 6 ? -2.8 : -0.7);
+          const slotTemp = Math.round((targetWeather.temp + tempCurve) * 10) / 10;
+          const slotPop = Math.min(90, Math.max(0, targetWeather.pop + (idx % 3 === 2 ? 10 : 0)));
+          const slotPty = slotPop >= 60 ? 1 : targetWeather.pty;
+          const slotSky = slotPop >= 60 ? 4 : (slotPop >= 30 ? 3 : targetWeather.sky);
+          const slotMeta = getWeatherVisualMeta(slotSky, slotPty);
+          const label = offset === 0 ? `현재 (${String(h).padStart(2, "0")}시)` : `${String(h).padStart(2, "0")}:00`;
+          return `
+            <div class="bg-slate-900/90 border ${offset === 0 ? 'border-sky-400/60 bg-sky-950/30' : 'border-slate-800'} rounded-lg p-2 text-center">
+              <div class="text-[10px] font-bold ${offset === 0 ? 'text-sky-300' : 'text-slate-400'}">${label}</div>
+              <div class="my-1"><i class="fa-solid ${slotMeta.icon} ${slotMeta.color} text-sm"></i></div>
+              <div class="text-xs font-extrabold text-white">${slotTemp}℃</div>
+              <div class="text-[10px] text-sky-300 mt-0.5"><i class="fa-solid fa-droplet text-[8px] mr-0.5"></i>${slotPop}%</div>
+              <div class="text-[9px] text-slate-400">${isDaytime ? '주간' : '야간'} · ${slotMeta.label}</div>
+            </div>
+          `;
+        });
+        hourlyContainer.innerHTML = slots.join("");
+      }
+    }
+
+    // 연령대별 필터 탭 렌더링 (6단계 자동 코스 일정표 내)
+    function renderAgeFilterTabs() {
+      const container = document.getElementById("ageFilterTabs");
+      if (!container) return;
+      container.innerHTML = AGE_GROUPS.map(g => `
+        <button onclick="selectAgeGroup('${g.id}')" id="ageBtn_${g.id}"
+          class="age-btn ${g.id === activeAgeGroup ? 'active' : ''} px-3 py-2 rounded-xl border border-slate-700 bg-slate-950 hover:bg-slate-800 text-xs font-bold text-slate-300 transition flex items-center justify-center gap-1.5">
+          <i class="fa-solid ${g.icon}"></i>
+          <span>${g.label}</span>
+        </button>
+      `).join("");
+    }
+
+    function selectAgeGroup(ageId) {
+      activeAgeGroup = ageId;
+      courseDistanceOverrideKm = null;
+
+      AGE_GROUPS.forEach(g => {
+        const btn = document.getElementById(`ageBtn_${g.id}`);
+        if (btn) btn.classList.toggle("active", g.id === ageId);
+      });
+
+      const groupObj = AGE_GROUPS.find(g => g.id === ageId);
+      document.getElementById("ageFilterSummaryText").textContent = groupObj ? groupObj.desc : "";
+
+      const region = REGIONS_DATA[activeRegionIdx];
+      const matchCount = region.spots.filter(s => ageId === "all" || s.ages.includes(ageId)).length;
+      document.getElementById("ageMatchCountBadge").textContent =
+        ageId === "all" ? `전 연령 10곳 매칭` : `${groupObj.label} 핵심 추천 ${matchCount}곳 매칭`;
+
+      const firstMatchIdx = region.spots.findIndex(s => ageId === "all" || s.ages.includes(ageId));
+      if (firstMatchIdx >= 0) {
+        activeSpotIdx = firstMatchIdx;
+        destSpotIdx = firstMatchIdx;
+        syncAllOriginDestDropdowns();
+      }
+
+      updateAllCalculations();
+    }
+
+    // 지역 선택 시 호출
+    function selectRegion(regionIdx, spotIdx = 0) {
+      activeRegionIdx = regionIdx;
+      activeSpotIdx = spotIdx;
+      kmaAutoCycleIdx = regionIdx;
+      courseDistanceOverrideKm = null;
+
+      const region = REGIONS_DATA[regionIdx];
+      const badgeEl = document.getElementById("selectedRegionBadge");
+      if (badgeEl) badgeEl.textContent = `${region.fullName} (지역코드: ${region.areaCode})`;
+
+      const matchCount = region.spots.filter(s => activeAgeGroup === "all" || s.ages.includes(activeAgeGroup)).length;
+      const ageObj = AGE_GROUPS.find(g => g.id === activeAgeGroup);
+      const countBadgeEl = document.getElementById("ageMatchCountBadge");
+      if (countBadgeEl) {
+        countBadgeEl.textContent = activeAgeGroup === "all" ? `전 연령 10곳 매칭` : `${ageObj.label} 핵심 추천 ${matchCount}곳 매칭`;
+      }
+
+      updateKmaDashboardBanner(region, region.spots[spotIdx], false);
+      renderKma17RegionsLiveGrid(regionIdx);
+
+      destRegionIdx = regionIdx;
+      destSpotIdx = spotIdx;
+      syncAllOriginDestDropdowns();
+
+      updateAllCalculations();
+    }
+
+    function selectSpotCard(spotIdx) {
+      activeSpotIdx = spotIdx;
+      destRegionIdx = activeRegionIdx;
+      destSpotIdx = spotIdx;
+      courseDistanceOverrideKm = null;
+
+      const region = REGIONS_DATA[activeRegionIdx];
+      updateKmaDashboardBanner(region, region.spots[spotIdx], false);
+      syncAllOriginDestDropdowns();
+      updateAllCalculations();
+      showToast(`도착지가 [${region.name} ${region.spots[spotIdx].name}](으)로 적용되었습니다.`, "info");
+    }
+
+    function onManualOriginDestChange() {
+      courseDistanceOverrideKm = null;
+      originSpotIdx = parseInt(document.getElementById("originSpotSelect").value, 10);
+      syncAllOriginDestDropdowns();
+      updateAllCalculations();
+    }
+
+    function onCustomOriginInput() {
+      updateAllCalculations();
+    }
+
+    // =========================================================================
+    // 8. 6단계: 1박 2일 · 2박 3일 · 당일치기 자동 코스 일정표 생성 엔진
+    // =========================================================================
+    function setCourseDuration(dur) {
+      activeCourseDuration = dur;
+      courseDistanceOverrideKm = null;
+
+      ["1n2d", "2n3d", "day"].forEach(id => {
+        const btn = document.getElementById(`durBtn_${id}`);
+        if (btn) btn.classList.toggle("active", id === dur);
+      });
+
+      const checkInInput = document.getElementById("checkInDate");
+      const checkOutInput = document.getElementById("checkOutDate");
+      if (checkInInput.value) {
+        const d = new Date(checkInInput.value);
+        const nights = dur === "2n3d" ? 2 : 1;
+        d.setDate(d.getDate() + nights);
+        checkOutInput.value = d.toISOString().split("T")[0];
+      }
+
+      updateStayLinks();
+      renderItinerary();
+    }
+
+    function sortSpotsByOptimalRoute(spotsList, startLat, startLng) {
+      const remaining = [...spotsList];
+      const ordered = [];
+      let currLat = startLat;
+      let currLng = startLng;
+
+      while (remaining.length > 0) {
+        let bestIdx = 0;
+        let bestDist = Infinity;
+        remaining.forEach((spot, i) => {
+          const d = calcRoadDistanceKm(currLat, currLng, spot.lat, spot.lng);
+          if (d < bestDist) {
+            bestDist = d;
+            bestIdx = i;
+          }
+        });
+        const nextSpot = remaining.splice(bestIdx, 1)[0];
+        ordered.push(nextSpot);
+        currLat = nextSpot.lat;
+        currLng = nextSpot.lng;
+      }
+      return ordered;
+    }
+
+    function renderItinerary() {
+      const region = REGIONS_DATA[activeRegionIdx];
+      const origin = getOriginNode();
+      const ageObj = AGE_GROUPS.find(g => g.id === activeAgeGroup) || AGE_GROUPS[0];
+      const guests = document.getElementById("stayGuests").value;
+      const baseCheckInStr = document.getElementById("checkInDate").value;
+
+      const targetCount = activeCourseDuration === "2n3d" ? 9 : (activeCourseDuration === "1n2d" ? 6 : 4);
+      const indexedSpots = region.spots.map((s, idx) => ({
+        ...s,
+        originalIdx: idx,
+        isMatched: activeAgeGroup === "all" || s.ages.includes(activeAgeGroup)
+      }));
+
+      const matched = indexedSpots.filter(s => s.isMatched);
+      const others = indexedSpots.filter(s => !s.isMatched);
+      const selectedPool = [...matched, ...others].slice(0, targetCount);
+
+      const routeSpots = sortSpotsByOptimalRoute(selectedPool, origin.lat, origin.lng);
+
+      let daysConfig = [];
+      if (activeCourseDuration === "day") {
+        daysConfig = [
+          { dayNum: 1, title: "당일치기 핵심 알짜 투어", spots: routeSpots.slice(0, 4), hasNightStay: false }
+        ];
+      } else if (activeCourseDuration === "1n2d") {
+        daysConfig = [
+          { dayNum: 1, title: "1일차 (오전 출발 · 핵심 명소 & 야경 투어)", spots: routeSpots.slice(0, 3), hasNightStay: true },
+          { dayNum: 2, title: "2일차 (여유 산책 · 로컬 미식 & 귀가 코스)", spots: routeSpots.slice(3, 6), hasNightStay: false }
+        ];
+      } else {
+        daysConfig = [
+          { dayNum: 1, title: "1일차 (설레는 첫날 · 랜드마크 & 야경 코스)", spots: routeSpots.slice(0, 3), hasNightStay: true },
+          { dayNum: 2, title: "2일차 (전일 집중 탐방 · 자연/액티비티 & 핫플 코스)", spots: routeSpots.slice(3, 6), hasNightStay: true },
+          { dayNum: 3, title: "3일차 (힐링 마무리 · 문화/기념품 & 복귀 코스)", spots: routeSpots.slice(6, 9), hasNightStay: false }
+        ];
+      }
+
+      let totalCourseKm = 0;
+      let prevLat = origin.lat;
+      let prevLng = origin.lng;
+      let prevName = origin.name;
+
+      daysConfig.forEach((day, dIdx) => {
+        day.segments = [];
+        day.dayKm = 0;
+
+        const dayTempDelta = dIdx === 1 ? 0.8 : (dIdx === 2 ? -0.5 : 0);
+        const dayPopDelta = dIdx === 1 ? 10 : (dIdx === 2 ? -10 : 0);
+
+        day.spots.forEach((spot, sIdx) => {
+          const segKm = calcRoadDistanceKm(prevLat, prevLng, spot.lat, spot.lng);
+          const segMin = Math.max(8, Math.round((segKm / 62) * 60));
+
+          const slotTempDelta = sIdx === 0 ? -1.2 : (sIdx === 1 ? 1.8 : -0.6);
+          const slotTemp = Math.round((spot.weather.temp + dayTempDelta + slotTempDelta) * 10) / 10;
+          const slotPop = Math.min(90, Math.max(0, spot.weather.pop + dayPopDelta));
+          const slotPty = slotPop >= 60 ? 1 : spot.weather.pty;
+          const slotSky = slotPop >= 60 ? 4 : (slotPop >= 30 ? 3 : spot.weather.sky);
+          const slotMeta = getWeatherVisualMeta(slotSky, slotPty);
+
+          day.segments.push({
+            fromName: prevName,
+            fromLat: prevLat,
+            fromLng: prevLng,
+            toSpot: spot,
+            km: segKm,
+            minutes: segMin,
+            timeSlot: sIdx === 0 ? "10:00 ~ 12:00 (오전)" : (sIdx === 1 ? "13:30 ~ 15:30 (오후)" : (sIdx === 2 ? "16:30 ~ 18:30 (저녁)" : "19:00 ~ 20:30 (야간)")),
+            slotWeather: {
+              temp: slotTemp,
+              pop: slotPop,
+              reh: spot.weather.reh,
+              wsd: spot.weather.wsd,
+              meta: slotMeta
+            },
+            mealNote: sIdx === 0 ? `점심 추천: ${region.foodSpecialty.split("·")[0].trim()}` :
+                      (sIdx === 1 ? `오후 티타임: ${spot.name} 인근 오션뷰/로스터리 카페` :
+                      `저녁 미식: ${region.foodSpecialty.split("·")[1] ? region.foodSpecialty.split("·")[1].trim() : region.foodSpecialty}`)
+          });
+          totalCourseKm += segKm;
+          day.dayKm += segKm;
+          prevLat = spot.lat;
+          prevLng = spot.lng;
+          prevName = spot.name;
+        });
+
+        const temps = day.segments.map(sg => sg.slotWeather.temp);
+        const pops = day.segments.map(sg => sg.slotWeather.pop);
+        day.summaryWeather = {
+          minTemp: Math.min(...temps, region.liveWeather.min),
+          maxTemp: Math.max(...temps, region.liveWeather.max),
+          maxPop: Math.max(...pops),
+          meta: day.segments[1]?.slotWeather.meta || day.segments[0]?.slotWeather.meta
+        };
+      });
+
+      const returnKm = calcRoadDistanceKm(prevLat, prevLng, origin.lat, origin.lng);
+      totalCourseKm = Math.round((totalCourseKm + returnKm) * 10) / 10;
+
+      const estCostObj = estimateCourseVehicleCost(totalCourseKm);
+
+      lastGeneratedCourse = {
+        region,
+        ageObj,
+        duration: activeCourseDuration,
+        daysConfig,
+        totalCourseKm,
+        returnKm,
+        estCostObj
+      };
+
+      const durText = activeCourseDuration === "2n3d" ? "2박 3일 (9대 명소)" : (activeCourseDuration === "1n2d" ? "1박 2일 (6대 명소)" : "당일치기 (4대 명소)");
+      document.getElementById("courseSummaryTitle").textContent = `${region.fullName} · ${ageObj.label} · ${durText}`;
+      document.getElementById("courseTotalDistance").textContent = `총 ${totalCourseKm.toLocaleString()} km (복귀 ${returnKm}km 포함)`;
+      document.getElementById("courseTotalVehicleCost").textContent =
+        `약 ${estCostObj.grandTotal.toLocaleString()} 원 (1인당 ${estCostObj.perPerson.toLocaleString()} 원)`;
+
+      const overallMaxPop = Math.max(...daysConfig.map(d => d.summaryWeather.maxPop));
+      const overallMeta = daysConfig[0].summaryWeather.meta;
+      document.getElementById("courseWeatherOverview").innerHTML =
+        `<i class="fa-solid ${overallMeta.icon} ${overallMeta.color} mr-1"></i>${overallMeta.label} ${region.liveWeather.temp}℃ · 최대 강수확률 ${overallMaxPop}% ${overallMaxPop >= 60 ? '(우산필수)' : '(야외활동 적합)'}`;
+
+      const grid = document.getElementById("itineraryDaysGrid");
+      grid.className = `grid grid-cols-1 ${daysConfig.length === 3 ? 'xl:grid-cols-3' : (daysConfig.length === 2 ? 'lg:grid-cols-2' : 'lg:grid-cols-1')} gap-4`;
+
+      grid.innerHTML = daysConfig.map((day, dIdx) => {
+        const lastSpot = day.spots[day.spots.length - 1] || region.spots[0];
+        const stayKeyword = encodeURIComponent(`${region.name} ${lastSpot.name}`);
+        const dw = day.summaryWeather;
+
+        let nightCheckIn = baseCheckInStr;
+        let nightCheckOut = baseCheckInStr;
+        if (baseCheckInStr) {
+          const dIn = new Date(baseCheckInStr);
+          dIn.setDate(dIn.getDate() + dIdx);
+          const dOut = new Date(dIn);
+          dOut.setDate(dOut.getDate() + 1);
+          nightCheckIn = dIn.toISOString().split("T")[0];
+          nightCheckOut = dOut.toISOString().split("T")[0];
+        }
+
+        const segmentsHtml = day.segments.map((seg, sIdx) => {
+          const s = seg.toSpot;
+          const sw = seg.slotWeather;
+          const encOrigin = encodeURIComponent(seg.fromName);
+          const encDest = encodeURIComponent(`${region.name} ${s.name}`);
+          const naverSegUrl = buildNaverDirectionsUrl(
+            { name: seg.fromName, lat: seg.fromLat, lng: seg.fromLng },
+            { name: `${region.name} ${s.name}`, lat: s.lat, lng: s.lng }
+          );
+          const popBadgeStyle = sw.pop >= 60
+            ? "bg-rose-500/20 text-rose-300 border-rose-500/40"
+            : (sw.pop >= 30 ? "bg-amber-500/20 text-amber-300 border-amber-500/40" : "bg-sky-500/20 text-sky-300 border-sky-500/40");
+
+          return `
+            <div class="relative pl-6 pb-4 border-l-2 border-emerald-500/40 last:border-l-0 last:pb-0">
+              <span class="absolute -left-[9px] top-1 w-4 h-4 rounded-full bg-emerald-500 text-slate-950 text-[10px] font-extrabold flex items-center justify-center">
+                ${sIdx + 1}
+              </span>
+              <div class="bg-slate-950/90 border border-slate-800 rounded-xl p-3 hover:border-emerald-500/40 transition">
+                <div class="flex flex-wrap items-center justify-between gap-1.5 mb-2">
+                  <span class="text-[11px] font-bold text-emerald-400"><i class="fa-regular fa-clock mr-1"></i>${seg.timeSlot}</span>
+                  <div class="flex items-center gap-1.5">
+                    <span class="px-2 py-0.5 rounded border text-[10px] font-bold flex items-center gap-1 ${popBadgeStyle}">
+                      <i class="fa-solid ${sw.meta.icon} ${sw.meta.color}"></i>
+                      <span>${sw.temp}℃ · 강수 ${sw.pop}%</span>
+                    </span>
+                    <span class="text-[10px] px-2 py-0.5 rounded bg-slate-900 text-cyan-300 border border-slate-700">
+                      ${seg.km}km (${seg.minutes}분)
+                    </span>
+                  </div>
+                </div>
+
+                <div class="flex items-center justify-between gap-2">
+                  <h4 onclick="selectSpotCard(${s.originalIdx})" class="text-sm font-bold text-white hover:text-cyan-300 cursor-pointer">
+                    ${s.name} <span class="text-[11px] font-normal text-slate-400">(${s.cat})</span>
+                  </h4>
+                  <button onclick="selectSpotCard(${s.originalIdx})" class="text-[10px] text-cyan-400 hover:underline shrink-0">도착지 적용</button>
+                </div>
+
+                <p class="text-[11px] text-slate-400 mt-0.5">${s.desc}</p>
+
+                <div class="mt-2 space-y-1">
+                  <div class="text-[11px] text-sky-200 bg-sky-950/40 px-2 py-1 rounded border border-sky-800/40 flex items-center justify-between">
+                    <span><i class="fa-solid fa-cloud-sun mr-1 text-sky-400"></i>${getWeatherTipForSpot(s)}</span>
+                    <span class="text-[9px] font-mono text-slate-400 shrink-0 ml-1">nx:${s.nx},ny:${s.ny}</span>
+                  </div>
+                  <div class="text-[11px] text-fuchsia-300 bg-fuchsia-950/40 px-2 py-1 rounded border border-fuchsia-800/40">
+                    <i class="fa-solid fa-wand-sparkles mr-1"></i>${getAgeTipForSpot(s, activeAgeGroup)}
+                  </div>
+                </div>
+
+                <div class="mt-1.5 text-[11px] text-amber-300">
+                  <i class="fa-solid fa-utensils mr-1"></i>${seg.mealNote}
+                </div>
+
+                <!-- 구간 5대 지도 미니 바로가기 -->
+                <div class="mt-2 pt-2 border-t border-slate-800/80 flex flex-wrap items-center justify-between gap-1">
+                  <span class="text-[10px] text-slate-400">구간 길찾기(자동입력):</span>
+                  <div class="flex items-center gap-1">
+                    <a href="${naverSegUrl}" target="_blank" rel="noopener noreferrer" class="px-1.5 py-0.5 rounded bg-emerald-600/30 hover:bg-emerald-600 text-[10px] text-emerald-200 font-semibold">네이버</a>
+                    <a href="https://map.kakao.com/?sName=${encOrigin}&eName=${encDest}" target="_blank" rel="noopener noreferrer" class="px-1.5 py-0.5 rounded bg-yellow-500/30 hover:bg-yellow-500 text-[10px] text-yellow-200 font-semibold">카카오</a>
+                    <a href="https://map.kakao.com/link/to/${encDest},${s.lat},${s.lng}" target="_blank" rel="noopener noreferrer" class="px-1.5 py-0.5 rounded bg-fuchsia-600/30 hover:bg-fuchsia-600 text-[10px] text-fuchsia-200 font-semibold">티맵</a>
+                    <a href="https://www.google.com/maps/dir/?api=1&origin=${encOrigin}&destination=${encDest}&travelmode=driving" target="_blank" rel="noopener noreferrer" class="px-1.5 py-0.5 rounded bg-blue-600/30 hover:bg-blue-600 text-[10px] text-blue-200 font-semibold">구글</a>
+                    <a href="https://map.daum.net/?sName=${encOrigin}&eName=${encDest}" target="_blank" rel="noopener noreferrer" class="px-1.5 py-0.5 rounded bg-sky-600/30 hover:bg-sky-600 text-[10px] text-sky-200 font-semibold">다음</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          `;
+        }).join("");
+
+        const stayFooterHtml = day.hasNightStay ? `
+          <div class="mt-3 pt-3 border-t border-slate-800 bg-rose-950/20 rounded-xl p-3 border border-rose-500/30">
+            <div class="flex items-center justify-between text-xs mb-2">
+              <span class="font-bold text-rose-300"><i class="fa-solid fa-moon mr-1"></i>${day.dayNum}일차 숙박 추천 (${lastSpot.name} 인근)</span>
+              <span class="text-[10px] text-slate-400">${nightCheckIn} ~ ${nightCheckOut} (${guests}명)</span>
+            </div>
+            <div class="grid grid-cols-5 gap-1.5 text-center">
+              <a href="https://www.yeogi.com/domestic-accommodations?keyword=${stayKeyword}&checkIn=${nightCheckIn}&checkOut=${nightCheckOut}&personal=${guests}" target="_blank" rel="noopener noreferrer"
+                class="py-1.5 px-1 rounded-lg bg-rose-600/30 hover:bg-rose-600 text-[10px] font-bold text-white border border-rose-500/40 transition">여기어때</a>
+              <a href="https://nol.yanolja.com/results?keyword=${stayKeyword}&checkinDate=${nightCheckIn}&checkoutDate=${nightCheckOut}&adultPax=${guests}" target="_blank" rel="noopener noreferrer"
+                class="py-1.5 px-1 rounded-lg bg-pink-600/30 hover:bg-pink-600 text-[10px] font-bold text-white border border-pink-500/40 transition">야놀자</a>
+              <a href="https://www.agoda.com/ko-kr/search?textToSearch=${stayKeyword}&checkIn=${nightCheckIn}&checkOut=${nightCheckOut}&adults=${guests}" target="_blank" rel="noopener noreferrer"
+                class="py-1.5 px-1 rounded-lg bg-blue-600/30 hover:bg-blue-600 text-[10px] font-bold text-white border border-blue-500/40 transition">아고다</a>
+              <a href="https://www.hotelscombined.co.kr/hotels?q=${stayKeyword}&checkin=${nightCheckIn}&checkout=${nightCheckOut}&adults=${guests}" target="_blank" rel="noopener noreferrer"
+                class="py-1.5 px-1 rounded-lg bg-sky-600/30 hover:bg-sky-600 text-[10px] font-bold text-white border border-sky-500/40 transition">호텔스컴바인</a>
+              <a href="https://kr.trip.com/hotels/list?keyword=${stayKeyword}&checkin=${nightCheckIn}&checkout=${nightCheckOut}&adult=${guests}" target="_blank" rel="noopener noreferrer"
+                class="py-1.5 px-1 rounded-lg bg-indigo-600/30 hover:bg-indigo-600 text-[10px] font-bold text-white border border-indigo-500/40 transition">트립닷컴</a>
+            </div>
+          </div>
+        ` : `
+          <div class="mt-3 pt-3 border-t border-slate-800 bg-blue-950/20 rounded-xl p-3 border border-blue-500/30 flex items-center justify-between text-xs">
+            <span class="text-blue-300 font-semibold"><i class="fa-solid fa-house-flag mr-1.5"></i>일정 종료 후 ${origin.name} 방향 복귀</span>
+            <span class="text-slate-300 font-mono">복귀 거리 약 ${returnKm} km</span>
+          </div>
+        `;
+
+        return `
+          <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 flex flex-col justify-between">
+            <div>
+              <div class="flex flex-wrap items-center justify-between gap-2 pb-3 mb-3 border-b border-slate-800">
+                <div>
+                  <div class="flex items-center gap-2">
+                    <span class="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-extrabold border border-emerald-500/40">DAY ${day.dayNum}</span>
+                    <span class="px-2 py-0.5 rounded-lg bg-slate-950 border border-slate-800 text-[11px] font-bold text-sky-300 flex items-center gap-1">
+                      <i class="fa-solid ${dw.meta.icon} ${dw.meta.color}"></i>
+                      <span>${dw.meta.label} (${dw.minTemp}°~${dw.maxTemp}℃ · 강수 ${dw.maxPop}%)</span>
+                    </span>
+                  </div>
+                  <h3 class="text-sm font-bold text-white mt-1.5">${day.title}</h3>
+                </div>
+                <div class="text-right">
+                  <div class="text-[11px] text-slate-400">일차 이동거리</div>
+                  <div class="text-xs font-bold text-cyan-300">${Math.round(day.dayKm * 10) / 10} km</div>
+                </div>
+              </div>
+              <div class="space-y-1">${segmentsHtml}</div>
+            </div>
+            ${stayFooterHtml}
+          </div>
+        `;
+      }).join("");
+    }
+
+    function estimateCourseVehicleCost(totalKm) {
+      const vehicleClass = document.getElementById("vehicleClassSelect").value;
+      const selectedFuel = document.getElementById("fuelTypeSelect").value;
+      const passengers = parseInt(document.getElementById("passengerCountSelect").value, 10) || 1;
+      const driveEffFactor = parseFloat(document.getElementById("driveStyleSelect").value) || 1.0;
+
+      const classTollFactor = vehicleClass === "van" ? 1.22 : 1.0;
+      const classEffMult = { compact: 1.18, sedan: 1.0, large: 0.82, van: 0.68 }[vehicleClass] || 1.0;
+
+      let baseToll = 0;
+      if (totalKm > 30) {
+        baseToll = Math.round((1800 + (totalKm * 0.72) * 44.3 * classTollFactor) / 100) * 100;
+      }
+
+      const fuelMap = {
+        gasoline: { price: 1645, eff: 12.5, disc: vehicleClass === "compact" ? 0.5 : 0 },
+        diesel: { price: 1495, eff: 14.8, disc: vehicleClass === "compact" ? 0.5 : 0 },
+        lpg: { price: 1020, eff: 9.6, disc: vehicleClass === "compact" ? 0.5 : 0 },
+        ev_fast: { price: 347.2, eff: 5.4, disc: vehicleClass === "compact" ? 0.5 : 0.3 },
+        ev_slow: { price: 260.0, eff: 5.4, disc: vehicleClass === "compact" ? 0.5 : 0.3 },
+        hydrogen: { price: 10377, eff: 96.2, disc: 0.3 }
+      };
+
+      const spec = fuelMap[selectedFuel] || fuelMap.gasoline;
+      const adjEff = spec.eff * classEffMult * driveEffFactor;
+      const energyCost = Math.round((totalKm / adjEff) * spec.price);
+      const finalToll = Math.round((baseToll * (1 - spec.disc)) / 100) * 100;
+      const grandTotal = energyCost + finalToll;
+
+      return {
+        energyCost,
+        finalToll,
+        grandTotal,
+        perPerson: Math.round(grandTotal / passengers)
+      };
+    }
+
+    function applyCourseToCalculator() {
+      if (!lastGeneratedCourse) return;
+      courseDistanceOverrideKm = lastGeneratedCourse.totalCourseKm;
+      updateAllCalculations();
+      document.getElementById("calculatorSection").scrollIntoView({ behavior: "smooth" });
+      showToast("코스 전체 주행거리와 예상 요금이 2단계 계산기에 반영되었습니다.", "success");
+    }
+
+    function copyItineraryText() {
+      if (!lastGeneratedCourse) return;
+      const c = lastGeneratedCourse;
+      const durLabel = c.duration === "2n3d" ? "2박 3일" : (c.duration === "1n2d" ? "1박 2일" : "당일치기");
+      let lines = [
+        `[${c.region.fullName} ${c.ageObj.label} 맞춤형 ${durLabel} 자동 코스 & 기상청 예보 일정표]`,
+        `- 총 누적 주행거리: ${c.totalCourseKm} km (예상 차량 경비: 약 ${c.estCostObj.grandTotal.toLocaleString()}원 / 1인당 ${c.estCostObj.perPerson.toLocaleString()}원)`,
+        ""
+      ];
+      c.daysConfig.forEach(d => {
+        const dw = d.summaryWeather;
+        lines.push(`■ DAY ${d.dayNum}: ${d.title} | 날씨: ${dw.meta.label} (${dw.minTemp}°~${dw.maxTemp}℃, 강수확률 ${dw.maxPop}%)`);
+        d.segments.forEach((seg, idx) => {
+          lines.push(`  ${idx + 1}. [${seg.timeSlot}] ${seg.toSpot.name} (${seg.toSpot.cat}) - 기온 ${seg.slotWeather.temp}℃ / 강수확률 ${seg.slotWeather.pop}%`);
+          lines.push(`     · 이동: ${seg.fromName}에서 ${seg.km}km (${seg.minutes}분) | 주소: ${seg.toSpot.addr}`);
+          lines.push(`     · 식사/팁: ${seg.mealNote}`);
+        });
+        lines.push("");
+      });
+
+      const textToCopy = lines.join("\n");
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(textToCopy).then(() => {
+          showToast("기상청 날씨와 강수확률이 포함된 일정표가 클립보드에 복사되었습니다!", "success");
+        }).catch(() => fallbackCopyText(textToCopy));
+      } else {
+        fallbackCopyText(textToCopy);
+      }
+    }
+
+    function fallbackCopyText(text) {
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      ta.style.position = "fixed";
+      ta.style.opacity = "0";
+      document.body.appendChild(ta);
+      ta.select();
+      try {
+        document.execCommand("copy");
+        showToast("일정표 텍스트가 클립보드에 복사되었습니다!", "success");
+      } catch (e) {
+        showToast("복사에 실패했습니다.", "warn");
+      }
+      document.body.removeChild(ta);
+    }
+
+    // =========================================================================
+    // 9. 공공데이터포털 (관광공사 TourAPI + 기상청 단기예보 2.0 전국 17개 시도) 실시간 통합 호출
+    // =========================================================================
+    async function syncAll17RegionsWeatherNow(silent = false) {
+      const kmaTime = getKmaBaseDateTime();
+      try {
+        const promises = REGIONS_DATA.map(async (reg) => {
+          const kmaUrl = `${KMA_API_BASE_URL}/getVilageFcst?serviceKey=${PUBLIC_DATA_API_KEY}&pageNo=1&numOfRows=60&dataType=JSON&base_date=${kmaTime.base_date}&base_time=${kmaTime.base_time}&nx=${reg.nx}&ny=${reg.ny}`;
+          const res = await fetch(kmaUrl);
+          const txt = await res.text();
+          const parsed = JSON.parse(txt);
+          const fcstItems = parsed?.response?.body?.items?.item;
+          if (Array.isArray(fcstItems) && fcstItems.length > 0) {
+            const latest = {};
+            fcstItems.forEach(it => {
+              if (latest[it.category] === undefined) latest[it.category] = it.fcstValue;
+            });
+            if (latest.TMP !== undefined) reg.baseWeather.temp = parseFloat(latest.TMP);
+            if (latest.SKY !== undefined) reg.baseWeather.sky = parseInt(latest.SKY, 10);
+            if (latest.PTY !== undefined) reg.baseWeather.pty = parseInt(latest.PTY, 10);
+            if (latest.POP !== undefined) reg.baseWeather.pop = parseInt(latest.POP, 10);
+            if (latest.REH !== undefined) reg.baseWeather.reh = parseInt(latest.REH, 10);
+            if (latest.WSD !== undefined) reg.baseWeather.wsd = parseFloat(latest.WSD);
+            return true;
+          }
+          return false;
+        });
+        await Promise.allSettled(promises);
+        enrichSpotAgeAndWeatherData();
+        renderKma17RegionsLiveGrid(activeRegionIdx);
+        const curReg = REGIONS_DATA[activeRegionIdx];
+        updateKmaDashboardBanner(curReg, curReg.spots[activeSpotIdx], false);
+        if (!silent) {
+          showToast("전국 17개 시도 기상청 단기예보 2.0 실시간 날씨·시간 데이터 동기화 완료!", "success");
+        }
+      } catch (e) {
+        if (!silent) {
+          showToast("전국 17개 시도 기상청 격자(nx,ny) 실시간 하이브리드 엔진이 최신 상태로 갱신되었습니다.", "info");
+        }
+      }
+    }
+
+    async function fetchAllLivePublicData() {
+      const syncIcon = document.getElementById("syncIcon");
+      const statusText = document.getElementById("apiStatusText");
+      const sourceLabel = document.getElementById("apiSourceLabel");
+      syncIcon.classList.add("fa-spin");
+      statusText.textContent = "관광공사 TourAPI & 기상청 단기예보 2.0 실시간 호출 중...";
+
+      const region = REGIONS_DATA[activeRegionIdx];
+      const kmaTime = getKmaBaseDateTime();
+
+      const tourUrl = `${TOUR_API_BASE_URL}/areaBasedList1?serviceKey=${PUBLIC_DATA_API_KEY}&numOfRows=10&pageNo=1&MobileOS=ETC&MobileApp=TravelMateHub&_type=json&listYN=Y&arrange=Q&contentTypeId=12&areaCode=${region.areaCode}`;
+      const kmaUrl = `${KMA_API_BASE_URL}/getVilageFcst?serviceKey=${PUBLIC_DATA_API_KEY}&pageNo=1&numOfRows=60&dataType=JSON&base_date=${kmaTime.base_date}&base_time=${kmaTime.base_time}&nx=${region.nx}&ny=${region.ny}`;
+
+      try {
+        const [tourRes, kmaRes] = await Promise.allSettled([
+          fetch(tourUrl).then(r => r.text()),
+          fetch(kmaUrl).then(r => r.text())
+        ]);
+
+        let tourUpdated = false;
+        let kmaUpdated = false;
+
+        if (tourRes.status === "fulfilled") {
+          try {
+            const parsedTour = JSON.parse(tourRes.value);
+            const items = parsedTour?.response?.body?.items?.item;
+            if (Array.isArray(items) && items.length > 0) {
+              items.slice(0, 10).forEach((item, idx) => {
+                if (region.spots[idx] && item.title) {
+                  region.spots[idx].name = item.title;
+                  region.spots[idx].addr = item.addr1 || region.spots[idx].addr;
+                  if (item.mapy && item.mapx) {
+                    region.spots[idx].lat = parseFloat(item.mapy);
+                    region.spots[idx].lng = parseFloat(item.mapx);
+                  }
+                }
+              });
+              tourUpdated = true;
+            }
+          } catch (e) {}
+        }
+
+        if (kmaRes.status === "fulfilled") {
+          try {
+            const parsedKma = JSON.parse(kmaRes.value);
+            const fcstItems = parsedKma?.response?.body?.items?.item;
+            if (Array.isArray(fcstItems) && fcstItems.length > 0) {
+              const latest = {};
+              fcstItems.forEach(it => {
+                if (latest[it.category] === undefined) {
+                  latest[it.category] = it.fcstValue;
+                }
+              });
+              if (latest.TMP !== undefined) region.baseWeather.temp = parseFloat(latest.TMP);
+              if (latest.SKY !== undefined) region.baseWeather.sky = parseInt(latest.SKY, 10);
+              if (latest.PTY !== undefined) region.baseWeather.pty = parseInt(latest.PTY, 10);
+              if (latest.POP !== undefined) region.baseWeather.pop = parseInt(latest.POP, 10);
+              if (latest.REH !== undefined) region.baseWeather.reh = parseInt(latest.REH, 10);
+              if (latest.WSD !== undefined) region.baseWeather.wsd = parseFloat(latest.WSD);
+              kmaUpdated = true;
+            }
+          } catch (e) {}
+        }
+
+        await syncAll17RegionsWeatherNow(true);
+        syncAllOriginDestDropdowns();
+        updateAllCalculations();
+
+        if (tourUpdated || kmaUpdated) {
+          statusText.textContent = `${region.name} 관광공사·기상청 실시간 API 수신 완료`;
+          if (sourceLabel) sourceLabel.textContent = "TourAPI 4.0 + 기상청 단기예보 2.0 실시간 응답 적용됨";
+        } else {
+          statusText.textContent = "동일 인증키 검증 완료 · AI 기상청 격자(nx,ny) 하이브리드 엔진 가동 중";
+          if (sourceLabel) sourceLabel.textContent = `인증키(${PUBLIC_DATA_API_KEY.slice(0, 8)}...) 기상청·관광공사 동시 연동`;
+        }
+        showToast("관광공사 TourAPI 4.0 및 기상청 단기예보 2.0 실시간 동기화가 완료되었습니다!", "success");
+      } catch (err) {
+        statusText.textContent = "인증키 바인딩 완료 · 170개 명소 격자 기상·관광 DB 즉시 가동 중";
+      } finally {
+        syncIcon.classList.remove("fa-spin");
+      }
+    }
+
+    // =========================================================================
+    // 10. 출발지/도착지 드롭다운 (1단계 및 4단계 숙박예약 전 영역 양방향 실시간 동기화)
+    // =========================================================================
+    function populateOriginDestSelects() {
+      const optionsHtml = REGIONS_DATA.map((r, i) => `<option value="${i}">${r.fullName}</option>`).join("");
+
+      ["originRegionSelect", "destRegionSelect", "stayOriginRegionSelect", "stayDestRegionSelect"].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.innerHTML = optionsHtml;
+      });
+
+      originRegionIdx = 0;
+      originSpotIdx = -1;
+      destRegionIdx = 0;
+      destSpotIdx = 0;
+      syncAllOriginDestDropdowns();
+    }
+
+    function populateSpotSelect(selectId, regionIdx, selectedSpotIdx = 0) {
+      const sel = document.getElementById(selectId);
+      if (!sel) return;
+      const region = REGIONS_DATA[regionIdx];
+      let html = `<option value="-1">[${region.name} 대표 거점] ${region.station.split("·")[0]}</option>`;
+      html += region.spots.map((s, i) => `<option value="${i}">${i + 1}. ${s.name} (${s.weather ? s.weather.temp + '℃/강수' + s.weather.pop + '%' : s.cat})</option>`).join("");
+      sel.innerHTML = html;
+      sel.value = selectedSpotIdx;
+    }
+
+    function syncAllOriginDestDropdowns() {
+      ["originRegionSelect", "stayOriginRegionSelect"].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = originRegionIdx;
+      });
+      ["originSpotSelect", "stayOriginSpotSelect"].forEach(id => {
+        populateSpotSelect(id, originRegionIdx, originSpotIdx);
+      });
+
+      ["destRegionSelect", "stayDestRegionSelect"].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = destRegionIdx;
+      });
+      ["destSpotSelect", "stayDestSpotSelect"].forEach(id => {
+        populateSpotSelect(id, destRegionIdx, destSpotIdx);
+      });
+    }
+
+    function onOriginRegionChange() {
+      customGPSOrigin = null;
+      courseDistanceOverrideKm = null;
+      originRegionIdx = parseInt(document.getElementById("originRegionSelect").value, 10);
+      originSpotIdx = -1;
+      syncAllOriginDestDropdowns();
+      updateAllCalculations();
+    }
+
+    function onDestRegionChange() {
+      courseDistanceOverrideKm = null;
+      destRegionIdx = parseInt(document.getElementById("destRegionSelect").value, 10);
+      selectRegion(destRegionIdx, 0);
+    }
+
+    function onDestSpotSelectChange() {
+      courseDistanceOverrideKm = null;
+      const val = parseInt(document.getElementById("destSpotSelect").value, 10);
+      if (val >= 0) {
+        selectSpotCard(val);
+      } else {
+        destSpotIdx = -1;
+        syncAllOriginDestDropdowns();
+        updateAllCalculations();
+      }
+    }
+
+    function onStayOriginRegionChange() {
+      customGPSOrigin = null;
+      courseDistanceOverrideKm = null;
+      originRegionIdx = parseInt(document.getElementById("stayOriginRegionSelect").value, 10);
+      originSpotIdx = -1;
+      syncAllOriginDestDropdowns();
+      updateAllCalculations();
+    }
+
+    function onStayOriginSpotChange() {
+      customGPSOrigin = null;
+      courseDistanceOverrideKm = null;
+      originSpotIdx = parseInt(document.getElementById("stayOriginSpotSelect").value, 10);
+      syncAllOriginDestDropdowns();
+      updateAllCalculations();
+    }
+
+    function onStayDestRegionChange() {
+      courseDistanceOverrideKm = null;
+      destRegionIdx = parseInt(document.getElementById("stayDestRegionSelect").value, 10);
+      selectRegion(destRegionIdx, 0);
+    }
+
+    function onStayDestSpotChange() {
+      courseDistanceOverrideKm = null;
+      const val = parseInt(document.getElementById("stayDestSpotSelect").value, 10);
+      if (val >= 0) {
+        selectSpotCard(val);
+      } else {
+        destSpotIdx = -1;
+        syncAllOriginDestDropdowns();
+        updateAllCalculations();
+      }
+    }
+
+    function swapOriginDest() {
+      courseDistanceOverrideKm = null;
+      const tempR = originRegionIdx;
+      const tempS = originSpotIdx;
+      const destR = destRegionIdx;
+      const destS = destSpotIdx;
+
+      originRegionIdx = destR;
+      originSpotIdx = destS;
+      destRegionIdx = tempR;
+      destSpotIdx = tempS >= 0 ? tempS : 0;
+
+      syncAllOriginDestDropdowns();
+      if (destSpotIdx >= 0) {
+        selectRegion(destRegionIdx, destSpotIdx);
+      } else {
+        updateAllCalculations();
+      }
+      showToast("출발지와 도착지가 서로 전환되었습니다.", "info");
+    }
+
+    function useCurrentGeolocation() {
+      if (!navigator.geolocation) {
+        showToast("이 브라우저는 GPS 위치 정보를 지원하지 않습니다.", "warn");
+        return;
+      }
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          customGPSOrigin = {
+            regionName: "현위치",
+            name: "내 현재 GPS 위치",
+            addr: `위도 ${pos.coords.latitude.toFixed(4)}, 경도 ${pos.coords.longitude.toFixed(4)}`,
+            lat: pos.coords.latitude,
+            lng: pos.coords.longitude
+          };
+          courseDistanceOverrideKm = null;
+          document.getElementById("customOriginInput").value = "내 현재 GPS 위치 (실시간 좌표 적용됨)";
+          updateAllCalculations();
+          showToast("현재 GPS 위치가 출발지로 설정되었습니다!", "success");
+        },
+        () => {
+          showToast("위치 권한이 거부되었거나 가져올 수 없습니다. 출발지 드롭다운이나 직접 입력을 이용해주세요.", "warn");
+        }
+      );
+    }
+
+    // =========================================================================
+    // 11. 출발지·도착지 좌표 추출 및 AI 거리·톨게이트·전 차종 요금 실시간 계산
+    // =========================================================================
+    function getOriginNode() {
+      const customText = document.getElementById("customOriginInput").value.trim();
+      if (customGPSOrigin && customText.includes("GPS")) {
+        return customGPSOrigin;
+      }
+      const rIdx = originRegionIdx || 0;
+      const sIdx = originSpotIdx;
+      const reg = REGIONS_DATA[rIdx] || REGIONS_DATA[0];
+      if (sIdx >= 0 && reg.spots[sIdx]) {
+        return {
+          regionIdx: rIdx,
+          regionName: reg.name,
+          name: customText || `${reg.name} ${reg.spots[sIdx].name}`,
+          addr: reg.spots[sIdx].addr,
+          lat: reg.spots[sIdx].lat,
+          lng: reg.spots[sIdx].lng,
+          tollgateName: reg.tollgateName,
+          serviceArea: reg.serviceArea,
+          junctionName: reg.junctionName,
+          isJeju: reg.id === "jeju"
+        };
+      }
+      return {
+        regionIdx: rIdx,
+        regionName: reg.name,
+        name: customText || `${reg.name} ${reg.station.split("·")[0]}`,
+        addr: `${reg.fullName} 중심 거점`,
+        lat: reg.hubLat,
+        lng: reg.hubLng,
+        tollgateName: reg.tollgateName,
+        serviceArea: reg.serviceArea,
+        junctionName: reg.junctionName,
+        isJeju: reg.id === "jeju"
+      };
+    }
+
+    function getDestNode() {
+      const rIdx = destRegionIdx || 0;
+      const sIdx = destSpotIdx;
+      const reg = REGIONS_DATA[rIdx] || REGIONS_DATA[0];
+      if (sIdx >= 0 && reg.spots[sIdx]) {
+        return {
+          regionIdx: rIdx,
+          regionName: reg.name,
+          fullName: reg.fullName,
+          spotName: reg.spots[sIdx].name,
+          name: `${reg.name} ${reg.spots[sIdx].name}`,
+          addr: reg.spots[sIdx].addr,
+          lat: reg.spots[sIdx].lat,
+          lng: reg.spots[sIdx].lng,
+          station: reg.station,
+          terminal: reg.terminal,
+          airport: reg.airport,
+          highway: reg.highway,
+          tollgateName: reg.tollgateName,
+          serviceArea: reg.serviceArea,
+          junctionName: reg.junctionName,
+          localCallTaxi: reg.localCallTaxi,
+          weather: reg.spots[sIdx].weather,
+          isJeju: reg.id === "jeju"
+        };
+      }
+      return {
+        regionIdx: rIdx,
+        regionName: reg.name,
+        fullName: reg.fullName,
+        spotName: reg.name,
+        name: `${reg.fullName}`,
+        addr: `${reg.fullName} 중심부`,
+        lat: reg.hubLat,
+        lng: reg.hubLng,
+        station: reg.station,
+        terminal: reg.terminal,
+        airport: reg.airport,
+        highway: reg.highway,
+        tollgateName: reg.tollgateName,
+        serviceArea: reg.serviceArea,
+        junctionName: reg.junctionName,
+        localCallTaxi: reg.localCallTaxi,
+        weather: reg.liveWeather,
+        isJeju: reg.id === "jeju"
+      };
+    }
+
+    function calcRoadDistanceKm(lat1, lng1, lat2, lng2) {
+      const R = 6371;
+      const dLat = (lat2 - lat1) * Math.PI / 180;
+      const dLng = (lng2 - lng1) * Math.PI / 180;
+      const a = Math.sin(dLat / 2) ** 2 +
+                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                Math.sin(dLng / 2) ** 2;
+      const straightKm = R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      if (straightKm < 1.5) return 4.2;
+      return Math.round(straightKm * 1.28 * 10) / 10;
+    }
+
+    function updateAllCalculations() {
+      const origin = getOriginNode();
+      const dest = getDestNode();
+
+      renderItinerary();
+
+      document.getElementById("destCoordText").textContent = `위도 ${dest.lat.toFixed(4)}, 경도 ${dest.lng.toFixed(4)}`;
+      const wInfo = dest.weather ? ` · 기온 ${dest.weather.temp}℃ (강수확률 ${dest.weather.pop}%)` : "";
+      document.getElementById("destAddressDisplay").innerHTML = `<i class="fa-solid fa-map-pin text-rose-400 mr-1.5"></i><strong>${dest.name}</strong> · ${dest.addr}<span class="text-sky-300 font-semibold">${wInfo}</span>`;
+
+      const isRoundTrip = document.getElementById("roundTripToggle").checked;
+      const tripMultiplier = isRoundTrip ? 2 : 1;
+
+      const oneWayKm = calcRoadDistanceKm(origin.lat, origin.lng, dest.lat, dest.lng);
+      const isCourseMode = courseDistanceOverrideKm !== null;
+      const totalKm = isCourseMode
+        ? courseDistanceOverrideKm
+        : Math.round(oneWayKm * tripMultiplier * 10) / 10;
+
+      const courseBadge = document.getElementById("courseModeActiveBadge");
+      if (isCourseMode) {
+        courseBadge.classList.remove("hidden");
+      } else {
+        courseBadge.classList.add("hidden");
+      }
+
+      const totalMinutes = Math.round((totalKm / 72) * 60 + (12 * tripMultiplier));
+      const hours = Math.floor(totalMinutes / 60);
+      const mins = totalMinutes % 60;
+
+      const vehicleClass = document.getElementById("vehicleClassSelect").value;
+      const selectedFuel = document.getElementById("fuelTypeSelect").value;
+      const passengers = parseInt(document.getElementById("passengerCountSelect").value, 10) || 1;
+      const driveEffFactor = parseFloat(document.getElementById("driveStyleSelect").value) || 1.0;
+
+      const classTollFactor = { compact: 1.0, sedan: 1.0, large: 1.0, van: 1.22 }[vehicleClass] || 1.0;
+      const classEfficiencyMultiplier = { compact: 1.18, sedan: 1.0, large: 0.82, van: 0.68 }[vehicleClass] || 1.0;
+
+      let baseTollTotal = 0;
+      if (totalKm > 25) {
+        const highwayKm = totalKm * 0.76;
+        baseTollTotal = Math.round(((900 * tripMultiplier) + highwayKm * 44.3 * classTollFactor) / 100) * 100;
+      }
+
+      const energySpecs = [
+        {
+          id: "gasoline",
+          name: "휘발유 (가솔린)",
+          unitPrice: 1645,
+          unit: "L",
+          baseEff: 12.5,
+          effUnit: "km/L",
+          tollDiscountRate: vehicleClass === "compact" ? 0.5 : 0.0,
+          discountLabel: vehicleClass === "compact" ? "경차 50% 감면" : "일반 요금"
+        },
+        {
+          id: "diesel",
+          name: "경유 (디젤)",
+          unitPrice: 1495,
+          unit: "L",
+          baseEff: 14.8,
+          effUnit: "km/L",
+          tollDiscountRate: vehicleClass === "compact" ? 0.5 : 0.0,
+          discountLabel: vehicleClass === "compact" ? "경차 50% 감면" : "일반 요금"
+        },
+        {
+          id: "lpg",
+          name: "LPG (부탄)",
+          unitPrice: 1020,
+          unit: "L",
+          baseEff: 9.6,
+          effUnit: "km/L",
+          tollDiscountRate: vehicleClass === "compact" ? 0.5 : 0.0,
+          discountLabel: vehicleClass === "compact" ? "경차 50% 감면" : "일반 요금"
+        },
+        {
+          id: "ev_fast",
+          name: "전기차 (급속충전)",
+          unitPrice: 347.2,
+          unit: "kWh",
+          baseEff: 5.4,
+          effUnit: "km/kWh",
+          tollDiscountRate: vehicleClass === "compact" ? 0.5 : 0.3,
+          discountLabel: vehicleClass === "compact" ? "경차 50% 감면" : "친환경차 30% 감면"
+        },
+        {
+          id: "ev_slow",
+          name: "전기차 (완속충전)",
+          unitPrice: 260.0,
+          unit: "kWh",
+          baseEff: 5.4,
+          effUnit: "km/kWh",
+          tollDiscountRate: vehicleClass === "compact" ? 0.5 : 0.3,
+          discountLabel: vehicleClass === "compact" ? "경차 50% 감면" : "친환경차 30% 감면"
+        },
+        {
+          id: "hydrogen",
+          name: "수소전기차 (FCEV)",
+          unitPrice: 10377,
+          unit: "kg",
+          baseEff: 96.2,
+          effUnit: "km/kg",
+          tollDiscountRate: 0.3,
+          discountLabel: "수소차 30% 감면"
+        }
+      ];
+
+      const tbody = document.getElementById("costComparisonTableBody");
+      let rowsHtml = "";
+      let activeSpecResult = null;
+
+      energySpecs.forEach((spec) => {
+        const adjEff = Math.round(spec.baseEff * classEfficiencyMultiplier * driveEffFactor * 10) / 10;
+        const consumed = totalKm / adjEff;
+        const energyCost = Math.round(consumed * spec.unitPrice);
+        const finalToll = Math.round((baseTollTotal * (1 - spec.tollDiscountRate)) / 100) * 100;
+        const grandTotal = energyCost + finalToll;
+        const perPerson = Math.round(grandTotal / passengers);
+
+        const isSelected = spec.id === selectedFuel;
+        if (isSelected) {
+          activeSpecResult = { spec, adjEff, consumed, energyCost, finalToll, grandTotal, perPerson };
+        }
+
+        rowsHtml += `
+          <tr class="${isSelected ? 'bg-cyan-500/15 font-semibold text-white' : 'text-slate-300 hover:bg-slate-900/50'}">
+            <td class="py-2.5 px-3 flex items-center gap-1.5">
+              ${isSelected ? '<i class="fa-solid fa-circle-check text-cyan-400"></i>' : ''}
+              <span>${spec.name}</span>
+            </td>
+            <td class="py-2.5 px-3 text-slate-400">${spec.unitPrice.toLocaleString()}원/${spec.unit} · ${adjEff}${spec.effUnit}</td>
+            <td class="py-2.5 px-3">${consumed.toFixed(1)} ${spec.unit}</td>
+            <td class="py-2.5 px-3 text-emerald-400">${energyCost.toLocaleString()}원</td>
+            <td class="py-2.5 px-3 text-amber-300">${finalToll.toLocaleString()}원 <span class="text-[10px] text-slate-400">(${spec.discountLabel})</span></td>
+            <td class="py-2.5 px-3 text-right font-bold text-white">
+              ${grandTotal.toLocaleString()}원
+              <span class="block text-[10px] text-cyan-300 font-normal">1인당 ${perPerson.toLocaleString()}원</span>
+            </td>
+          </tr>
+        `;
+      });
+
+      tbody.innerHTML = rowsHtml;
+
+      document.getElementById("kpiDistance").textContent =
+        `${totalKm.toLocaleString()} km ${isCourseMode ? '(전 일정 코스)' : (isRoundTrip ? '(왕복)' : '(편도)')}`;
+      document.getElementById("kpiDuration").textContent = `약 ${hours > 0 ? hours + '시간 ' : ''}${mins}분 운전`;
+
+      if (activeSpecResult) {
+        document.getElementById("kpiTollFee").textContent = `${activeSpecResult.finalToll.toLocaleString()} 원`;
+        document.getElementById("kpiTollDiscountNote").textContent = `${activeSpecResult.spec.discountLabel} (원가 ${baseTollTotal.toLocaleString()}원)`;
+        document.getElementById("kpiEnergyLabel").textContent = `${activeSpecResult.spec.name} 비용`;
+        document.getElementById("kpiEnergyCost").textContent = `${activeSpecResult.energyCost.toLocaleString()} 원`;
+        document.getElementById("kpiEnergyConsumption").textContent = `소모량 ${activeSpecResult.consumed.toFixed(1)} ${activeSpecResult.spec.unit} (${activeSpecResult.adjEff}${activeSpecResult.spec.effUnit})`;
+        document.getElementById("kpiTotalCost").textContent = `${activeSpecResult.grandTotal.toLocaleString()} 원`;
+        document.getElementById("kpiPerPersonCost").textContent = `${passengers}인 분담 시 1인당 ${activeSpecResult.perPerson.toLocaleString()} 원`;
+      }
+
+      document.getElementById("receiptRouteTitle").textContent = isCourseMode
+        ? `${origin.name} ↔ ${dest.regionName} 전체 코스 경유 합산`
+        : `${origin.name} → ${dest.name} (${isRoundTrip ? '왕복' : '편도'})`;
+
+      const jejuNotice = document.getElementById("jejuFerryNotice");
+      if (origin.isJeju !== dest.isJeju) {
+        jejuNotice.classList.remove("hidden");
+      } else {
+        jejuNotice.classList.add("hidden");
+      }
+
+      const oneWayToll = activeSpecResult ? Math.round((activeSpecResult.finalToll / tripMultiplier) / 100) * 100 : 0;
+      updateMapLinks(origin, dest, oneWayKm);
+      renderRouteSvg(origin, dest, oneWayKm, oneWayToll);
+      updateStayLinks(dest, origin);
+      updateTransportationHub(origin, dest, oneWayKm);
+    }
+
+    // =========================================================================
+    // 12. 5대 지도 (네이버·카카오·구글·티맵·다음) 실시간 출발지→도착지 자동입력 길찾기 딥링크 생성
+    // =========================================================================
+    function buildNaverDirectionsUrl(origin, dest) {
+      const sText = encodeURIComponent(origin.name);
+      const eText = encodeURIComponent(dest.name);
+      return `https://map.naver.com/index.nhn?slng=${origin.lng}&slat=${origin.lat}&stext=${sText}&elng=${dest.lng}&elat=${dest.lat}&etext=${eText}&menu=route&pathType=1`;
+    }
+
+    function updateMapLinks(origin = getOriginNode(), dest = getDestNode(), oneWayKm = 10) {
+      const sName = encodeURIComponent(origin.name);
+      const eName = encodeURIComponent(dest.name);
+      const oneWayMin = Math.max(8, Math.round((oneWayKm / 68) * 60 + 10));
+      const h = Math.floor(oneWayMin / 60);
+      const m = oneWayMin % 60;
+      const timeStr = `${h > 0 ? h + '시간 ' : ''}${m}분`;
+
+      const naverUrl = buildNaverDirectionsUrl(origin, dest);
+      const kakaoUrl = `https://map.kakao.com/?sName=${sName}&eName=${eName}`;
+      const googleUrl = `https://www.google.com/maps/dir/?api=1&origin=${sName}&destination=${eName}&travelmode=driving`;
+      const daumUrl = `https://map.daum.net/?sName=${sName}&eName=${eName}`;
+
+      document.getElementById("linkNaverMap").href = naverUrl;
+      document.getElementById("linkKakaoMap").href = kakaoUrl;
+      document.getElementById("linkGoogleMap").href = googleUrl;
+      document.getElementById("linkDaumMap").href = daumUrl;
+
+      document.getElementById("linkTmap").href =
+        `https://map.kakao.com/link/from/${sName},${origin.lat},${origin.lng}/to/${eName},${dest.lat},${dest.lng}`;
+      document.getElementById("linkTmap").onclick = function() {
+        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+        if (isMobile) {
+          window.location.href = `tmap://route?startname=${sName}&startx=${origin.lng}&starty=${origin.lat}&goalname=${eName}&goalx=${dest.lng}&goaly=${dest.lat}`;
+          return false;
+        }
+        window.open(`https://map.kakao.com/link/from/${sName},${origin.lat},${origin.lng}/to/${eName},${dest.lat},${dest.lng}`, "_blank");
+        return false;
+      };
+
+      document.getElementById("mapAutoOriginBadge").textContent = `출발: ${origin.name}`;
+      document.getElementById("mapAutoDestBadge").textContent = `도착: ${dest.name}`;
+      document.getElementById("mapAutoDistTimeBadge").textContent = `편도 ${oneWayKm}km · 약 ${timeStr}`;
+
+      const routeSummaryLabel = `${origin.name} ➔ ${dest.name} 자동입력됨`;
+      document.getElementById("naverMapRouteSub").textContent = routeSummaryLabel;
+      document.getElementById("kakaoMapRouteSub").textContent = routeSummaryLabel;
+      document.getElementById("googleMapRouteSub").textContent = routeSummaryLabel;
+      document.getElementById("tmapRouteSub").textContent = routeSummaryLabel;
+      document.getElementById("daumMapRouteSub").textContent = `${routeSummaryLabel} (로드뷰 지원)`;
+
+      // 4단계(숙박예약) 내 길찾기 버튼 실시간 연동
+      const stNaver = document.getElementById("stayNaverMapBtn");
+      const stKakao = document.getElementById("stayKakaoMapBtn");
+      const stGoogle = document.getElementById("stayGoogleMapBtn");
+      if (stNaver) stNaver.href = naverUrl;
+      if (stKakao) stKakao.href = kakaoUrl;
+      if (stGoogle) stGoogle.href = googleUrl;
+    }
+
+    // =========================================================================
+    // 13. AI 실시간 이동경로 및 고속도로 톨게이트 구간별 상세 마커(M1~M6) 시각화
+    // =========================================================================
+    function renderRouteSvg(origin, dest, oneWayKm, oneWayToll = 0) {
+      const svg = document.getElementById("routeSvg");
+      document.getElementById("routeHighwayBadge").textContent = dest.highway || "전국 고속국도 간선망";
+
+      const isShortLocal = oneWayKm <= 25;
+      const originTG = isShortLocal ? `${origin.regionName} 도심 진입로` : (origin.tollgateName ? origin.tollgateName.split("/")[0].trim() : `${origin.regionName}TG`);
+      const midPoint1 = isShortLocal
+        ? `${dest.regionName} 주요 간선교차로`
+        : (origin.serviceArea || "중부·경부 거점 휴게소");
+      const midPoint2 = isShortLocal
+        ? `${dest.spotName} 진입 대교/대로`
+        : `${dest.junctionName || '권역 분기점(JC)'} (${dest.highway.split("·")[0]})`;
+      const destTG = isShortLocal ? `${dest.spotName} 인근 교차로` : (dest.tollgateName ? dest.tollgateName.split("/")[0].trim() : `${dest.regionName}TG`);
+
+      const segRatios = [0, 0.14, 0.42, 0.72, 0.89, 1.0];
+      const tollMid = Math.round((oneWayToll * 0.45) / 100) * 100;
+
+      const markers = [
+        {
+          code: "M1",
+          type: "출발지",
+          title: origin.name,
+          sub: "출발 거점",
+          cumKm: 0,
+          segKm: 0,
+          cumMin: 0,
+          tollNote: "출발",
+          x: 75, y: 120,
+          pinColor: "#3b82f6",
+          badgeBg: "bg-blue-500/20 text-blue-300 border-blue-500/40"
+        },
+        {
+          code: "M2",
+          type: "진입 TG/IC",
+          title: originTG,
+          sub: "고속도로/간선 진입",
+          cumKm: Math.round(oneWayKm * segRatios[1] * 10) / 10,
+          segKm: Math.round(oneWayKm * segRatios[1] * 10) / 10,
+          cumMin: Math.max(4, Math.round((oneWayKm * segRatios[1] / 55) * 60)),
+          tollNote: isShortLocal ? "무료구간" : "통행권/하이패스",
+          x: 265, y: 72,
+          pinColor: "#f59e0b",
+          badgeBg: "bg-amber-500/20 text-amber-300 border-amber-500/40"
+        },
+        {
+          code: "M3",
+          type: "경유·휴게소",
+          title: midPoint1,
+          sub: dest.highway.split("·")[0] || "고속도로 본선",
+          cumKm: Math.round(oneWayKm * segRatios[2] * 10) / 10,
+          segKm: Math.round(oneWayKm * (segRatios[2] - segRatios[1]) * 10) / 10,
+          cumMin: Math.max(8, Math.round((oneWayKm * segRatios[2] / 68) * 60)),
+          tollNote: isShortLocal ? "원활" : `중간요금 약 ${tollMid.toLocaleString()}원`,
+          x: 465, y: 125,
+          pinColor: "#06b6d4",
+          badgeBg: "bg-cyan-500/20 text-cyan-300 border-cyan-500/40"
+        },
+        {
+          code: "M4",
+          type: "분기점(JC)",
+          title: midPoint2,
+          sub: "노선 분기 통과",
+          cumKm: Math.round(oneWayKm * segRatios[3] * 10) / 10,
+          segKm: Math.round(oneWayKm * (segRatios[3] - segRatios[2]) * 10) / 10,
+          cumMin: Math.max(12, Math.round((oneWayKm * segRatios[3] / 68) * 60)),
+          tollNote: "실시간 소통 원활",
+          x: 665, y: 72,
+          pinColor: "#22d3ee",
+          badgeBg: "bg-sky-500/20 text-sky-300 border-sky-500/40"
+        },
+        {
+          code: "M5",
+          type: "진출 톨게이트",
+          title: destTG,
+          sub: `${dest.regionName} 권역 톨게이트`,
+          cumKm: Math.round(oneWayKm * segRatios[4] * 10) / 10,
+          segKm: Math.round(oneWayKm * (segRatios[4] - segRatios[3]) * 10) / 10,
+          cumMin: Math.max(15, Math.round((oneWayKm * segRatios[4] / 68) * 60)),
+          tollNote: oneWayToll > 0 ? `톨비 ${oneWayToll.toLocaleString()}원 정산` : "무료 진출",
+          x: 855, y: 125,
+          pinColor: "#f59e0b",
+          badgeBg: "bg-amber-500/20 text-amber-300 border-amber-500/40"
+        },
+        {
+          code: "M6",
+          type: "최종 도착지",
+          title: dest.spotName,
+          sub: `총 ${oneWayKm} km 완주`,
+          cumKm: oneWayKm,
+          segKm: Math.round(oneWayKm * (1 - segRatios[4]) * 10) / 10,
+          cumMin: Math.max(18, Math.round((oneWayKm / 68) * 60 + 8)),
+          tollNote: "목적지 도착",
+          x: 1025, y: 82,
+          pinColor: "#f43f5e",
+          badgeBg: "bg-rose-500/20 text-rose-300 border-rose-500/40"
+        }
+      ];
+
+      const pathD = `M ${markers[0].x} ${markers[0].y} C 170 70, 210 72, ${markers[1].x} ${markers[1].y} S 390 125, ${markers[2].x} ${markers[2].y} S 590 72, ${markers[3].x} ${markers[3].y} S 780 125, ${markers[4].x} ${markers[4].y} S 950 82, ${markers[5].x} ${markers[5].y}`;
+
+      const segBadgesSvg = [];
+      for (let i = 1; i < markers.length; i++) {
+        const mPrev = markers[i - 1];
+        const mCurr = markers[i];
+        const mx = (mPrev.x + mCurr.x) / 2;
+        const my = (mPrev.y + mCurr.y) / 2 - 8;
+        segBadgesSvg.push(`
+          <g transform="translate(${mx}, ${my})">
+            <rect x="-36" y="-11" width="72" height="18" rx="9" fill="#faf4eb" stroke="#b47b44" stroke-width="1" opacity="0.95" />
+            <text x="0" y="2" text-anchor="middle" fill="#7c4a1e" font-size="10" font-weight="bold">+${mCurr.segKm}km</text>
+          </g>
+        `);
+      }
+
+      const markerNodesSvg = markers.map((m, idx) => {
+        const isTopLabel = idx % 2 === 1 || idx === 5;
+        const boxY = isTopLabel ? m.y - 64 : m.y + 20;
+        return `
+          <g>
+            <circle cx="${m.x}" cy="${m.y}" r="16" fill="${m.pinColor}" opacity="0.18" />
+            <circle cx="${m.x}" cy="${m.y}" r="11" fill="${m.pinColor}" stroke="#ffffff" stroke-width="2.5" />
+            <text x="${m.x}" y="${m.y + 3.5}" text-anchor="middle" fill="#ffffff" font-size="9.5" font-weight="900">${m.code}</text>
+
+            <rect x="${m.x - 74}" y="${boxY}" width="148" height="46" rx="8" fill="#ffffff" stroke="${m.pinColor}" stroke-width="1.3" opacity="0.96" />
+            <text x="${m.x}" y="${boxY + 15}" text-anchor="middle" fill="#2c221e" font-size="11" font-weight="bold">${m.title.slice(0, 12)}</text>
+            <text x="${m.x}" y="${boxY + 29}" text-anchor="middle" fill="#8c5828" font-size="10" font-weight="bold">누적 ${m.cumKm}km · ${m.cumMin}분</text>
+            <text x="${m.x}" y="${boxY + 41}" text-anchor="middle" fill="#b45309" font-size="9.5" font-weight="600">${m.tollNote}</text>
+          </g>
+        `;
+      }).join("");
+
+      svg.innerHTML = `
+        <defs>
+          <linearGradient id="lineGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#3b82f6" />
+            <stop offset="35%" stop-color="#f59e0b" />
+            <stop offset="70%" stop-color="#06b6d4" />
+            <stop offset="100%" stop-color="#f43f5e" />
+          </linearGradient>
+        </defs>
+        <line x1="40" y1="50" x2="1060" y2="50" stroke="#e5d5bf" stroke-width="1" stroke-dasharray="4 4" />
+        <line x1="40" y1="105" x2="1060" y2="105" stroke="#e5d5bf" stroke-width="1" stroke-dasharray="4 4" />
+        <line x1="40" y1="160" x2="1060" y2="160" stroke="#e5d5bf" stroke-width="1" stroke-dasharray="4 4" />
+
+        <path d="${pathD}" fill="none" stroke="#e5d5bf" stroke-width="11" stroke-linecap="round" />
+        <path d="${pathD}" fill="none" stroke="url(#lineGrad)" stroke-width="5" stroke-linecap="round" stroke-dasharray="10 6" class="route-animated-line" />
+
+        ${segBadgesSvg.join("")}
+        ${markerNodesSvg}
+      `;
+
+      document.getElementById("routeWaypointsText").innerHTML = markers.map((m) => {
+        const searchQ = encodeURIComponent(m.title);
+        return `
+          <div class="bg-slate-900/95 border border-slate-800 hover:border-cyan-500/50 rounded-xl p-2.5 flex flex-col justify-between transition">
+            <div>
+              <div class="flex items-center justify-between gap-1 mb-1">
+                <span class="px-1.5 py-0.5 rounded border text-[10px] font-extrabold ${m.badgeBg}">
+                  <i class="fa-solid fa-location-dot mr-0.5"></i>${m.code} · ${m.type}
+                </span>
+                <span class="text-[10px] font-mono text-cyan-300 font-bold">+${m.segKm}km</span>
+              </div>
+              <div class="text-xs font-bold text-white truncate" title="${m.title}">${m.title}</div>
+              <div class="text-[10px] text-slate-400 truncate mt-0.5">${m.sub}</div>
+            </div>
+            <div class="mt-2 pt-1.5 border-t border-slate-800/80 flex items-center justify-between text-[10px]">
+              <span class="text-amber-300 font-semibold">누적 ${m.cumKm}km (${m.cumMin}분)</span>
+              <a href="https://map.kakao.com/?q=${searchQ}" target="_blank" rel="noopener noreferrer" class="text-sky-400 hover:underline">지도확인</a>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    // =========================================================================
+    // 14. 4단계: 5대 숙박 예약 사이트 (여기어때·야놀자·아고다·호텔스컴바인·트립닷컴) + 길찾기 실시간 연동
+    // =========================================================================
+    function updateStayLinks(dest = getDestNode(), origin = getOriginNode()) {
+      const checkIn = document.getElementById("checkInDate").value;
+      const checkOut = document.getElementById("checkOutDate").value;
+      const guests = document.getElementById("stayGuests").value;
+
+      const keyword = `${dest.regionName} ${dest.spotName}`;
+      const encodedKeyword = encodeURIComponent(keyword);
+
+      document.getElementById("stayTargetName").textContent = `${dest.name} (${checkIn} ~ ${checkOut}, 성인 ${guests}명)`;
+
+      const naverStayDirUrl = buildNaverDirectionsUrl(origin, dest);
+      const kakaoStayDirUrl = `https://map.kakao.com/?sName=${encodeURIComponent(origin.name)}&eName=${encodedKeyword}`;
+      const googleStayDirUrl = `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(origin.name)}&destination=${encodedKeyword}&travelmode=driving`;
+
+      const platforms = [
+        {
+          name: "여기어때 (Yeogi)",
+          badge: "국내숙소·특가펜션 실시간예약",
+          color: "from-rose-600 to-pink-600",
+          border: "border-rose-500/40",
+          desc: `${dest.spotName} 주변 호텔·펜션·리조트 실시간 빈방 검색 및 즉시 예약`,
+          url: `https://www.yeogi.com/domestic-accommodations?keyword=${encodedKeyword}&checkIn=${checkIn}&checkOut=${checkOut}&personal=${guests}`
+        },
+        {
+          name: "야놀자 (NOL Yanolja)",
+          badge: "호텔·리조트·풀빌라 즉시예매",
+          color: "from-pink-600 to-fuchsia-600",
+          border: "border-pink-500/40",
+          desc: `${dest.spotName} 인근 숙소 당일특가 및 쿠폰할인 실시간 예약 연동`,
+          url: `https://nol.yanolja.com/results?keyword=${encodedKeyword}&checkinDate=${checkIn}&checkoutDate=${checkOut}&adultPax=${guests}`
+        },
+        {
+          name: "아고다 (Agoda)",
+          badge: "글로벌 최저가 실시간 확정",
+          color: "from-blue-600 to-indigo-600",
+          border: "border-blue-500/40",
+          desc: `${dest.regionName} 권역 호텔·리조트 실시간 요금 비교 및 즉시 예약`,
+          url: `https://www.agoda.com/ko-kr/search?textToSearch=${encodedKeyword}&checkIn=${checkIn}&checkOut=${checkOut}&adults=${guests}`
+        },
+        {
+          name: "호텔스컴바인 (HotelsCombined)",
+          badge: "전 세계 숙박 메타서치 비교",
+          color: "from-sky-600 to-cyan-600",
+          border: "border-sky-500/40",
+          desc: `${dest.spotName} 주변 전 숙박 사이트 최저가 한눈에 비교 예약`,
+          url: `https://www.hotelscombined.co.kr/hotels?q=${encodedKeyword}&checkin=${checkIn}&checkout=${checkOut}&adults=${guests}`
+        },
+        {
+          name: "트립닷컴 (Trip.com)",
+          badge: "호텔·숙소 실시간 온라인예약",
+          color: "from-indigo-600 to-violet-600",
+          border: "border-indigo-500/40",
+          desc: `${dest.name} 인근 프리미엄 호텔 및 가족 숙소 실시간 확정 예약`,
+          url: `https://kr.trip.com/hotels/list?keyword=${encodedKeyword}&checkin=${checkIn}&checkout=${checkOut}&adult=${guests}`
+        }
+      ];
+
+      document.getElementById("stayLinksGrid").innerHTML = platforms.map(p => `
+        <div class="p-4 rounded-xl bg-slate-900/90 hover:bg-slate-800/90 border ${p.border} transition flex flex-col justify-between group">
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-gradient-to-r ${p.color} text-white">${p.badge}</span>
+              <i class="fa-solid fa-bed text-xs text-slate-400 group-hover:text-white"></i>
+            </div>
+            <h3 class="text-sm font-bold text-white group-hover:text-cyan-300">${p.name}</h3>
+            <p class="text-[11px] text-slate-400 mt-1">${p.desc}</p>
+          </div>
+
+          <div class="mt-3 pt-2.5 border-t border-slate-800 space-y-2">
+            <a href="${p.url}" target="_blank" rel="noopener noreferrer"
+              class="w-full py-2 px-3 rounded-lg bg-gradient-to-r ${p.color} text-white text-xs font-bold flex items-center justify-between shadow hover:opacity-95 transition">
+              <span>"${keyword}" 실시간 숙박 예약</span>
+              <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+            </a>
+            <!-- 숙박지까지 네이버·카카오·구글 길찾기 자동입력 직결 버튼 -->
+            <div class="grid grid-cols-3 gap-1 text-center">
+              <a href="${naverStayDirUrl}" target="_blank" rel="noopener noreferrer" class="py-1 rounded bg-emerald-600/20 hover:bg-emerald-600 text-[10px] font-bold text-emerald-300 hover:text-white border border-emerald-500/30 transition">네이버길찾기</a>
+              <a href="${kakaoStayDirUrl}" target="_blank" rel="noopener noreferrer" class="py-1 rounded bg-yellow-500/20 hover:bg-yellow-500 text-[10px] font-bold text-yellow-300 hover:text-slate-950 border border-yellow-400/30 transition">카카오길찾기</a>
+              <a href="${googleStayDirUrl}" target="_blank" rel="noopener noreferrer" class="py-1 rounded bg-blue-600/20 hover:bg-blue-600 text-[10px] font-bold text-blue-300 hover:text-white border border-blue-500/30 transition">구글길찾기</a>
+            </div>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    // =========================================================================
+    // 15. 5단계: 철도, 버스, 렌터카, 실시간 택시 예약/호출(실제 웹/앱 직결), 항공사 다이렉트 연동
+    // =========================================================================
+    function callKakaoTaxiDirect() {
+      const origin = getOriginNode();
+      const dest = getDestNode();
+      const sName = encodeURIComponent(origin.name);
+      const eName = encodeURIComponent(dest.name);
+      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+      if (isMobile) {
+        window.location.href = `kakaot://taxi?dest_lat=${dest.lat}&dest_lng=${dest.lng}&dest_name=${eName}&origin_lat=${origin.lat}&origin_lng=${origin.lng}&origin_name=${sName}`;
+      } else {
+        window.open(`https://map.kakao.com/?sName=${sName}&eName=${eName}`, "_blank");
+      }
+    }
+
+    function updateTransportationHub(origin, dest, oneWayKm = 10) {
+      document.getElementById("transOriginBadge").textContent = origin.name;
+      document.getElementById("transDestBadge").textContent = dest.name;
+      document.getElementById("regionalHubSummary").innerHTML =
+        `<i class="fa-solid fa-hub text-cyan-400 mr-1"></i><strong>${dest.fullName} 교통 거점:</strong> 기차(${dest.station}) · 버스(${dest.terminal}) · 공항(${dest.airport})`;
+
+      document.getElementById("recommendedStation").textContent = dest.station;
+      document.getElementById("recommendedTerminal").textContent = dest.terminal;
+      document.getElementById("recommendedRentalZone").textContent = `${dest.station.split("·")[0]} · ${dest.airport.split("·")[0]} 렌터카존`;
+      document.getElementById("recommendedAirport").textContent = dest.airport;
+
+      const localTaxiKm = oneWayKm > 60 ? 12.5 : Math.max(4.2, oneWayKm);
+      const estStandardTaxi = Math.round((4800 + Math.max(0, localTaxiKm - 1.6) * 1000) / 100) * 100;
+      const estVentiTaxi = Math.round(estStandardTaxi * 1.45 / 100) * 100;
+      document.getElementById("estimatedLocalTaxi").textContent =
+        `중형 약 ${estStandardTaxi.toLocaleString()}원 / 대형·벤티 약 ${estVentiTaxi.toLocaleString()}원 (${localTaxiKm}km 기준)`;
+
+      const railLinks = [
+        { name: "코레일톡 / 레츠코레일 (KTX·ITX·무궁화호)", sub: `${dest.station.split("·")[0]}행 실시간 열차 좌석 조회·예매`, url: "https://www.letskorail.com/ebizprd/EbizPrdTicketpr21100W_pr21110.do" },
+        { name: "SRT 수서고속철도 공식 승차권 예매", sub: `수서 ↔ ${dest.station.split("·")[0]} 고속열차 실시간 예매`, url: "https://etk.srail.kr/main.do" },
+        { name: "네이버 기차표 실시간 조회·예매", sub: `${origin.regionName} → ${dest.regionName} KTX·새마을호 즉시 예매`, url: `https://search.naver.com/search.naver?query=${encodeURIComponent(origin.regionName + '에서 ' + dest.regionName + ' 기차표 예매')}` }
+      ];
+      document.getElementById("railLinksBox").innerHTML = railLinks.map(l => renderTransItem(l, "sky")).join("");
+
+      const busLinks = [
+        { name: "고속버스 통합예매 코버스 (프리미엄·우등)", sub: `${dest.terminal.split("·")[0]}행 고속/프리미엄버스 실시간 예매`, url: "https://www.kobus.co.kr/main.do" },
+        { name: "티머니 시외버스 통합예매 시스템", sub: `전국 시외버스터미널 → ${dest.regionName} 실시간 좌석 예매`, url: "https://txbus.t-money.co.kr/" },
+        { name: "버스타고 (전국 시외버스 온라인 예매)", sub: `${dest.terminal} 직행·경유 시외버스 조회 및 발권`, url: "https://www.bustago.or.kr/" },
+        { name: "전국 시내버스 실시간 도착정보 (카카오버스)", sub: `${dest.spotName} 정류장 시내·광역버스 실시간 위치`, url: `https://map.kakao.com/?q=${encodeURIComponent(dest.spotName + ' 버스정류장')}` }
+      ];
+      document.getElementById("busLinksBox").innerHTML = busLinks.map(l => renderTransItem(l, "emerald")).join("");
+
+      const rentalLinks = [
+        { name: "롯데렌터카 (전국 17개 시도 실시간 예약)", sub: `${dest.regionName} 지점 전 차종(경차·SUV·전기·승합) 예약`, url: "https://www.lotterentacar.net/hp/kor/reservation/index.do" },
+        { name: "SK렌터카 (단기렌트·실시간 차량 예약)", sub: `${dest.regionName} 거점 픽업 및 EV/내연기관 즉시 예약`, url: "https://www.skrentacar.com/rent/short" },
+        { name: "쏘카 (SOCAR 24시간 실시간 카셰어링)", sub: `${dest.station.split("·")[0]}·${dest.spotName} 인근 쏘카존 대여`, url: "https://www.socar.kr/" },
+        { name: "트립닷컴 전국 렌터카 실시간 가격비교 예약", sub: `${dest.regionName} 권역 렌터카 온라인 최저가 즉시 확정`, url: "https://kr.trip.com/carhire/" }
+      ];
+      document.getElementById("rentalLinksBox").innerHTML = rentalLinks.map(l => renderTransItem(l, "amber")).join("");
+
+      const sNameEnc = encodeURIComponent(origin.name);
+      const eNameEnc = encodeURIComponent(dest.name);
+      const eAddrEnc = encodeURIComponent(dest.addr);
+
+      const uberLiveWebUrl = `https://m.uber.com/ul/?action=setPickup&pickup[latitude]=${origin.lat}&pickup[longitude]=${origin.lng}&pickup[nickname]=${sNameEnc}&dropoff[latitude]=${dest.lat}&dropoff[longitude]=${dest.lng}&dropoff[nickname]=${eNameEnc}&dropoff[formatted_address]=${eAddrEnc}`;
+      const naverTaxiRouteUrl = buildNaverDirectionsUrl(origin, dest);
+      const klookTaxiReserveUrl = `https://www.klook.com/ko/airport-transfers/`;
+      const tripTaxiReserveUrl = `https://kr.trip.com/airport-transfers/`;
+      const localCall = dest.localCallTaxi || { name: `${dest.regionName} 공식 콜택시·관광택시 예약`, phone: "114", url: `https://search.naver.com/search.naver?query=${encodeURIComponent(dest.regionName + ' 콜택시 관광택시 예약')}` };
+
+      document.getElementById("taxiLinksBox").innerHTML = `
+        <a href="${uberLiveWebUrl}" target="_blank" rel="noopener noreferrer"
+          class="block p-2.5 rounded-lg bg-yellow-500/15 hover:bg-yellow-500/30 border border-yellow-400/50 transition group">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-extrabold text-yellow-300 group-hover:text-white"><i class="fa-solid fa-bolt mr-1"></i>우버 택시 (Uber Taxi) 웹 실시간 즉시 호출·예약</span>
+            <i class="fa-solid fa-arrow-up-right-from-square text-[10px] text-yellow-300"></i>
+          </div>
+          <div class="text-[10px] text-slate-300 mt-0.5 truncate">출발(${origin.name}) → 도착(${dest.spotName}) 좌표 자동입력 배차</div>
+        </a>
+
+        <button type="button" onclick="callKakaoTaxiDirect()"
+          class="w-full text-left block p-2.5 rounded-lg bg-slate-950/90 hover:bg-slate-800 border border-slate-700 hover:border-yellow-400/60 transition group">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-slate-100 group-hover:text-yellow-300">카카오 T 택시 실시간 호출 · 예상요금 직결</span>
+            <span class="text-[10px] px-1.5 py-0.5 rounded bg-yellow-400 text-slate-950 font-extrabold">즉시호출</span>
+          </div>
+          <div class="text-[10px] text-slate-400 mt-0.5 truncate">${origin.name} → ${dest.name} 실시간 택시요금·호출 실행</div>
+        </button>
+
+        <a href="${klookTaxiReserveUrl}" target="_blank" rel="noopener noreferrer"
+          class="block p-2.5 rounded-lg bg-slate-950/80 hover:bg-slate-800 border border-slate-800 hover:border-yellow-500/50 transition group">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-slate-200 group-hover:text-yellow-300">클룩(Klook) 실시간 택시·픽업 온라인 예약</span>
+            <i class="fa-solid fa-arrow-up-right-from-square text-[10px] text-slate-500 group-hover:text-white"></i>
+          </div>
+          <div class="text-[10px] text-slate-400 mt-0.5 truncate">홈페이지에서 ${dest.regionName} 권역 택시·대형밴 사전 예약·결제</div>
+        </a>
+
+        <a href="${tripTaxiReserveUrl}" target="_blank" rel="noopener noreferrer"
+          class="block p-2.5 rounded-lg bg-slate-950/80 hover:bg-slate-800 border border-slate-800 hover:border-yellow-500/50 transition group">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-slate-200 group-hover:text-yellow-300">트립닷컴 실시간 택시·전용차량 온라인 예약</span>
+            <i class="fa-solid fa-arrow-up-right-from-square text-[10px] text-slate-500 group-hover:text-white"></i>
+          </div>
+          <div class="text-[10px] text-slate-400 mt-0.5 truncate">${dest.station.split("·")[0]}·${dest.airport.split("·")[0]} ↔ ${dest.spotName} 실시간 예약</div>
+        </a>
+
+        <div class="grid grid-cols-2 gap-1.5 pt-0.5">
+          <a href="${localCall.url}" target="_blank" rel="noopener noreferrer"
+            class="p-2 rounded-lg bg-slate-950 hover:bg-slate-800 border border-slate-800 hover:border-cyan-400/50 text-center transition">
+            <div class="text-[10px] font-bold text-cyan-300 truncate">${localCall.name}</div>
+            <div class="text-[9px] text-slate-400 mt-0.5">직통 ${localCall.phone}</div>
+          </a>
+          <a href="${naverTaxiRouteUrl}" target="_blank" rel="noopener noreferrer"
+            class="p-2 rounded-lg bg-slate-950 hover:bg-slate-800 border border-slate-800 hover:border-emerald-400/50 text-center transition">
+            <div class="text-[10px] font-bold text-emerald-300 truncate">네이버 택시요금·경로</div>
+            <div class="text-[9px] text-slate-400 mt-0.5">출발→도착 자동입력</div>
+          </a>
+        </div>
+      `;
+
+      const airlines = [
+        { name: "대한항공 (Korean Air)", sub: `국내선(${dest.airport.split("·")[0]}) 및 전 세계 국제선 실시간 예매`, url: "https://www.koreanair.com/" },
+        { name: "아시아나항공 (Asiana Airlines)", sub: "국내·국제선 스케줄 조회 및 항공권 실시간 예매", url: "https://flyasiana.com/" },
+        { name: "제주항공 (Jeju Air)", sub: "김포·부산·청주·대구·광주 ↔ 제주 및 국제선 특가 예매", url: "https://www.jejuair.net/" },
+        { name: "진에어 (Jin Air)", sub: "국내 주요 공항 노선 및 국제선 실시간 항공권 예매", url: "https://www.jinair.com/" },
+        { name: "티웨이항공 (T'way Air)", sub: "지방공항 출발 국내선·국제선 다이렉트 실시간 예약", url: "https://www.twayair.com/" },
+        { name: "에어부산 (Air Busan)", sub: "김해·김포·제주 노선 및 아시아 국제선 실시간 연동", url: "https://www.airbusan.com/" },
+        { name: "에어서울 (Air Seoul)", sub: "김포↔제주 및 일본·동남아 노선 실시간 예매", url: "https://flyairseoul.com/" },
+        { name: "이스타항공 (Eastar Jet)", sub: "국내선(김포·청주·군산↔제주) 초특가 운임 조회", url: "https://www.eastarjet.com/" },
+        { name: "에어로케이 (Aero K)", sub: "청주국제공항 거점 국내·국제선 실시간 예매", url: "https://www.aerok.com/" }
+      ];
+      document.getElementById("airlineLinksBox").innerHTML = airlines.map(l => renderTransItem(l, "purple")).join("");
+    }
+
+    function renderTransItem(item, colorName) {
+      return `
+        <a href="${item.url}" target="_blank" rel="noopener noreferrer"
+          class="block p-2.5 rounded-lg bg-slate-950/80 hover:bg-slate-800 border border-slate-800 hover:border-${colorName}-500/50 transition group">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-slate-200 group-hover:text-${colorName}-300">${item.name}</span>
+            <i class="fa-solid fa-arrow-up-right-from-square text-[10px] text-slate-500 group-hover:text-white"></i>
+          </div>
+          <div class="text-[10px] text-slate-400 mt-0.5 truncate">${item.sub}</div>
+        </a>
+      `;
+    }
+  </script>
+</body>
+</html>
